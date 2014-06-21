@@ -1,0 +1,7 @@
+set(_CATKIN_CURRENT_PACKAGE "gps_common")
+set(gps_common_MAINTAINER "Timo Roehling <timo.roehling@fkie.fraunhofer.de>")
+set(gps_common_DEPRECATED "")
+set(gps_common_VERSION "0.1.7")
+set(gps_common_BUILD_DEPENDS "message_generation" "message_filters" "roscpp" "std_msgs" "nav_msgs" "sensor_msgs")
+set(gps_common_RUN_DEPENDS "message_runtime")
+set(gps_common_BUILDTOOL_DEPENDS "catkin")

@@ -1,0 +1,7 @@
+set(_CATKIN_CURRENT_PACKAGE "gps_umd")
+set(gps_umd_MAINTAINER "Ken Tossell <ken@tossell.net>")
+set(gps_umd_DEPRECATED "")
+set(gps_umd_VERSION "0.1.7")
+set(gps_umd_BUILD_DEPENDS )
+set(gps_umd_RUN_DEPENDS "gpsd_client" "gps_common")
+set(gps_umd_BUILDTOOL_DEPENDS "catkin")

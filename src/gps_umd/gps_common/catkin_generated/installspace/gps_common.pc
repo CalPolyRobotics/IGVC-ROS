@@ -1,0 +1,8 @@
+prefix=/usr/local
+
+Name: gps_common
+Description: Description of gps_common
+Version: 0.1.7
+Cflags: -I/usr/local/include
+Libs: -L/usr/local/lib 
+Requires: message_runtime

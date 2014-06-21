@@ -1,0 +1,2 @@
+- setup-file:
+    local-name: /home/michaelroberts/catkin_ws/src/gps_umd/gps_umd/devel/setup.sh

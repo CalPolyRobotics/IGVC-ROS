@@ -22,9 +22,13 @@ CMakeCache.txt
 *~
 
 # generated header files
-src/*/cfg
-src/*/msg
-src/*/srv
+src/*/cfg/*
+src/*/msg/*
+src/*/srv/*
 
 # dynamic reconfigure generated files
 cfg/cpp
+
+#devel files
+/devel/include/*
+/devel/share/common-lisp/ros/*
