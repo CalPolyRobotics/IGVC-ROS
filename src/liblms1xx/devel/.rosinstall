@@ -1,0 +1,2 @@
+- setup-file:
+    local-name: /home/daschulz/IGVC/rosLidarRepo/RCPRG_laser_drivers/liblms1xx/devel/setup.sh

@@ -1,0 +1,15 @@
+<package>
+  <description brief="gps_test_pkg">
+
+     gps_test_pkg
+
+  </description>
+  <author>michael roberts</author>
+  <license>BSD</license>
+  <review status="unreviewed" notes=""/>
+  <url>http://ros.org/wiki/gps_test_pkg</url>
+  <depend package="gpsd_client"/>
+
+</package>
+
+

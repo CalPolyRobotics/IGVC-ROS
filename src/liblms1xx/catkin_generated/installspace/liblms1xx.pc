@@ -1,0 +1,8 @@
+prefix=/usr/local
+
+Name: liblms1xx
+Description: Description of liblms1xx
+Version: 0.0.0
+Cflags: -I/usr/local/include
+Libs: -L/usr/local/lib -llms1xx
+Requires: roscpp sensor_msgs
