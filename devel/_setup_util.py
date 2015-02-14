@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/python2
 
 # Software License Agreement (BSD License)
 #
@@ -54,8 +54,8 @@ ENV_VAR_SUBFOLDERS = {
     'CPATH': 'include',
     'LD_LIBRARY_PATH' if not IS_DARWIN else 'DYLD_LIBRARY_PATH': 'lib',
     'PATH': 'bin',
-    'PKG_CONFIG_PATH': 'lib/pkgconfig',
-    'PYTHONPATH': 'lib/python2.7/dist-packages',
+    'PKG_CONFIG_PATH': os.path.join('lib', 'pkgconfig'),
+    'PYTHONPATH': 'lib/python2.7/site-packages',
 }
 
 
@@ -68,11 +68,14 @@ def rollback_env_variables(environ, env_var_subfolders):
     lines = []
     unmodified_environ = copy.copy(environ)
     for key in sorted(env_var_subfolders.keys()):
-        subfolder = env_var_subfolders[key]
-        value = _rollback_env_variable(unmodified_environ, key, subfolder)
-        if value is not None:
-            environ[key] = value
-            lines.append(assignment(key, value))
+        subfolders = env_var_subfolders[key]
+        if not isinstance(subfolders, list):
+            subfolders = [subfolders]
+        for subfolder in subfolders:
+            value = _rollback_env_variable(unmodified_environ, key, subfolder)
+            if value is not None:
+                environ[key] = value
+                lines.append(assignment(key, value))
     if lines:
         lines.insert(0, comment('reset environment variables by unrolling modifications based on all workspaces in CMAKE_PREFIX_PATH'))
     return lines
@@ -93,7 +96,7 @@ def _rollback_env_variable(environ, name, subfolder):
             subfolder = subfolder[1:]
         if subfolder.endswith(os.path.sep) or (os.path.altsep and subfolder.endswith(os.path.altsep)):
             subfolder = subfolder[:-1]
-    for ws_path in _get_workspaces(environ, include_fuerte=True):
+    for ws_path in _get_workspaces(environ, include_fuerte=True, include_non_existing=True):
         path_to_find = os.path.join(ws_path, subfolder) if subfolder else ws_path
         path_to_remove = None
         for env_path in env_paths:
@@ -108,7 +111,7 @@ def _rollback_env_variable(environ, name, subfolder):
     return new_value if value_modified else None
 
 
-def _get_workspaces(environ, include_fuerte=False):
+def _get_workspaces(environ, include_fuerte=False, include_non_existing=False):
     '''
     Based on CMAKE_PREFIX_PATH return all catkin workspaces.
 
@@ -119,7 +122,7 @@ def _get_workspaces(environ, include_fuerte=False):
     value = environ[env_name] if env_name in environ else ''
     paths = [path for path in value.split(os.pathsep) if path]
     # remove non-workspace paths
-    workspaces = [path for path in paths if os.path.isfile(os.path.join(path, CATKIN_MARKER_FILE)) or (include_fuerte and path.startswith('/opt/ros/fuerte'))]
+    workspaces = [path for path in paths if os.path.isfile(os.path.join(path, CATKIN_MARKER_FILE)) or (include_fuerte and path.startswith('/opt/ros/fuerte')) or (include_non_existing and not os.path.exists(path))]
     return workspaces
 
 
@@ -143,7 +146,7 @@ def prepend_env_variables(environ, env_var_subfolders, workspaces):
     return lines
 
 
-def _prefix_env_variable(environ, name, paths, subfolder):
+def _prefix_env_variable(environ, name, paths, subfolders):
     '''
     Return the prefix to prepend to the environment variable NAME, adding any path in NEW_PATHS_STR without creating duplicate or empty items.
     '''
@@ -151,11 +154,15 @@ def _prefix_env_variable(environ, name, paths, subfolder):
     environ_paths = [path for path in value.split(os.pathsep) if path]
     checked_paths = []
     for path in paths:
-        if subfolder:
-            path = os.path.join(path, subfolder)
-        # exclude any path already in env and any path we already added
-        if path not in environ_paths and path not in checked_paths:
-            checked_paths.append(path)
+        if not isinstance(subfolders, list):
+            subfolders = [subfolders]
+        for subfolder in subfolders:
+            path_tmp = path
+            if subfolder:
+                path_tmp = os.path.join(path_tmp, subfolder)
+            # exclude any path already in env and any path we already added
+            if path_tmp not in environ_paths and path_tmp not in checked_paths:
+                checked_paths.append(path_tmp)
     prefix_str = os.pathsep.join(checked_paths)
     if prefix_str != '' and environ_paths:
         prefix_str += os.pathsep
@@ -252,7 +259,7 @@ if __name__ == '__main__':
             sys.exit(1)
 
         # environment at generation time
-        CMAKE_PREFIX_PATH = '/home/caddy/IGVC-ROS/devel;/opt/ros/hydro'.split(';')
+        CMAKE_PREFIX_PATH = '/opt/ros/indigo'.split(';')
         # prepend current workspace if not already part of CPP
         base_path = os.path.dirname(__file__)
         if base_path not in CMAKE_PREFIX_PATH:

@@ -67,14 +67,14 @@ set(beagle_pkg_CONFIG_INCLUDED TRUE)
 
 # set variables for source/devel/install prefixes
 if("TRUE" STREQUAL "TRUE")
-  set(beagle_pkg_SOURCE_PREFIX /home/caddy/IGVC-ROS/src/beagle_pkg)
-  set(beagle_pkg_DEVEL_PREFIX /home/caddy/IGVC-ROS/devel)
+  set(beagle_pkg_SOURCE_PREFIX /home/gerik/Documents/IGVC-ROS/src/beagle_pkg)
+  set(beagle_pkg_DEVEL_PREFIX /home/gerik/Documents/IGVC-ROS/devel)
   set(beagle_pkg_INSTALL_PREFIX "")
   set(beagle_pkg_PREFIX ${beagle_pkg_DEVEL_PREFIX})
 else()
   set(beagle_pkg_SOURCE_PREFIX "")
   set(beagle_pkg_DEVEL_PREFIX "")
-  set(beagle_pkg_INSTALL_PREFIX /home/caddy/IGVC-ROS/install)
+  set(beagle_pkg_INSTALL_PREFIX /home/gerik/Documents/IGVC-ROS/install)
   set(beagle_pkg_PREFIX ${beagle_pkg_INSTALL_PREFIX})
 endif()
 
@@ -91,9 +91,9 @@ endif()
 # flag project as catkin-based to distinguish if a find_package()-ed project is a catkin project
 set(beagle_pkg_FOUND_CATKIN_PROJECT TRUE)
 
-if(NOT "/home/caddy/IGVC-ROS/devel/include;/home/caddy/IGVC-ROS/src/beagle_pkg/include" STREQUAL "")
+if(NOT "/home/gerik/Documents/IGVC-ROS/devel/include;/home/gerik/Documents/IGVC-ROS/src/beagle_pkg/include" STREQUAL "")
   set(beagle_pkg_INCLUDE_DIRS "")
-  set(_include_dirs "/home/caddy/IGVC-ROS/devel/include;/home/caddy/IGVC-ROS/src/beagle_pkg/include")
+  set(_include_dirs "/home/gerik/Documents/IGVC-ROS/devel/include;/home/gerik/Documents/IGVC-ROS/src/beagle_pkg/include")
   foreach(idir ${_include_dirs})
     if(IS_ABSOLUTE ${idir} AND IS_DIRECTORY ${idir})
       set(include ${idir})
@@ -103,7 +103,7 @@ if(NOT "/home/caddy/IGVC-ROS/devel/include;/home/caddy/IGVC-ROS/src/beagle_pkg/i
         message(FATAL_ERROR "Project 'beagle_pkg' specifies '${idir}' as an include dir, which is not found.  It does not exist in '${include}'.  Ask the maintainer 'daschulz <daschulz@calpoly.edu>' to fix it.")
       endif()
     else()
-      message(FATAL_ERROR "Project 'beagle_pkg' specifies '${idir}' as an include dir, which is not found.  It does neither exist as an absolute directory nor in '/home/caddy/IGVC-ROS/src/beagle_pkg/${idir}'.  Ask the maintainer 'daschulz <daschulz@calpoly.edu>' to fix it.")
+      message(FATAL_ERROR "Project 'beagle_pkg' specifies '${idir}' as an include dir, which is not found.  It does neither exist as an absolute directory nor in '/home/gerik/Documents/IGVC-ROS/src/beagle_pkg/${idir}'.  Ask the maintainer 'daschulz <daschulz@calpoly.edu>' to fix it.")
     endif()
     _list_append_unique(beagle_pkg_INCLUDE_DIRS ${include})
   endforeach()
@@ -122,7 +122,7 @@ foreach(library ${libraries})
     set(lib_path "")
     set(lib "${library}-NOTFOUND")
     # since the path where the library is found is returned we have to iterate over the paths manually
-    foreach(path /home/caddy/IGVC-ROS/devel/lib;/home/caddy/IGVC-ROS/devel/lib;/opt/ros/hydro/lib)
+    foreach(path /home/gerik/Documents/IGVC-ROS/devel/lib;/opt/ros/indigo/lib)
       find_library(lib ${library}
         PATHS ${path}
         NO_DEFAULT_PATH NO_CMAKE_FIND_ROOT_PATH)
