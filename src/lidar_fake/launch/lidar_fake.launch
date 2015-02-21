@@ -1,0 +1,6 @@
+<launch>
+  <group ns="lidar_fake">
+    <node pkg="lidar_fake" name="derp" type="lidar_fake_node"/>
+  </group>
+
+</launch>
