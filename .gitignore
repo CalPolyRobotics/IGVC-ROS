@@ -30,5 +30,4 @@ src/*/srv/*
 cfg/cpp
 
 #devel files
-/devel/include/*
-/devel/share/common-lisp/ros/*
+devel/*
