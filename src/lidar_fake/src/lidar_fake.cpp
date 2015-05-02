@@ -1,9 +1,16 @@
-#include "ros/ros.h"
-#include "std_msgs/Int16MultiArray.h"
+#include <ros/ros.h>
+#include <math.h>
+#include <sensor_msgs/LaserScan.h>
 
 #include <sstream>
 #define LIDAR_READS 540
-
+//once every 1/25 sec = for 1.2 deg, 500+ measurements per sec
+float gaussFcn(float dist, float variance, float mean)
+{
+	float c = 1/(variance * sqrt(2 * 3.14));
+	float d = -0.5 * ((dist - mean) / variance);
+	return c * exp(pow(d,2)); 
+}
 int main(int argc, char **argv)
 {
   /*
@@ -32,15 +39,15 @@ int main(int argc, char **argv)
    * publishes on "distances"
    * creates a 1000 (char...?) buffer
   */
-  ros::Publisher distances_pub =
-      n.advertise<std_msgs::Int16MultiArray>("distances", 1000);
+  unsigned int num_readings = LIDAR_READS;
+  double laser_frequency = LIDAR_READS;
+  double ranges[num_readings];
+  double intensities[num_readings];
+  
+    ros::Publisher distances_pub = n.advertise<sensor_msgs::LaserScan>("distances", num_readings);
 
-  /*
-   * ros::Rate maintains a particular 
-   * rate for a loop
-   * maintains a rate of 25 Hz
-  */
-  ros::Rate loop_rate(25);
+  int count = 0;
+  ros::Rate r(1.0);
 
   /*
    * prints out to console
@@ -59,39 +66,39 @@ int main(int argc, char **argv)
   */
   while(ros::ok())
   {
-    std_msgs::Int16MultiArray msg;
-
-    /*
-     * msg.data is a multi array
-    */
-    msg.data.clear();
-
-    /*
-     * Appends a random number from 0 - 255
-     * to msgs (the multi array of lidar data)
-     * Does 540 times
-    */
-    for( int i = 0; i < LIDAR_READS; i++)
-    {
-	msg.data.push_back(rand() % 255);
-    }
     
-    /*
-     * publishes lidar distance data 
-     * to all subscribers
-    */
-    distances_pub.publish(msg);
+    ros::Time scan_time = ros::Time::now();
 
-    /* 
-     * spinOnce used for callbacks
-     * to make sure callbacks are called
-    */
-    ros::spinOnce();
+    sensor_msgs::LaserScan scan;
 
-    /*
-     * put ROS rate object to sleep
-    */
-    loop_rate.sleep();
+    scan.header.stamp = scan_time;
+    scan.header.frame_id = "laser_frame";
+    scan.angle_min = -2.35619449615;
+    scan.angle_max = 2.35619449615;
+    scan.angle_increment = 3.14/ num_readings;
+    scan.time_increment = (1/ laser_frequency)/ (num_readings);
+    scan.range_min = 0.0;
+    scan.range_max = 20.0;
+
+    for(unsigned int i = 0; i < num_readings; i++)
+    {
+	ranges[i] = (float) (rand()/((float)RAND_MAX)* scan.range_max);
+	intensities[i] = 100 + count;
+    }
+
+    scan.ranges.resize(num_readings);
+    scan.intensities.resize(num_readings);
+
+    for(unsigned int i = 0; i < num_readings; i++)
+    {
+	scan.ranges[i] = gaussFcn(ranges[i],1.0,9.0);
+	scan.intensities[i] = intensities[i];
+	ROS_INFO("Ranges: %f", ranges[i]);
+    }
+
+    distances_pub.publish(scan);
+    count++;
+    r.sleep();
   }
 
 

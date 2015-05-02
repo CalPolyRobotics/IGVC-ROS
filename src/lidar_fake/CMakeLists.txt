@@ -46,7 +46,7 @@ find_package(catkin REQUIRED COMPONENTS
 ## Generate messages in the 'msg' folder
 add_message_files(
   FILES
-  data.msg
+  LaserScan.msg
 )
 
 ## Generate services in the 'srv' folder
@@ -92,8 +92,11 @@ include_directories(
 )
 
 add_executable(lidar_fake src/lidar_fake.cpp)
+add_executable(lidar_fake_reader src/lidar_fake_reader.cpp)
 target_link_libraries(lidar_fake ${catkin_LIBRARIES})
+target_link_libraries(lidar_fake_reader ${catkin_LIBRARIES})
 add_dependencies(lidar_fake lidar_fake_generate_messages_cpp)
+add_dependencies(lidar_fake_reader lidar_fake_generate_messages_cpp)
 
 ## Declare a cpp library
 # add_library(lidar_fake

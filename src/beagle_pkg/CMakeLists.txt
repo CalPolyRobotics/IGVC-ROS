@@ -10,6 +10,7 @@ find_package(catkin REQUIRED COMPONENTS
   std_msgs
   message_generation
   liblms1xx
+  gps_common
 )
 
 ## System dependencies are found with CMake's conventions

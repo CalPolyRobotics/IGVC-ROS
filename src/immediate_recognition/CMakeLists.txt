@@ -6,7 +6,7 @@ project(immediate_recognition)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
   roscpp
-  stdmsgs
+  std_msgs
 )
 
 ## System dependencies are found with CMake's conventions
@@ -160,3 +160,8 @@ include_directories(
 
 ## Add folders to be run by python nosetests
 # catkin_add_nosetests(test)
+include_directories(include ${catkin_INCLUDE_DIRS})
+
+add_executable(immediate_recongnition src/immediate_recongnition.cpp)
+target_link_libraries(immediate_recongnition ${catkin_LIBRARIES})
+add_dependencies(immediate_recongnition IVGS_ROS_generate_messages_cpp)
