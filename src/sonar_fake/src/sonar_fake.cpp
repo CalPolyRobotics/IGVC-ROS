@@ -1,6 +1,5 @@
 #include "ros/ros.h"
-#include "std_msgs/Int32MultiArray.h"
-
+#include <sonar_fake/SonarArray.h>
 #include <sstream>
 #include <string>
 
@@ -12,20 +11,28 @@ int main(int argc, char** argv) {
 
    ros::NodeHandle n;
 
-   ros::Publisher sonar_pub = n.advertise<std_msgs::Int32MultiArray>("data", 100);
+   ros::Publisher sonar_pub = n.advertise<sonar_fake::SonarArray>("sonar_data", 100);
    ros::Rate loop_rate(10); 
 
    ROS_INFO("Starting Sonar Fake Node");
    
-   while (ros::ok()) { 
-      std_msgs::Int32MultiArray data;
-
-      data.data.clear();
+   
+ 
+   while (ros::ok()) {
+      sonar_fake::SonarArray sonar_data;
+      sonar_data.distance.clear();
 
       for(int i = 0; i < NUM_SONAR; i++) {
-         data.data[i] = 128;
+         //sonar_data.data.push_back(((float)rand()/RAND_MAX) * 1068);
+         sonar_data.distance.push_back( 5.3);
       }
-      sonar_pub.publish(data);
+
+      for(int i = 0; i< NUM_SONAR; i++)
+      {
+	  ROS_INFO("Distances (cm): %f", sonar_data.distance[i]);	
+      }
+
+      sonar_pub.publish(sonar_data);
       ros::spinOnce();
 
       loop_rate.sleep();

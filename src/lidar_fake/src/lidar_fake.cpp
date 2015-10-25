@@ -82,7 +82,8 @@ int main(int argc, char **argv)
 
     for(unsigned int i = 0; i < num_readings; i++)
     {
-	ranges[i] = (float) (rand()/((float)RAND_MAX)* scan.range_max);
+	ranges[i] = 5.3;
+	//ranges[i] = (float) (rand()/((float)RAND_MAX)* scan.range_max);
 	intensities[i] = 100 + count;
     }
 
@@ -91,7 +92,8 @@ int main(int argc, char **argv)
 
     for(unsigned int i = 0; i < num_readings; i++)
     {
-	scan.ranges[i] = gaussFcn(ranges[i],1.0,9.0);
+	//scan.ranges[i] = gaussFcn(ranges[i],1.0,9.0);
+	scan.ranges[i] = 5.3;
 	scan.intensities[i] = intensities[i];
 	ROS_INFO("Ranges: %f", ranges[i]);
     }

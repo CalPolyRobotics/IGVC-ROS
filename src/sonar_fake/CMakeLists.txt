@@ -4,7 +4,7 @@ project(sonar_fake)
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
-find_package(catkin REQUIRED COMPONENTS roscpp std_msgs genmsg)
+find_package(catkin REQUIRED COMPONENTS roscpp std_msgs genmsg message_generation)
 
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
@@ -23,7 +23,7 @@ find_package(catkin REQUIRED COMPONENTS roscpp std_msgs genmsg)
 ## package, follow these steps:
 ## * Let MSG_DEP_SET be the set of packages whose message types you use in
 ##   your messages/services/actions (e.g. std_msgs, actionlib_msgs, ...).
-## * In the file package.xml:
+## the file package.xml:
 ##   * add a build_depend and a run_depend tag for each package in MSG_DEP_SET
 ##   * If MSG_DEP_SET isn't empty the following dependencies might have been
 ##     pulled in transitively but can be declared for certainty nonetheless:
@@ -40,11 +40,11 @@ find_package(catkin REQUIRED COMPONENTS roscpp std_msgs genmsg)
 ##   * add every package in MSG_DEP_SET to generate_messages(DEPENDENCIES ...)
 
 ## Generate messages in the 'msg' folder
-# add_message_files(
-#   FILES
-#   Message1.msg
-#   Message2.msg
-# )
+add_message_files(
+   FILES
+   SonarArray.msg
+ ) 
+
 
 ## Generate services in the 'srv' folder
 # add_service_files(
@@ -61,10 +61,10 @@ find_package(catkin REQUIRED COMPONENTS roscpp std_msgs genmsg)
 # )
 
 ## Generate added messages and services with any dependencies listed here
-#generate_messages(
-   #DEPENDENCIES
-   #std_msgs  # Or other packages containing msgs
-#)
+generate_messages(
+   DEPENDENCIES
+   std_msgs
+)
 
 ###################################
 ## catkin specific configuration ##
@@ -76,10 +76,7 @@ find_package(catkin REQUIRED COMPONENTS roscpp std_msgs genmsg)
 ## CATKIN_DEPENDS: catkin_packages dependent projects also need
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
-#  INCLUDE_DIRS include
-#  LIBRARIES sonar_fake
-#  CATKIN_DEPENDS other_catkin_pkg
-#  DEPENDS system_lib
+  CATKIN_DEPENDS message_runtime
 )
 
 ###########
