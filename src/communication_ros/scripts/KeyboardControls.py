@@ -47,7 +47,7 @@ def KeyboardCtrls():
 			if event.type == pygame.KEYDOWN:	
 				pressed = pygame.key.get_pressed()
 
-		#Throttle ctrls
+		#Throttle ctrls(w incr throttle, s decr throttle)
 		if pressed[pygame.K_w]:
 			if throttle < float(sys.maxint):
 				throttle += throttle_delta
@@ -60,7 +60,8 @@ def KeyboardCtrls():
 				throttle = 0
 		else:
 			throttle = 0
-		
+
+		#Steering ctrls(left to turn more to left, right to turn right)
 		if pressed[pygame.K_LEFT]:
 			if steering > 0:
 				steering -= steering_delta
@@ -74,6 +75,7 @@ def KeyboardCtrls():
 		else:
 			steering = float(sys.maxint)/2.0
 
+		# 0 = forward, 1 = neutral, 2 = reverse
 		if pressed[pygame.K_UP]:
 			FNR = 0
 		elif pressed[pygame.K_DOWN]:
@@ -82,7 +84,7 @@ def KeyboardCtrls():
 			FNR = 1
 	
 		#convert throttle to b/w 0 & 100, steering from 0 to 90	
-
+		# 0 = no throttle, 100 = full throttle; 0 = all the way left, 90 = all the way right
 		print "FNR: " +  str(FNR)
 		print "Steering:" + str(convert(steering, max_steering))
 		print "Throttle: " + str(convert(throttle,max_throttle))

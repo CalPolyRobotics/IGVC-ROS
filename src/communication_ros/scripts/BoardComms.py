@@ -8,11 +8,12 @@ from std_msgs.msg import UInt8, UInt16
 
 start_byte_1 = 0xF0
 start_byte_2 = 0x5A
-s_number = 0
-#dictionary {message_type: fcn}
-
+#sequence number counts the messages up to 255, wrap around to 0
+s_number = 0 #dictionary {message_type: fcn}
+#tracks the message types
 message_type = [i for i in range(0x00,0x17)]
 send_message_type = 0
+#error checking, to be implemented later
 CRC8 = 0
 header_packet_length = 6
 data_msg = 0
@@ -83,6 +84,7 @@ def listener():
 	rospy.spin()
 
 if __name__ == '__main__':
+	#will be able to send as serial message
 	#ser = serial.Serial('/dev/ttyUSB0', 115200, timeout=0)
 
 	listener()
