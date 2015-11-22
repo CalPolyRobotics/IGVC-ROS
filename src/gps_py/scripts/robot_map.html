@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<style type="text/css">
+			html, body { height: 100%; margin: 0; padding: 0; }
+			#map { height: 100%; }
+		</style>
+	<head>
+	<body>
+ 		<script type="text/javascript" src="http://cdn.robotwebtools.org/EventEmitter2/current/eventemitter2.min.js"></script>
+        <script type="text/javascript" src="http://cdn.robotwebtools.org/roslibjs/current/roslib.min.js"></script>
+		<div id="map"></div>
+		<script src="robot_map.js"></script>
+		<script async defer
+			src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDldormglx3H76BOrATfVAGdE66hkcD7SQ&callback=initMap">
+		</script>	
+	</body>
+</html>
