@@ -1,7 +1,0 @@
-set(_CATKIN_CURRENT_PACKAGE "gpsd_client")
-set(gpsd_client_MAINTAINER "Timo Roehling <timo.roehling@fkie.fraunhofer.de>")
-set(gpsd_client_DEPRECATED "")
-set(gpsd_client_VERSION "0.1.7")
-set(gpsd_client_BUILD_DEPENDS "roscpp" "gps_common" "sensor_msgs" "pkg-config" "libgps")
-set(gpsd_client_RUN_DEPENDS )
-set(gpsd_client_BUILDTOOL_DEPENDS "catkin")
