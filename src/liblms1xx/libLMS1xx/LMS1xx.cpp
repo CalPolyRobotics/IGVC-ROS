@@ -235,7 +235,7 @@ void LMS1xx::getData(scanData& data) {
         return ;
         }
 
-              std::cout << "test";
+        // std::cout << "test";
 	} while ((buf[0] != 0x02) || (buf[len - 1] != 0x03));
 
 	//	if (debug)
