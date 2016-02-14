@@ -190,6 +190,6 @@ include_directories(
 # catkin_add_nosetests(test)
 
 
-add_executable(LMS1xx_node src/LMS1xx_node.cpp)
-target_link_libraries(LMS1xx_node ${catkin_LIBRARIES})
-add_dependencies(LMS1xx_node beagle_pkg_gencpp)
+add_executable(lidar_scan src/lidar_scan.cpp)
+target_link_libraries(lidar_scan ${catkin_LIBRARIES})
+add_dependencies(lidar_scan lidar_pkg_gencpp)
