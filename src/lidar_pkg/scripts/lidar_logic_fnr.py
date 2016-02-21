@@ -8,8 +8,9 @@ NEUTRAL = 0
 FORWARD = 1
 REVERSE = 2
 STATE_4 = 3
+
 # Set_FNR Publisher
-PUB = rospy.Publisher('Set_FNR', UInt8, queue_size=10)
+PUB_FNR = rospy.Publisher('Set_FNR', UInt8, queue_size=10)
 
 # Distance to Trigger Reverse
 FIRST_VIEW = 0.5 
@@ -27,7 +28,6 @@ RANGE_BEG = 130
 RANGE_END = 421
 
 # Counter for State 4: REVERSE_TO_NEUTRAL
-
 STATE_4_COUNT_DELAY = 30
 
 # Should receive this from a publisher
@@ -53,20 +53,20 @@ def interpretRanges(ranges):
       # Set the State to Preferred if it is not Already
       if pref_state != FNR_state:
          if pref_state == FORWARD and FNR_state == REVERSE:
-            PUB.publish(NEUTRAL)
-         PUB.publish(pref_state)
+            PUB_FNR.publish(NEUTRAL)
+         PUB_FNR.publish(pref_state)
          FNR_state = pref_state
    else:
       global count
       if count >= STATE_4_COUNT_DELAY:
          count = 0
-         PUB.publish(FORWARD)
+         PUB_FNR.publish(FORWARD)
          FNR_state = FORWARD 
       else:
          count += 1
 
 def listener():
-   rospy.init_node('lidar_logic', anonymous=True)
+   rospy.init_node('lidar_logic_fnr', anonymous=True)
    rospy.Subscriber("lidar_scan_ranges", Float32MultiArray, callback)
 
    # spin() simply keeps python from exiting until this node is stopped

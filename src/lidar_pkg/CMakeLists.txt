@@ -170,9 +170,8 @@ include_directories(
 # )
 
 ## Mark other files for installation (e.g. launch and bag files, etc.)
-# install(FILES
-#   # myfile1
-#   # myfile2
+#install(FILES
+#   src/lidar.launch
 #   DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
 # )
 
@@ -193,3 +192,7 @@ include_directories(
 add_executable(lidar_scan src/lidar_scan.cpp)
 target_link_libraries(lidar_scan ${catkin_LIBRARIES})
 add_dependencies(lidar_scan lidar_pkg_gencpp)
+
+find_package(catkin REQUIRED COMPONENTS roslaunch)
+roslaunch_add_file_check(src/launch)
+
