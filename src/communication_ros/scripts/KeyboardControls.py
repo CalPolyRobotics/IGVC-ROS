@@ -36,6 +36,11 @@ def KeyboardCtrls():
 	steering_delta = sys.maxint/(steering_const * max_steering)
 	rate = rospy.Rate(30) #3600
 
+    #if no new value = don't send new msg
+    old_throttle = 0
+    old_steering = 0
+    old_FNR = 0
+
 	while not rospy.is_shutdown():
 
 		pressed = pygame.key.get_pressed()
@@ -49,6 +54,7 @@ def KeyboardCtrls():
 
 		#Throttle ctrls(w incr throttle, s decr throttle)
 		if pressed[pygame.K_w]:
+            old_throttle = throttle
 			if throttle < float(sys.maxint):
 				throttle += throttle_delta
 			else:
@@ -63,6 +69,7 @@ def KeyboardCtrls():
 
 		#Steering ctrls(left to turn more to left, right to turn right)
 		if pressed[pygame.K_LEFT]:
+			old_steering = steering
 			if steering > 0:
 				steering -= steering_delta
 			else:
@@ -77,25 +84,35 @@ def KeyboardCtrls():
 
 		# 0 = forward, 1 = neutral, 2 = reverse
 		if pressed[pygame.K_UP]:
+			old_FNR = FNR
 			FNR = 0
 		elif pressed[pygame.K_DOWN]:
+			old_FNR = FNR
 			FNR = 2
 		elif pressed[pygame.K_RSHIFT]:
+			old_FNR = FNR
 			FNR = 1
 	
 		#convert throttle to b/w 0 & 100, steering from 0 to 90	
 		# 0 = no throttle, 100 = full throttle; 0 = all the way left, 90 = all the way right
-		print "FNR: " +  str(FNR)
-		print "Steering:" + str(convert(steering, max_steering))
-		print "Throttle: " + str(convert(throttle,max_throttle))
+        if FNR not old_FNR:
+			print "FNR: " +  str(FNR)
+			pubFNR.publish(FNR)
+        
+        if steering not old_steering:
+			print "Steering:" + str(convert(steering, max_steering))
+			pubSteering.publish(convert(steering, max_steering))
 
-		pubFNR.publish(FNR)
-		pubSteering.publish(convert(steering, max_steering))
-		pubThrottle.publish(convert(throttle, max_throttle))
+        if throttle not old_throttle:
+			print "Throttle: " + str(convert(throttle,max_throttle))
+			pubThrottle.publish(convert(throttle, max_throttle))
 
 def convert(raw, max_range):
 	return int( (float(raw)/float(sys.maxint)) * max_range)
 
 if __name__  == "__main__":
+	print "FNR => UP, DOWN, RSHIFT"
+	print "Steering => LEFT, RIGHT"
+	print "Throttle => W, S"
 	KeyboardCtrls()
 #i want to be able to store a value for throttle, FNR, steering
