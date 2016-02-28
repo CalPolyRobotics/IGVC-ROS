@@ -25,7 +25,7 @@ def callbackSFNR(data):
 	global send_message_type
 	global header_packer_length
 	global data_msg
-	#global ser
+	global ser
 	if s_number < 255:
 		s_number = s_number + 1
 	else:
@@ -35,7 +35,7 @@ def callbackSFNR(data):
 	data_msg = data.data
 	packet = bytearray([start_byte_1, start_byte_2, CRC8, send_message_type, s_number, packet_length, data_msg])
 	print(''.join(format(x, '02x') for x in packet))
-	#ser.write(packet)
+	ser.write(packet)
 
 def callbackSThrottle(data):
 	global s_number
@@ -43,7 +43,7 @@ def callbackSThrottle(data):
 	global send_message_type
 	global header_packet_length
 	global data_msg
-	#global ser
+	global ser
 	rospy.loginfo(rospy.get_name() + "The throttle data is %d ", data.data)
 	if s_number < 255:
 		s_number = s_number +  1
@@ -52,9 +52,9 @@ def callbackSThrottle(data):
 	send_message_type = message_type[8]
 	packet_length = header_packet_length + 2
 	data_msg = data.data
-	packet = bytearray([start_byte_1, start_byte_2, CRC8, send_message_type, s_number, packet_length, data_msg >> 8, data_msg])
+	packet = bytearray([start_byte_1, start_byte_2, CRC8, send_message_type, s_number, packet_length, (data_msg >> 8) & 0xFF, data_msg & 0xFF])
 	print(''.join(format(x, '02x') for x in packet))
-	#ser.write(packet)
+	ser.write(packet)
 
 def callbackSSteering(data):
 	global s_number
@@ -62,18 +62,18 @@ def callbackSSteering(data):
 	global send_message_type
 	global header_packet_length
 	global data_msg
-	#global ser
+	global ser
 	rospy.loginfo(rospy.get_name() + "The steering data is %d ", data.data)
-	if s_number < 255:
+	if s_number < 256:
 		s_number = s_number + 1
 	else:
 		s_number = 0
 	send_message_type = message_type[14]
 	packet_length = header_packet_length + 2
 	data_msg = data.data
-	packet = bytearray([start_byte_1, start_byte_2, CRC8, send_message_type, s_number, packet_length, data_msg >> 8, data_msg])
+	packet = bytearray([start_byte_1, start_byte_2, CRC8, send_message_type, s_number, packet_length, (data_msg >> 8) & 0xFF, data_msg & 0xFF])
 	print(''.join(format(x, '02x') for x in packet))
-	#ser.write(packet)
+	ser.write(packet)
 
 def listener():
 	rospy.init_node('BoardComms', anonymous=True)
@@ -85,7 +85,7 @@ def listener():
 
 if __name__ == '__main__':
 	#will be able to send as serial message
-	#ser = serial.Serial('/dev/ttyUSB0', 115200, timeout=0)
+	ser = serial.Serial('/dev/ttyACM0', 115200, timeout=0)
 
 	listener()
 
