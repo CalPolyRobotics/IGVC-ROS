@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 import rospy
+import math
 from std_msgs.msg import Float32MultiArray 
 from std_msgs.msg import UInt8
 
@@ -9,14 +10,17 @@ FORWARD = 1
 REVERSE = 2
 STATE_4 = 3
 
+# Half the Width of the Golf Cart
+HALF_WIDTH = .546
+
 # Set_FNR Publisher
 PUB_FNR = rospy.Publisher('Set_FNR', UInt8, queue_size=10)
 
 # Distance to Trigger Reverse
-FIRST_VIEW = 0.5 
+FIRST_VIEW = 1.0 
 
 # Distance to Trigger Neutral Range(FirstView to SecondView)
-SECOND_VIEW = 1.5 
+SECOND_VIEW = 1.5 # 1.5 
 
 # Safe Distance to Trigger Forward Range( > SecondView)
 
@@ -40,13 +44,13 @@ def interpretRanges(ranges):
    if FNR_state != STATE_4:
       pref_state = FORWARD 
       for i in range(RANGE_BEG, RANGE_END):
-
-         if ranges[i] > TOLERANCE:
-            if ranges[i] < FIRST_VIEW:
-               pref_state = REVERSE 
-               break
-            elif ranges[i] < SECOND_VIEW:
-               pref_state = NEUTRAL 
+         if rangeRectangle(i, ranges[i]):
+            if ranges[i] > TOLERANCE:
+               if ranges[i] < FIRST_VIEW:
+                  pref_state = REVERSE 
+                  break
+               elif ranges[i] < SECOND_VIEW:
+                  pref_state = NEUTRAL 
            
            # Otherwise: Preferred State Remains Forward
 
@@ -65,6 +69,15 @@ def interpretRanges(ranges):
       else:
          count += 1
 
+def rangeRectangle(index, length):
+   if index > 541/2:
+      if length > (HALF_WIDTH/math.cos(math.radians(180-((index - 90)/2)))):
+         return False
+   else:
+      if length > (HALF_WIDTH/math.cos(math.radians((index - 90)/2))):
+         return False
+
+   return True
 def listener():
    rospy.init_node('lidar_logic_fnr', anonymous=True)
    rospy.Subscriber("lidar_scan_ranges", Float32MultiArray, callback)

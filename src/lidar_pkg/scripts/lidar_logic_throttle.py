@@ -10,16 +10,16 @@ PUB_FNR = rospy.Publisher('Set_FNR', UInt8, queue_size=10)
 PUB_THR = rospy.Publisher('Set_Throttle', UInt16, queue_size=10) 
 
 # States
-FIRST_THR = 10 
-SECOND_THR = 20
-THIRD_THR = 45 
-FOURTH_THR = 63
+FIRST_THR = 9 
+SECOND_THR = 13 
+THIRD_THR = 15
+FOURTH_THR = 17  
 
 # Views That Trigger Throttle Changes
-FIRST_VIEW = 0.5 
-SECOND_VIEW = 1.5 #1.5 
-THIRD_VIEW =  3.0 #3.0 
-FOURTH_VIEW = 4.0 #4.0 
+FIRST_VIEW =  1.0 
+SECOND_VIEW = 3.0 #1.5 
+THIRD_VIEW =  4.0 #3.0 
+FOURTH_VIEW = 6.0 #4.5 
 
 # Min Distance for a viable range point
 TOLERANCE = .003
