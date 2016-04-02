@@ -84,6 +84,7 @@ namespace microstrain_3dmgx2_imu
    *     double angrate[3];
    *     double orientation[9];
    *     imu.receive_accel_angrate_orientation(&time, accel, angrate, orientation);
+
    *   }
    *   imu.close_port();
    * \endcode
