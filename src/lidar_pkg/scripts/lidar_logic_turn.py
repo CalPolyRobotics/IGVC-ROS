@@ -1,12 +1,15 @@
 #!/usr/bin/env python
 import rospy
 import math
+
 from std_msgs.msg import Float32MultiArray 
 from std_msgs.msg import UInt8
 from std_msgs.msg import UInt16
 
+from willitcrash import get_minmax_range
+
 # Half the Width of the Golf Cart
-HALF_WIDTH = .25 #.546
+HALF_WIDTH = .59
 
 # Set_FNR Publisher
 PUB_STEERING = rospy.Publisher('Set_Steering', UInt16, queue_size=10)
@@ -40,7 +43,7 @@ IN_VIEW = 4.0
 TOL = .003
 
 # THe Max distance of a point
-MAX_POINT = 20
+MAX_POINT = 100 
 
 # Ranges to View for Computation
 RANGE_BEG = 200 
@@ -50,6 +53,8 @@ RANGE_END = 350
 # TODO TODO TODO Should be 0
 FNR_state = 1 
 turn_state = C0 
+
+VIEW = 20 
 
 # Count for Determing How Long to Keep Turned
 count = 0
@@ -76,13 +81,30 @@ def interpretRanges(ranges):
                   turn_state = L3
                   count = 0
                   break
+def willItCrash(ranges):
+   for i in range(RANGE_BEG, RANGE_END):
+      if rangeRectangle(i, ranges[i]):
+         if ranges[i] > TOL and ranges[i] < VIEW:
+            print "True ", i
+            return True
+   print "False"
+   return False
+
+def will_it_crash_turn(ranges):
+   for index, value in enumerate(ranges):
+      minmax = get_minmax_range(turn_state, index)
+      if value > TOL and value > minmax[0] and value < minmax[1]:
+            rospy.loginfo("111111111111111111111111111111111111111111111111111111")
+            return True
+   rospy.loginfo("0")
+   return False
 
 def rangeRectangle(index, length):
    if index > 541/2:
-      if length > (HALF_WIDTH/math.cos(math.radians(180-((index - 90)/2)))):
+      if length > (HALF_WIDTH/math.cos(math.radians(180-((index - 90)/2.0)))):
          return False
    else:
-      if length > (HALF_WIDTH/math.cos(math.radians((index - 90)/2))):
+      if length > (HALF_WIDTH/math.cos(math.radians((index - 90)/2.0))):
          return False
    return True
 
@@ -102,7 +124,8 @@ def fnrCallback(data):
 
 def rangesCallback(data):
    #rospy.loginfo(rospy.get_caller_id() + "I heard %s", data.data)
-   interpretRanges(data.data);
+   #interpretRanges(data.data);
+   will_it_crash_turn(data.data);
 
 if __name__ == '__main__':
    listener()

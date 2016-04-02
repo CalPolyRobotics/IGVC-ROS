@@ -3,6 +3,7 @@ import serial
 import rospy
 import re
 from std_msgs.msg import Int32 
+from gps_pkg.msg import GPS_Coord
 
 
 def talker():
