@@ -2,6 +2,7 @@
 
 import rospy
 import serial
+import sys
 
 from std_msgs.msg import UInt8, UInt16
 
@@ -48,7 +49,7 @@ def callbackSThrottle(data):
 	if s_number < 255:
 		s_number = s_number +  1
 	else:
-		s_number = 0
+		s_number = 0 
 	send_message_type = message_type[8]
 	packet_length = header_packet_length + 2
 	data_msg = data.data
@@ -85,7 +86,10 @@ def listener():
 
 if __name__ == '__main__':
 	#will be able to send as serial message
-	ser = serial.Serial('/dev/ttyACM0', 115200, timeout=0)
-
-	listener()
+   args = sys.argv
+   if len(args) > 1:
+      ser = serial.Serial('/dev/' + args[1], 115200, timeout=0)
+   else:
+      ser = serial.Serial('/dev/ttyACM0', 115200, timeout=0)
+   listener()
 
