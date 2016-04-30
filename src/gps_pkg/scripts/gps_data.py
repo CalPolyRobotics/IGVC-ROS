@@ -7,7 +7,7 @@ from gps_pkg.msg import GPS_Coord
 
 
 def talker():
-    pub = rospy.Publisher('gps_data_coords', Int32, queue_size=10)
+    pub = rospy.Publisher('gps_data_coords', GPS_Coord, queue_size=10)
     rospy.init_node('gps_data', anonymous=True)
     rate = rospy.Rate(10) # 10hz
     i = 0
@@ -38,19 +38,23 @@ def talker():
                  longNum = int(longArr[0])*10000000 + int(longDec * 1000)
 
                  if gga_info[3] == 'S':
-                     lat = lat * -1 
+                    lat = lat * -1 
                  if gga_info[5] == 'W':
-                     longNum = longNum * -1
+                    longNum = longNum * -1
                  latSum += lat
                  lngSum += longNum
 
                  if i % div  == 0:
-                     rospy.loginfo(latSum/div)
-                     pub.publish(latSum/div)
-                     rospy.loginfo(lngSum/div)
-                     pub.publish(lngSum/div)
-                     latSum = 0
-                     lngSum = 0
+                    data = GPS_Coord()
+
+                    data.lat = latSum/div
+                    data.lng = lngSum/div
+
+                    rospy.loginfo(data)
+                    pub.publish(data)
+
+                    latSum = 0
+                    lngSum = 0
              rate.sleep()
 
 if __name__ == '__main__':
