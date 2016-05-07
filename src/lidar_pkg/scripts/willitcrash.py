@@ -7,28 +7,37 @@ SAFETY_MARGIN = 0.0
 kMAX_INDEX = 270
 kMIN_INDEX = 90
 
-
-def get_minmax_range(setLidarAngle, setLidarDistance, setCircleInnerRadius, setCircleOuterRadius):
-# The path of the golf cart while turning is a circle. If the LIDAR is at (0,0), these are
-# the polar coordinates of the center of the circular path
+def getCrashDistancesPolar(setLidarAngle, setLidarDistance, setCircleInnerRadius, setCircleOuterRadius):
+    # The path of the golf cart while turning is a circle. If the LIDAR is at (0,0), these are
+    # the polar coordinates of the center of the circular path
     lidarAngle = math.radians(90.0-setLidarAngle)   # To be determined as a function of steering angle
     lidarDistance = setLidarDistance #3.23 #3.1877 #2.94  # To be determined as a function of steering angle
+    # Convert polar coordinates to cartesian. The center of the circle is located at 
+    # (circleOriginX,circleOriginY).
+    circleOriginX = lidarDistance * math.cos(lidarAngle)
+    circleOriginY = lidarDistance * math.sin(lidarAngle)
+    
+    return getCrashDistancesCartesian(circleOriginX,circleOriginY,setCircleInnerRadius,setCircleOuterRadius)
+
+def getCrashDistancesCartesian(setCircleOriginX,setCircleOriginY,setCircleInnerRadius,setCircleOuterRadius):
     circleInnerRadius = setCircleInnerRadius - SAFETY_MARGIN #2.15 2.1717 #1.8542       # To be determined as a function of steering angle
     circleOuterRadius = setCircleOuterRadius + SAFETY_MARGIN #3.68 #3.7338   #3.455        # To be determined as a function of steering angle
 
-#lidarAngle = math.radians(90.0-118.0)   # To be determined as a function of steering angle
-#lidarDistance = 3.72 #3.23 #3.1877 #2.94  # To be determined as a function of steering angle
-#circleInnerRadius = 2.71 - SAFETY_MARGIN #2.15 2.1717 #1.8542       # To be determined as a function of steering angle
-#circleOuterRadius = 4.19 + SAFETY_MARGIN #3.68 #3.7338   #3.455        # To be determined as a function of steering angle
+    #lidarAngle = math.radians(90.0-118.0)   # To be determined as a function of steering angle
+    #lidarDistance = 3.72 #3.23 #3.1877 #2.94  # To be determined as a function of steering angle
+    #circleInnerRadius = 2.71 - SAFETY_MARGIN #2.15 2.1717 #1.8542       # To be determined as a function of steering angle
+    #circleOuterRadius = 4.19 + SAFETY_MARGIN #3.68 #3.7338   #3.455        # To be determined as a function of steering angle
 
-# Convert polar coordinates to cartesian. The center of the circle is located at 
-# (circleOriginX,circleOriginY).
-    circleOriginX = lidarDistance * math.cos(lidarAngle)
-    circleOriginY = lidarDistance * math.sin(lidarAngle)
+    # Convert polar coordinates to cartesian. The center of the circle is located at (circleOriginX,circleOriginY).
+    circleOriginX = setCircleOriginX
+    circleOriginY = setCircleOriginY
+
     if kDEBUG == True: ("Circular path center coordinate: (%f,%f)" % (circleOriginX,circleOriginY))
-    __calculated_ranges = []
+    calculatedDistances = []
+    
+    # Append zeros
     for n in xrange(0,kMIN_INDEX):
-        __calculated_ranges.append((0,0))
+        calculatedDistances.append((0,0))
 
     for n in xrange(kMIN_INDEX,kMAX_INDEX + 1):
         # Slope of the ray from the LIDAR. Has equation y = mx
@@ -62,10 +71,11 @@ def get_minmax_range(setLidarAngle, setLidarDistance, setCircleInnerRadius, setC
            # Find the magnitude of the segment from (0,0) to (x,y)
            innerLimit = math.sqrt(pow(xInner,2) + pow(yInner,2))
       
-        __calculated_ranges.append((innerLimit, outerLimit))
+        calculatedDistances.append((innerLimit, outerLimit))
   
-    for n in xrange(kMAX_INDEX + 1, 541):
-       __calculated_ranges.append((0,0))
+    # Append zeroes
+    for n in xrange(kMAX_INDEX + 1, 540):
+       calculatedDistances.append((0,0))
 
-    return __calculated_ranges
+    return calculatedDistances
 
