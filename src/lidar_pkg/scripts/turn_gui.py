@@ -2,23 +2,102 @@
 
 import rospy, pygame, math, sys
 from std_msgs.msg import UInt8, UInt16, Float32MultiArray
+from willitcrash import getCrashDistancesCartesian
 
-multiplier = 3
-num = 1.0
+SCALE_FACTOR = 50
+AXIS_CENTER = 10
+CART_HEIGHT = 65*2.54/100
+CART_WIDTH = 45/2*2.54/100 # Half of the cart width
+TEXT_COLOR = (0, 51, 102)
+color = (115, 115, 115)
 var = False
-array = []
+lidarDataArray = []
 for i in range (0,540):
-    array.append(1)
+    lidarDataArray.append(1)
+
+def drawText(screen, font, text, index):
+    screen.blit(font.render(str(text), True, TEXT_COLOR), (800, 10 + 30*index))
+
+def drawPath(screen, font, steering):
+    circleCenterX = 0
+    circleCenterY = 0
+    circleInnerCenterR = 0
+    circleOuterCenterR = 0
+    #Left Turn Wheel Path
+    if steering < 0:
+        steerInvert = -1
+    else:
+        steerInvert = 1
+
+    #SteeringAngle ranges from 0 to 0.16109 [rads] (0 to 35 degrees)
+    steeringAngle = abs(steering*math.pi*35/180/32767.5)
+    #Center Wheel Path
+    if steeringAngle < math.radians(0.01):
+        rect = pygame.draw.rect(screen, (255,255,255), (SCALE_FACTOR*(AXIS_CENTER-CART_WIDTH), 0, 2*SCALE_FACTOR*CART_WIDTH,1000), 3)
+    else: #if steeringAngle != 0:
+        circleInnerCenterR = abs(CART_HEIGHT/(math.tan(steeringAngle)) - 
+                abs(0.5*CART_HEIGHT/math.tan(steeringAngle)))
+
+        circleOuterCenterR = abs(CART_HEIGHT/math.sin(steeringAngle) 
+                - abs(0.5*CART_HEIGHT/math.sin(steeringAngle))) + 2*CART_WIDTH
+        math.sqrt(pow(circleOuterCenterR+CART_WIDTH,2) + pow(CART_HEIGHT,2))
+        circleCenterX = steerInvert*(circleInnerCenterR+CART_WIDTH)
+        circleCenterY = CART_HEIGHT
+        #Draw The Inner and Outer Circles
+        drawCircle(screen, (255,255,255), AXIS_CENTER+steerInvert*(CART_WIDTH+circleInnerCenterR), AXIS_CENTER+CART_HEIGHT, circleInnerCenterR)
+        drawCircle(screen, (255,255,255), AXIS_CENTER+steerInvert*(CART_WIDTH+circleInnerCenterR), AXIS_CENTER+CART_HEIGHT, circleOuterCenterR)
+        # Draws the center point of the Inner and Outer Circles
+        circle = pygame.draw.circle(screen, (255,0,0), 
+                (int(SCALE_FACTOR*(AXIS_CENTER+circleCenterX)), 
+                int(SCALE_FACTOR*(AXIS_CENTER+circleCenterY))), 2, 2)
+
+    #else: #if steeringAngle == 0
+
+    drawText(screen, font, steeringAngle, 3)
+    return (circleCenterX, circleCenterY, circleInnerCenterR, circleOuterCenterR)
+
+def drawCircle(screen, circleColor, xCoordinate, yCoordinate, radius):
+    circle = pygame.draw.circle(screen, circleColor, (int(SCALE_FACTOR*xCoordinate), int(SCALE_FACTOR*yCoordinate)), int(SCALE_FACTOR*radius), 3)
+
+def drawBackground(screen, font):
+    #Begin Redrawing the GUI
+    screen.fill(color)
+
+    #Cartesian Coordinate Axis
+    #Draws Vertical Axis
+    line = pygame.draw.line(screen, (0,0,0), (SCALE_FACTOR*AXIS_CENTER, SCALE_FACTOR*2*AXIS_CENTER), 
+            (SCALE_FACTOR*AXIS_CENTER, 0))
+    #Draws Horizontal Axis
+    line = pygame.draw.line(screen, (0,0,0), (0, SCALE_FACTOR*AXIS_CENTER), 
+            (SCALE_FACTOR*2*AXIS_CENTER, SCALE_FACTOR*AXIS_CENTER))
+    #Boundary Box
+    rect = pygame.draw.rect(screen, (0,0,0), (0, 0, 2*SCALE_FACTOR*AXIS_CENTER, 2*SCALE_FACTOR*AXIS_CENTER), 4)
+
+    # 5 Meter Line Markers
+    for i in range (1,5):
+        line = pygame.draw.line(screen, (10,10,10), 
+            (SCALE_FACTOR*0.5*AXIS_CENTER, SCALE_FACTOR*(AXIS_CENTER-i*5)), 
+            (SCALE_FACTOR*1.5*AXIS_CENTER, SCALE_FACTOR*(AXIS_CENTER-i*5)))
+
+    #Golf Cart Rectangle
+    rect = pygame.draw.rect(screen, (0,0,0), 
+            (int(SCALE_FACTOR*(AXIS_CENTER-CART_WIDTH)), int(SCALE_FACTOR*(AXIS_CENTER)), int(SCALE_FACTOR*(2*CART_WIDTH)), int(SCALE_FACTOR*CART_HEIGHT)), 4)
+
+    #Joystick Summary GUI Text
+    screen.blit(font.render('Joystick Summary:', True, TEXT_COLOR), (600, 10))
+    screen.blit(font.render('FNR Status:', True, TEXT_COLOR), (600, 40))
+    screen.blit(font.render('Throttle Status:', True, TEXT_COLOR), (600, 70))
+    screen.blit(font.render('Steering Status:', True, TEXT_COLOR), (600, 100))
+
 
 def callback(data):
     global var
     var = True
-    global num
-    num = 100*data.data[270];
-    global array
+    global lidarDataArray
     for i in range(0, 540):
         #Multiply by 10 to convert meters to dm and multiplier for GUI scaling
-        array[i] = 10*data.data[i]*multiplier
+        #lidarDataArray[i] = 100*data.data[i]*multiplier
+        lidarDataArray[i] = data.data[i]
 
 def JoystickCtrls():
     #initialize the publishers
@@ -32,16 +111,8 @@ def JoystickCtrls():
     size = width, height = 1250, 750
     screen = pygame.display.set_mode(size)
     pygame.display.set_caption("HUD")
-    font = pygame.font.SysFont('Arial', 20)
-    color = (115, 115, 115)
-    black = (0, 0, 0)
     screen.fill(color)
 
-    # GUI SETUP
-    scaling_factor = 2.5
-    cart_height = int(65*2.54*multiplier/10)
-    cart_width = int(45/2*2.54*multiplier/10) # Half of the cart width
-    axis_center = 625
 
     #Default Initialization values
     FNR_print = "zero"
@@ -49,11 +120,15 @@ def JoystickCtrls():
     steering_print = "zero"
     radius = 0
     outerRadius = 0
-    degrees = 0
+    circleCenterX = 0
+    circleCenterY = 0
+    circleInnerCenterR = 0
+    circleInnerCenterR = 0
     pygame.display.update()
     controller = pygame.joystick.Joystick(0)
     controller.init()
 
+    font = pygame.font.SysFont('Arial', 20)
     #set the message values
     throttle = 0.0
     FNR = 1
@@ -118,15 +193,17 @@ def JoystickCtrls():
                 steering += 15
 
         #Steering ctrls Continued (right joystick left to turn left, right to turn right)
-        if controller.get_axis(3) < -1*0.10:
+        #if controller.get_axis(3) < -1*0.01:
+        if controller.get_axis(3) < 0:
             fastMode = True
             if fastMode == True:
-                tiltValue = round(controller.get_axis(3), 1)
-                steering = 0.5*max_steering* tiltValue
-        elif controller.get_axis(3) > 0.10:
+                tiltValue = controller.get_axis(3)
+                steering = 0.5*max_steering*tiltValue
+        #elif controller.get_axis(3) > 0.01:
+        elif controller.get_axis(3) > 0:
             fastMode = True
             if fastMode == True:
-                tiltValue = round(controller.get_axis(3), 1)
+                tiltValue = controller.get_axis(3)
                 steering = 0.5*max_steering* tiltValue
         elif fastMode == True:
             steering = 0
@@ -155,75 +232,44 @@ def JoystickCtrls():
             pubSteering.publish(publishedSteering)
             old_publishedSteering = publishedSteering
 
-        #Begin Redrawing the GUI
-        screen.fill(color)
+        #GUI Background & Live Data
+        drawBackground(screen, font)
+        # Draw Cart Path & Store Coordinates & Radii in pathParams Tuple
+        pathParams = drawPath(screen, font, steering)
 
-        #Cartesian Coordinate Axis
-        line = pygame.draw.line(screen, (0,0,0), (axis_center, axis_center+axis_center), 
-                (axis_center, axis_center-axis_center))
-        line = pygame.draw.line(screen, (0,0,0), (axis_center-axis_center, axis_center), 
-                (axis_center+axis_center, axis_center))
-
-        #Left Turn Wheel Path
-        if steering < 0:
-            degrees = (steering/32767.5)*-35 #32767 Steering Value, 35 degree approximation
-            if math.tan(degrees) >  0:
-                if (math.tan(math.radians(degrees))) > 0:
-                    radius = int(abs(cart_height/(math.tan(math.radians(degrees))) 
-                            - abs(0.5*cart_height/math.tan(math.radians(degrees))))*2.54)
-                    outerRadius = int(abs(cart_height/math.sin(math.radians(degrees)) 
-                            - abs(0.5*cart_height/math.sin(math.radians(degrees))))*2.54)
-            #Draw The Left Turn Wheel Path
-            circle = pygame.draw.circle(screen, (255,255,255), 
-                    (axis_center-cart_width-radius,axis_center+cart_height), radius, 3)
-            circle = pygame.draw.circle(screen, (255,255,255), 
-                    (axis_center-cart_width-radius,axis_center+cart_height), outerRadius+2*cart_width, 3)
-
-        #Center Wheel Path
-        if steering < 35 and steering > -35:
-            rect = pygame.draw.rect(screen, (255,255,255), 
-                    (axis_center-cart_width, 0, 2*cart_width,1000), 3)
-
-        #Right Turn Wheel Path
-        if steering > 0:
-            degrees = (steering/32767.5)*35 #32767 Steering Value, 35 degree approximation
-            if math.tan(degrees) > 0:
-                if (math.tan(math.radians(degrees))) > 0:
-                    radius = int((cart_height/(math.tan(math.radians(degrees))) - 
-                            0.5*cart_height/math.tan(math.radians(degrees)))*2.54)
-                    outerRadius = int((cart_height/math.sin(math.radians(degrees)) - 
-                            0.5*cart_height/math.sin(math.radians(degrees)))*2.54)
-            #Draw The Right Turn Wheel Path
-            circle = pygame.draw.circle(screen, (255,255,255), 
-                    (axis_center+cart_width+radius,axis_center+cart_height), radius, 3)
-            circle = pygame.draw.circle(screen, (255,255,255), 
-                    (axis_center+cart_width+radius,axis_center+cart_height), outerRadius+2*cart_width, 3)
-
-        #Golf Cart Rectangle
-        rect = pygame.draw.rect(screen, (0,0,0), 
-                (axis_center-cart_width, axis_center, 2*cart_width, cart_height), 4)
-
-        # 5 Meter Line Markers
-        line = pygame.draw.line(screen, (10,10,10), 
-                (axis_center-0.5*axis_center, axis_center-(multiplier*500/10)), 
-                (0.5*axis_center+axis_center, axis_center-(multiplier*500/10)))
-        line = pygame.draw.line(screen, (10,10,10), 
-                (axis_center-0.5*axis_center, axis_center-(multiplier*2*500/10)), 
-                (0.5*axis_center+axis_center, axis_center-(multiplier*2*500/10)))
-        line = pygame.draw.line(screen, (10,10,10), 
-                (axis_center-0.5*axis_center, axis_center-(multiplier*3*500/10)), 
-                (0.5*axis_center+axis_center, axis_center-(multiplier*3*500/10)))
-        line = pygame.draw.line(screen, (10,10,10), 
-                (axis_center-0.5*axis_center, axis_center-(multiplier*4*500/10)), 
-                (0.5*axis_center+axis_center, axis_center-(multiplier*4*500/10)))
+        #Lidar Data GUI
+        #if var == True:
+        if True:
+            drawText(screen, font, pathParams[0], 5)
+            drawText(screen, font, pathParams[1], 6)
+            drawText(screen, font, pathParams[2], 7)
+            drawText(screen, font, pathParams[3], 8)
 
 
-        #Joystick Summary GUI Text
-        myColor = (0, 51, 102)
-        screen.blit(font.render('Joystick Summary:', True, myColor), (10, 10))
-        screen.blit(font.render('FNR Status:', True, myColor), (10, 40))
-        screen.blit(font.render('Throttle Status:', True, myColor), (10, 70))
-        screen.blit(font.render('Steering Status:', True, myColor), (10, 100))
+            crashDistances = getCrashDistancesCartesian(pathParams[0], pathParams[1], pathParams[2], pathParams[3])
+            for i in range(0, 540):
+                crashData = crashDistances[i]
+                theta = (i-90)*90/180
+                if (lidarDataArray[i] < crashData[1]) and (lidarDataArray[i] > crashData[0]):
+                    pointColor = (255,0,0)
+                else:
+                    pointColor = (0,255,0)
+                cos_function = lidarDataArray[i]*(math.cos(math.radians(theta)))
+                sin_function = lidarDataArray[i]*(math.sin(math.radians(theta)))
+                drawCircle(screen, pointColor, AXIS_CENTER+cos_function, AXIS_CENTER-sin_function, 3.0/SCALE_FACTOR)
+                #circle = pygame.draw.circle(screen, (pointColor), (int(AXIS_CENTER+cos_function), int(AXIS_CENTER-sin_function)), 2, 2)
+
+                #Draws Crash Distance Outer Circle
+                cos_function = crashData[1]*(math.cos(math.radians(theta)))
+                sin_function = crashData[1]*(math.sin(math.radians(theta)))
+                drawCircle(screen, (0,0,255), AXIS_CENTER+cos_function, AXIS_CENTER-sin_function, 3.0/SCALE_FACTOR)
+
+                #Draws Crash Distance Inner Circle
+                cos_function = crashData[0]*(math.cos(math.radians(theta)))
+                sin_function = crashData[0]*(math.sin(math.radians(theta)))
+                drawCircle(screen, (0,0,255), AXIS_CENTER+cos_function, AXIS_CENTER-sin_function, 3.0/SCALE_FACTOR)
+
+
 
         #FNR Status GUI
         FNR_print = None
@@ -233,23 +279,13 @@ def JoystickCtrls():
             FNR_print = "Forward"
         if FNR == 2:
             FNR_print = "Backward"
-        throttle_print = str(publishedThrottle*100/40) + '%'
-        steering_print = str(steering) + ''
-        screen.blit(font.render(FNR_print, True, myColor), (175, 40))
-        screen.blit(font.render(throttle_print, True, myColor), (175, 70))
-        screen.blit(font.render(steering_print, True, myColor), (175, 100))
+        drawText(screen, font, FNR_print, 0)
+        drawText(screen, font, str(publishedThrottle*100/40) + '%', 1)
+        drawText(screen, font, steering, 2)
 
         #Throttle GUI
         rect = pygame.draw.rect(screen, (0,204,0), (250, 75, 250, 15), 2)
         rect = pygame.draw.rect(screen, (0,204,0), (250, 75, publishedThrottle*100*2.5/40, 15), 0)
-
-        #Lidar Data GUI
-        if var == True:
-            for i in range(0, 540):
-                theta = (i-90)*90/180
-                cos_function = int(array[i]*(math.cos(math.radians(theta))))
-                sin_function = int(array[i]*(math.sin(math.radians(theta))))
-                circle = pygame.draw.circle(screen, (255,0,0), (axis_center+cos_function, axis_center-sin_function), 2, 2)
 
         #End Redrawing The GUI and Update
         pygame.display.update()
