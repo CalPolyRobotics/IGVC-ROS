@@ -210,7 +210,8 @@ def JoystickCtrls():
 
         #Throttle ctrls(left joystick up incr throttle, down decr throttle)
         if controller.get_axis(1) < -1*0.05 and cruiseControl == False:
-            tiltValue = round(-1*controller.get_axis(1), 1)
+            #tiltValue = round(-1*controller.get_axis(1), 1)
+            tiltValue = -1*controller.get_axis(1)
             throttle = 40.0 * tiltValue
         elif cruiseControl == False:
             throttle = 0
@@ -228,7 +229,7 @@ def JoystickCtrls():
 
         #Publish The Steering
         publishedSteering = int(0.5*max_steering + steering)
-        if abs(publishedSteering - old_publishedSteering) > 1000:
+        if abs(publishedSteering - old_publishedSteering) > 100:
             pubSteering.publish(publishedSteering)
             old_publishedSteering = publishedSteering
 
@@ -250,10 +251,13 @@ def JoystickCtrls():
             for i in range(0, 540):
                 crashData = crashDistances[i]
                 theta = (i-90)*90/180
-                if (lidarDataArray[i] < crashData[1]) and (lidarDataArray[i] > crashData[0]):
+                if (
+                    ((crashData[0] == -1) and (lidarDataArray[i] < crashData[1])) or   
+                        ((crashData[0] != -1) and (lidarDataArray[i] < crashData[0]))
+                        ):
                     pointColor = (255,0,0)
                 else:
-                    pointColor = (0,255,0)
+                    pointColor = (255,255,200)
                 cos_function = lidarDataArray[i]*(math.cos(math.radians(theta)))
                 sin_function = lidarDataArray[i]*(math.sin(math.radians(theta)))
                 drawCircle(screen, pointColor, AXIS_CENTER+cos_function, AXIS_CENTER-sin_function, 3.0/SCALE_FACTOR)
@@ -265,9 +269,10 @@ def JoystickCtrls():
                 drawCircle(screen, (0,0,255), AXIS_CENTER+cos_function, AXIS_CENTER-sin_function, 3.0/SCALE_FACTOR)
 
                 #Draws Crash Distance Inner Circle
-                cos_function = crashData[0]*(math.cos(math.radians(theta)))
-                sin_function = crashData[0]*(math.sin(math.radians(theta)))
-                drawCircle(screen, (0,0,255), AXIS_CENTER+cos_function, AXIS_CENTER-sin_function, 3.0/SCALE_FACTOR)
+                if (crashData[0] != -1):
+                    cos_function = crashData[0]*(math.cos(math.radians(theta)))
+                    sin_function = crashData[0]*(math.sin(math.radians(theta)))
+                    drawCircle(screen, (0,0,255), AXIS_CENTER+cos_function, AXIS_CENTER-sin_function, 3.0/SCALE_FACTOR)
 
 
 

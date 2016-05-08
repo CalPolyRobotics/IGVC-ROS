@@ -5,7 +5,7 @@ SAFETY_MARGIN = 0.0
 
 # The portion of the circle we're using for this part is valid for these indices
 kMAX_INDEX = 270
-kMIN_INDEX = 90
+kMIN_INDEX = 0
 
 def getCrashDistancesPolar(setLidarAngle, setLidarDistance, setCircleInnerRadius, setCircleOuterRadius):
     # The path of the golf cart while turning is a circle. If the LIDAR is at (0,0), these are
@@ -30,7 +30,7 @@ def getCrashDistancesCartesian(setCircleOriginX,setCircleOriginY,setCircleInnerR
 
     # Convert polar coordinates to cartesian. The center of the circle is located at (circleOriginX,circleOriginY).
     circleOriginX = setCircleOriginX
-    circleOriginY = setCircleOriginY
+    circleOriginY = -1* setCircleOriginY
 
     if kDEBUG == True: ("Circular path center coordinate: (%f,%f)" % (circleOriginX,circleOriginY))
     calculatedDistances = []
@@ -58,18 +58,19 @@ def getCrashDistancesCartesian(setCircleOriginX,setCircleOriginY,setCircleInnerR
         if abs(circleInnerRadius) > abs(circleOriginY):
            # xInner and yInner are the coordinates of the intersection of the ray with the inner circular path
            try:
-              xInner = (math.sqrt((pow(m,2) + 1) * pow(circleInnerRadius,2) - pow(m,2) * pow(circleOriginX,2) + 
+              xInner = (-1*math.sqrt((pow(m,2) + 1) * pow(circleInnerRadius,2) - pow(m,2) * pow(circleOriginX,2) + 
                  2.0 * m * circleOriginX * circleOriginY - pow(circleOriginY,2)) + m * circleOriginY + circleOriginX) / (pow(m,2) + 1.0)
               if kDEBUG == True: print xInner
+              yInner = m * xInner
+              if kDEBUG == True: print("Outer intersection coordinate: (%f,%f)" % (xInner,yInner))
+              
+              # Find the magnitude of the segment from (0,0) to (x,y)
+              innerLimit = math.sqrt(pow(xInner,2) + pow(yInner,2))
 
            except Exception as e:
-              xInner = 0
+              innerLimit = -1
 
-           yInner = m * xInner
-           if kDEBUG == True: print("Outer intersection coordinate: (%f,%f)" % (xInner,yInner))
 
-           # Find the magnitude of the segment from (0,0) to (x,y)
-           innerLimit = math.sqrt(pow(xInner,2) + pow(yInner,2))
       
         calculatedDistances.append((innerLimit, outerLimit))
   
