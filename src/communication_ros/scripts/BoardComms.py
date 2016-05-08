@@ -87,7 +87,7 @@ def listener():
 	rospy.spin()
 
 if __name__ == '__main__':
-	#will be able to send as serial message
+    #will be able to send as serial message
    args = sys.argv
    if len(args) > 1:
       ser = serial.Serial('/dev/' + args[1], 115200, timeout=0)
