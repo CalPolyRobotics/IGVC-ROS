@@ -53,7 +53,7 @@ def getCrashDistancesCartesian(setCircleOriginX,setCircleOriginY,setCircleInnerR
         # Find the magnitude of the segment from (0,0) to (x,y)
         outerLimit = math.sqrt(pow(xOuter,2) + pow(yOuter,2))
 
-        innerLimit = 0
+        innerLimit = -1
         # If the inner circle is above the x-axis, then do extra calculations to determine inner limit
         if abs(circleInnerRadius) > abs(circleOriginY):
            # xInner and yInner are the coordinates of the intersection of the ray with the inner circular path
