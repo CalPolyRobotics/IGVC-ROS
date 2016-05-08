@@ -1,16 +1,17 @@
 #!/usr/bin/env python
 
 import rospy, pygame, math, sys, serial
-from std_msgs.msg import UInt8, UInt16, Float32MultiArray
+from std_msgs.msg import UInt8, UInt16, Float32MultiArray, UInt8MultiArray
 from willitcrash import getCrashDistancesCartesian
 
 SERIAL_ENABLE = 0
-USB_ENABLE = 0
+USB_ENABLE = 1
 OBSTACLE_THRESHOLD = 5
 SCALE_FACTOR = 30
 AXIS_CENTER = 20
 CART_HEIGHT = 65*2.54/100
 CART_WIDTH = 45/2*2.54/100 # Half of the cart width
+MAX_STEERING = 25
 TEXT_COLOR = (0, 51, 102)
 #color = (115, 115, 115)
 color = (150,135,150)
@@ -21,11 +22,13 @@ for i in range (0,540):
 
 def drawText(screen, font, text, index):
     screen.blit(font.render(str(text), True, TEXT_COLOR), (200, 800 -  30*index))
+
 def debugPrint(screen, font, text, title, index):
     screen.blit(font.render(str(text), True, TEXT_COLOR), (1225, 800 -  30*index))
     screen.blit(font.render(str(title), True, TEXT_COLOR), (1225, 800 -  60*index))
 
-
+def callBackSteering(data):
+    steering = data.data[0] << 8 + data.data[1]
 
 def drawPath(screen, font, steering):
     circleCenterX = 0
@@ -38,8 +41,8 @@ def drawPath(screen, font, steering):
     else:
         steerInvert = 1
 
-    #SteeringAngle ranges from 0 to 0.16109 [rads] (0 to 35 degrees)
-    steeringAngle = abs(steering*math.pi*35/180/32767.5)
+    #SteeringAngle ranges from 0 to 0.16109 [rads] (0 to MAX_STEERING degrees)
+    steeringAngle = abs(steering*math.pi*MAX_STEERING/180/32767.5)
     #Center Wheel Path
     if steeringAngle == 0:
         steeringAngle = 0.001
@@ -98,8 +101,6 @@ def drawBackground(screen, font):
     screen.blit(font.render('Steering Status:', True, TEXT_COLOR), (10, 800-60))
     screen.blit(font.render('Wheel Angle:', True, TEXT_COLOR), (10, 800-90))
 
-
-
 def callback(data):
     global var
     var = True
@@ -113,8 +114,10 @@ def JoystickCtrls():
     pubFNR = rospy.Publisher("Set_FNR", UInt8, queue_size=1000)#100000
     pubSteering = rospy.Publisher("Set_Steering", UInt16, queue_size=1000)
     pubThrottle = rospy.Publisher("Set_Throttle", UInt16, queue_size=1000)
+    pubLights = rospy.Publisher("Set_Lights", UInt16, queue_size=1000)
     rospy.init_node('JoystickCtrls', anonymous=True)
     rospy.Subscriber("lidar_scan_ranges", Float32MultiArray, callback)
+    rospy.Subscriber("Get_Steering", UInt8MultiArray, callBackSteering)
 
     pygame.init()
     size = width, height = 1350, 825
@@ -164,7 +167,7 @@ def JoystickCtrls():
             timeout=1
         )
     if USB_ENABLE == 1:
-        ser = serial.Serial('/dev/ttyACM0', 115200, timeout=0)
+        pass
 
     while not rospy.is_shutdown():
         for event in pygame.event.get():
@@ -336,7 +339,7 @@ def JoystickCtrls():
                     ser.write("[setLED,8,1]")
                     ser.readline()
                 elif USB_ENABLE == 1:
-                    pass
+                    pubLights.publish(0x0080)
                 else:
                     #drawText(screen, font, "Obstacles Detected: %d" % obstaclesDetected, 9)
                     debugPrint(screen, font, obstaclesDetected, "Obstacles", 1)
@@ -345,7 +348,7 @@ def JoystickCtrls():
                     ser.write("[setLED,8,0]")
                     ser.readline()
                 elif USB_ENABLE == 1:
-                    pass
+                    pubLights.publish(0)
                 else:
                     #drawText(screen, font, "Obstacles Detected: %d" % obstaclesDetected, 9)
                     debugPrint(screen, font, obstaclesDetected, "Obstacles", 1)
