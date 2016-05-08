@@ -87,13 +87,13 @@ def getCrashDistancesCartesian(setCircleOriginX,setCircleOriginY,setCircleInnerR
         m = math.tan(math.radians(n / 2.0 - 45))
         if kDEBUG == True: print("Slope: %f" % m)
 
-        outerLimit = getLimit(m,circleOriginX,circleOriginY,circleOuterRadius,0)
+        outerLimit = getLimit(m,circleOriginX,circleOriginY,circleOuterRadius,1)
         if (circleOriginX > 0):
             innerLimit1 = -1
             innerLimit2 = -1
         else:
-            innerLimit1 = getLimit(m,circleOriginX,circleOriginY,circleInnerRadius,1)
-            innerLimit2 = getLimit(m,circleOriginX,circleOriginY,circleInnerRadius,0)
+            innerLimit1 = getLimit(m,circleOriginX,circleOriginY,circleInnerRadius,0)
+            innerLimit2 = getLimit(m,circleOriginX,circleOriginY,circleInnerRadius,1)
 
         calculatedDistances.append((innerLimit1, outerLimit, innerLimit2))
  
