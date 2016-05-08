@@ -180,7 +180,7 @@ def JoystickCtrls():
                 if not controller.get_button(8) == 0: #Left Trigger
                     fastMode = False
 
-        # Steering ctrls slowMode (right trigger to turn right, left trigger to turn left)
+        # Steering ctrls Triggers slowMode (right trigger to turn right, left trigger to turn left)
         leftSteering = controller.get_axis(2)
         if leftSteering > 0.05:
             fastMode = False
@@ -246,22 +246,30 @@ def JoystickCtrls():
             drawText(screen, font, pathParams[2], 7)
             drawText(screen, font, pathParams[3], 8)
 
-
             crashDistances = getCrashDistancesCartesian(pathParams[0], pathParams[1], pathParams[2], pathParams[3])
+            pointColor = (0,0,0)
             for i in range(0, 540):
                 crashData = crashDistances[i]
                 theta = (i-90)*90/180
-                if (
-                    ((crashData[0] == -1) and (lidarDataArray[i] < crashData[1])) or   
-                        ((crashData[0] != -1) and (lidarDataArray[i] < crashData[0]))
+                if steering > 0:
+                    if (
+                        ((crashData[0] == -1) and (lidarDataArray[i] < crashData[1])) or
+                            ((crashData[0] != -1) and (lidarDataArray[i] < crashData[0]))
+                            ):
+                        pointColor = (255,0,0)
+                    else:
+                        pointColor = (0,255,0)
+                elif steering < 0:
+                    if (
+                        lidarDataArray[i] > crashData[2]
                         ):
-                    pointColor = (255,0,0)
-                else:
-                    pointColor = (255,255,200)
+                        pointColor = (0,255,255)
+                    else:
+                        pointColor = (255,0,255)
+                #Draws Lidar Points
                 cos_function = lidarDataArray[i]*(math.cos(math.radians(theta)))
                 sin_function = lidarDataArray[i]*(math.sin(math.radians(theta)))
                 drawCircle(screen, pointColor, AXIS_CENTER+cos_function, AXIS_CENTER-sin_function, 3.0/SCALE_FACTOR)
-                #circle = pygame.draw.circle(screen, (pointColor), (int(AXIS_CENTER+cos_function), int(AXIS_CENTER-sin_function)), 2, 2)
 
                 #Draws Crash Distance Outer Circle
                 cos_function = crashData[1]*(math.cos(math.radians(theta)))
@@ -274,7 +282,12 @@ def JoystickCtrls():
                     sin_function = crashData[0]*(math.sin(math.radians(theta)))
                     drawCircle(screen, (0,0,255), AXIS_CENTER+cos_function, AXIS_CENTER-sin_function, 3.0/SCALE_FACTOR)
 
+                    cos_function = crashData[2]*(math.cos(math.radians(theta)))
+                    sin_function = crashData[2]*(math.sin(math.radians(theta)))
+                    drawCircle(screen, (0,0,255), AXIS_CENTER+cos_function, AXIS_CENTER-sin_function, 3.0/SCALE_FACTOR)
 
+
+                
 
         #FNR Status GUI
         FNR_print = None

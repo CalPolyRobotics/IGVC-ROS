@@ -4,7 +4,7 @@ kDEBUG = False
 SAFETY_MARGIN = 0.0
 
 # The portion of the circle we're using for this part is valid for these indices
-kMAX_INDEX = 270
+kMAX_INDEX = 540
 kMIN_INDEX = 0
 
 def getCrashDistancesPolar(setLidarAngle, setLidarDistance, setCircleInnerRadius, setCircleOuterRadius):
@@ -37,9 +37,9 @@ def getCrashDistancesCartesian(setCircleOriginX,setCircleOriginY,setCircleInnerR
     
     # Append zeros
     for n in xrange(0,kMIN_INDEX):
-        calculatedDistances.append((0,0))
+        calculatedDistances.append((0,0,0))
 
-    for n in xrange(kMIN_INDEX,kMAX_INDEX + 1):
+    for n in xrange(kMIN_INDEX, 271):
         # Slope of the ray from the LIDAR. Has equation y = mx
         m = math.tan(math.radians(n / 2.0 - 45))
         if kDEBUG == True: print("Slope: %f" % m)
@@ -50,33 +50,54 @@ def getCrashDistancesCartesian(setCircleOriginX,setCircleOriginY,setCircleInnerR
         yOuter = m * xOuter
         if kDEBUG == True: print("Outer intersection coordinate: (%f,%f)" % (xOuter,yOuter))
 
-        # Find the magnitude of the segment from (0,0) to (x,y)
+        # Find the magnitude of the segment from (0,0) to (x,y) 
         outerLimit = math.sqrt(pow(xOuter,2) + pow(yOuter,2))
 
         innerLimit = -1
-        # If the inner circle is above the x-axis, then do extra calculations to determine inner limit
-        if abs(circleInnerRadius) > abs(circleOriginY):
-           # xInner and yInner are the coordinates of the intersection of the ray with the inner circular path
-           try:
-              xInner = (-1*math.sqrt((pow(m,2) + 1) * pow(circleInnerRadius,2) - pow(m,2) * pow(circleOriginX,2) + 
-                 2.0 * m * circleOriginX * circleOriginY - pow(circleOriginY,2)) + m * circleOriginY + circleOriginX) / (pow(m,2) + 1.0)
-              if kDEBUG == True: print xInner
-              yInner = m * xInner
-              if kDEBUG == True: print("Outer intersection coordinate: (%f,%f)" % (xInner,yInner))
-              
-              # Find the magnitude of the segment from (0,0) to (x,y)
-              innerLimit = math.sqrt(pow(xInner,2) + pow(yInner,2))
+        innerLimit2 = -1
+        # xInner and yInner are the coordinates of the intersection of the ray with the inner circular path
+        try:
+            xInner = (-1*math.sqrt((pow(m,2) + 1) * pow(circleInnerRadius,2) - pow(m,2) * pow(circleOriginX,2) + 
+                2.0 * m * circleOriginX * circleOriginY - pow(circleOriginY,2)) + m * circleOriginY + circleOriginX) / (pow(m,2) + 1.0)
+            xInner2 = (math.sqrt((pow(m,2) + 1) * pow(circleInnerRadius,2) - pow(m,2) * pow(circleOriginX,2) + 
+                2.0 * m * circleOriginX * circleOriginY - pow(circleOriginY,2)) + m * circleOriginY + circleOriginX) / (pow(m,2) + 1.0)
 
-           except Exception as e:
-              innerLimit = -1
+            if kDEBUG == True: print xInner
+            yInner = m * xInner
+            yInner2 = m * xInner2
+            if kDEBUG == True: print("Outer intersection coordinate: (%f,%f)" % (xInner,yInner))
+            
+            # Find the magnitude of the segment from (0,0) to (x,y)
+            innerLimit = math.sqrt(pow(xInner,2) + pow(yInner,2))
+            innerLimit2 = math.sqrt(pow(xInner2, 2) + pow(yInner2, 2))
 
+        except Exception as e:
+            innerLimit = -1
+            innerLimit2 = -1
 
-      
-        calculatedDistances.append((innerLimit, outerLimit))
+        calculatedDistances.append((innerLimit, outerLimit, innerLimit2))
   
+    for n in xrange(271, kMAX_INDEX + 1):
+        # Slope of the ray from the LIDAR. Has equation y = mx
+        m = math.tan(math.radians(n / 2.0 - 45))
+        if kDEBUG == True: print("Slope: %f" % m)
+
+        # xOuter and yOuter are the coordinates of the ray intersecting the outer circular path
+        xOuter = (-1*math.sqrt((pow(m,2) + 1) * pow(circleOuterRadius,2) - pow(m,2) * pow(circleOriginX,2) + 
+            2.0 * m * circleOriginX * circleOriginY - pow(circleOriginY,2)) + m * circleOriginY + circleOriginX) / (pow(m,2) + 1.0)
+        yOuter = m * xOuter
+        if kDEBUG == True: print("Outer intersection coordinate: (%f,%f)" % (xOuter,yOuter))
+
+        # Find the magnitude of the segment from (0,0) to (x,y) 
+        outerLimit = math.sqrt(pow(xOuter,2) + pow(yOuter,2))
+
+        innerLimit = -1
+        innerLimit2 = -1
+        calculatedDistances.append((innerLimit, outerLimit, innerLimit2))
+ 
     # Append zeroes
     for n in xrange(kMAX_INDEX + 1, 540):
-       calculatedDistances.append((0,0))
+       calculatedDistances.append((0,0,0))
 
     return calculatedDistances
 
