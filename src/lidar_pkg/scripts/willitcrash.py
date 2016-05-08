@@ -10,7 +10,7 @@ kMIN_INDEX = 0
 # There are always two possible solutions so supply a 0 or 1 for solution_num to return the appropriate one
 def getLimit(m, circleOriginX, circleOriginY, radius, solution_num):
     invert = 1
-    if (solution == 1): invert = -1
+    if (solution_num == 1): invert = -1
     
     # Default value for no solution
     limit = -1
@@ -18,12 +18,12 @@ def getLimit(m, circleOriginX, circleOriginY, radius, solution_num):
     # limitX and limitY are the coordinates of the intersection of the ray with the circular path
     try:
         # Solve for the first solution
-        limitX1 = (invert * math.sqrt((m**2 + 1) * radius**2 - m**2 * circleOriginX**2 + 
+        limitX = (invert * math.sqrt((m**2 + 1) * radius**2 - m**2 * circleOriginX**2 + 
             2.0 * m * circleOriginX * circleOriginY - circleOriginY**2) + m * circleOriginY + circleOriginX) / (m**2 + 1.0)
         limitY = m * limitX
 
         if kDEBUG == True: print("Intersection coordinate: (%f,%f)" % (limitX,limitY))
-        
+    
         # Find the magnitude of the segment from (0,0) to (x,y)
         limit = math.sqrt(limitX**2 + limitY**2)
   
@@ -76,7 +76,7 @@ def getCrashDistancesCartesian(setCircleOriginX,setCircleOriginY,setCircleInnerR
             innerLimit1 = getLimit(m,circleOriginX,circleOriginY,circleInnerRadius,1)
             innerLimit2 = getLimit(m,circleOriginX,circleOriginY,circleInnerRadius,0)
         else:
-            innerLimit = -1
+            innerLimit1 = -1
             innerLimit2 = -1
         
         calculatedDistances.append((innerLimit1, outerLimit, innerLimit2))
@@ -89,13 +89,13 @@ def getCrashDistancesCartesian(setCircleOriginX,setCircleOriginY,setCircleInnerR
 
         outerLimit = getLimit(m,circleOriginX,circleOriginY,circleOuterRadius,0)
         if (circleOriginX > 0):
-            innerLimit = -1
+            innerLimit1 = -1
             innerLimit2 = -1
         else:
             innerLimit1 = getLimit(m,circleOriginX,circleOriginY,circleInnerRadius,1)
             innerLimit2 = getLimit(m,circleOriginX,circleOriginY,circleInnerRadius,0)
 
-        calculatedDistances.append((innerLimit, outerLimit, innerLimit2))
+        calculatedDistances.append((innerLimit1, outerLimit, innerLimit2))
  
     # Append zeroes
     for n in xrange(kMAX_INDEX + 1, 540):
@@ -103,3 +103,5 @@ def getCrashDistancesCartesian(setCircleOriginX,setCircleOriginY,setCircleInnerR
 
     return calculatedDistances
 
+if __name__ == "__main__":
+    getCrashDistancesCartesian(40,2,39,40)
