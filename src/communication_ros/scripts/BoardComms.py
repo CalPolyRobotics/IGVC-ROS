@@ -3,8 +3,10 @@
 import rospy
 import serial
 import sys
+import os
 
 from std_msgs.msg import UInt8, UInt16
+from subprocess import call
 
 
 start_byte_1 = 0xF0
@@ -85,11 +87,28 @@ def listener():
 	rospy.spin()
 
 if __name__ == '__main__':
-	#will be able to send as serial message
+    #will be able to send as serial message
    args = sys.argv
    if len(args) > 1:
       ser = serial.Serial('/dev/' + args[1], 115200, timeout=0)
    else:
-      ser = serial.Serial('/dev/ttyACM0', 115200, timeout=0)
+      ls = []
+      index = 0
+      files = os.listdir('/dev')
+      print(files)
+      #serString = "/dev/ttyACM0"
+      serString = None
+      for file in files:
+         index+=1
+         ls.append(file)
+         temp = file[0 : len(file)-1]
+         if temp == "ttyACM":
+            serString =  '/dev/' + str(ls[index-1])
+            print(serString)
+            break
+      
+      #ser = serial.Serial('/dev/ttyACM0', 115200, timeout=0)
+      ser = serial.Serial(serString, 115200, timeout=0)
+
    listener()
 
