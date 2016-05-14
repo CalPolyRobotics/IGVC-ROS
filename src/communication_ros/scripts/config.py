@@ -1,3 +1,7 @@
+start_1  = 0xF0 # Start Byte 1
+start_2  = 0x5A # Start Byte 2
+header_size = 6    # Size of Header
+
 DATA_TYPES = (
    "GET_STATUS", 
    "R_GET_STATUS", 
