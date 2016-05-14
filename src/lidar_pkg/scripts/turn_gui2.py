@@ -18,6 +18,11 @@ MAX_STEERING_PUBLISH= 65535
 TEXT_COLOR = (0, 51, 102)
 color = (150,135,150)
 lidarDataArray = []
+
+publishedThrottle = 5
+publishedSteering = 2000
+FNR = 1
+
 for i in range (0,540):
     lidarDataArray.append(1)
 
@@ -133,17 +138,26 @@ def callback(data):
     for i in range(0, 540):
         #Multiply by 10 to convert meters to dm and multiplier for GUI scaling
         lidarDataArray[i] = data.data[i]
+def callbackFNR(data):
+    global FNR
+    FNR = int(data)
+def callbackThrottle(data):
+    global publishedThrottle
+    publishedThrottle = int(data)
+#def callbackSteering(data):
+    #global steering
+    #steering = data
 
-def JoystickCtrls():
+def TurnGUI():
     global steering
     #initialize the publishers
-    pubFNR = rospy.Publisher("Set_FNR", UInt8, queue_size=1000)#100000
-    pubSteering = rospy.Publisher("Set_Steering", UInt16, queue_size=1000)
-    pubThrottle = rospy.Publisher("Set_Throttle", UInt16, queue_size=1000)
     pubLights = rospy.Publisher("Set_Lights", UInt16, queue_size=1000)
-    rospy.init_node('JoystickCtrls', anonymous=True)
+    rospy.init_node('TurnGUI', anonymous=True)
     rospy.Subscriber("Get_Steering", UInt8MultiArray, callBackSteering)
     rospy.Subscriber("lidar_scan_ranges", Float32MultiArray, callback)
+    rospy.Subscriber("Set_FNR", UInt8, callbackFNR)
+    rospy.Subscriber("Set_Throttle", UInt16, callbackThrottle)
+    #rospy.Subscriber("Set_Steering", UInt16, callbackSteering)
 
     pygame.init()
     size = width, height = 1350, 825
@@ -167,7 +181,7 @@ def JoystickCtrls():
     font = pygame.font.SysFont('Arial', 20)
     #set the message values
     throttle = 0.0
-    FNR = 1
+    #FNR = 1
 
     #max for throttle & steering
 
@@ -193,156 +207,13 @@ def JoystickCtrls():
         pass
 
     while not rospy.is_shutdown():
-        #time.sleep(0.1)
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
-            if event.type == pygame.JOYBUTTONDOWN:
-                #Foward and background ctrls(right joystick up and down is forward & backward)
-                if not controller.get_button(2) == 0: #Button X
-                    old_FNR = FNR
-                    if cruiseControl:
-                        cruiseControl = not cruiseControl
-                    FNR = 0
-                if not controller.get_button(0) == 0: #Button A
-                    old_FNR = FNR
-                    if cruiseControl:
-                        cruiseControl = not cruiseControl
-                    FNR = 2
-                if not controller.get_button(1) == 0: #Button X
-                    old_FNR = FNR
-                    if cruiseControl:
-                        cruiseControl = not cruiseControl
-                    FNR = 0
-                if not controller.get_button(3) == 0: #Button Y
-                    old_FNR = FNR
-                    if cruiseControl:
-                        cruiseControl = not cruiseControl
-                    FNR = 1
-
-                #5
-                if not controller.get_button(4) == 0: #LeftButton
-                    cruiseControl = not cruiseControl
-                if not controller.get_button(5) == 0: #RightButton
-                    steerControl = not steerControl
-                if not controller.get_button(7) == 0: #Right Trigger
-                    fastMode = False
-                if not controller.get_button(8) == 0: #Left Trigger
-                    fastMode = False
         #GUI Background & Live Data
         drawBackground(screen, font)
 
-        if SERIAL_ENABLE == 1:
-            ser.flushInput()
-            ser.write("[getSteerValue]")
-            time.sleep(0.05)
-            ser.readline()
-            read_data = ser.readline()
-            num_data = read_data[1:len(read_data)-3]
-            debugPrint(screen, font, read_data, 'read_data', 4)
-            if len(steerHistory) > 10:
-                print(steerHistory.pop(0))
-            try:
-                steerHistory.append(int(num_data))
-            except:
-                pass
-            #num_data_sum = 0
-            steerSum = 0
-
-            try:
-                for val in steerHistory:
-                    steerSum += val
-                average = steerSum/len(steerHistory)
-                steering = -1*interp(int(average),[575,1570],[-32767,32767])
-                #steering = -1*interp(int(num_data),[575,1570],[-32767,32767])
-
-                """
-                if not (abs(old_num_data - int(num_data)) > 1000):
-                    old_num_data = int(num_data)
-                steering = -1*interp(int(old_num_data),[575,1570],[-32767,32767])
-                #steering = -1*interp(int(num_data),[575,1570],[-32767,32767])
-                """
-
-                """
-                for i in range(0, 20):
-                    ser.flushInput()
-                    ser.write("[getSteerValue]")
-                    time.sleep(0.1)
-                    ser.readline()
-                    read_data = ser.readline()
-                    num_data = read_data[1:len(read_data)-3]
-                    num_data_sum += float(num_data)
-                num_data_sum/= 20
-                debugPrint(screen, font, num_data_sum, 'num_data', 3)
-                steering = -1*interp(int(num_data_sum),[575,1570],[-32767,32767])
-                """
-
-            except:
-                steering = -1
-        elif USB_ENABLE == 1:
-            pass
-        else:
-            # Steering ctrls Triggers slowMode (right trigger to turn right, left trigger to turn left)
-            leftSteering = controller.get_axis(2)
-            if leftSteering > 0:
-                fastMode = False
-                if steering > -32765:
-                    steering -= 15
-            rightSteering = controller.get_axis(5)
-            if rightSteering > 0:
-                fastMode = False
-                if steering < 32765:
-                    steering += 15
-
-            #Steering ctrls Continued (right joystick left to turn left, right to turn right)
-            if controller.get_axis(3) < -0.001 and steerControl == False:
-                fastMode = True
-                if fastMode == True:
-                    tiltValue = controller.get_axis(3)
-                    steering = 0.5*MAX_STEERING_PUBLISH*tiltValue
-            elif controller.get_axis(3) > 0.001 and steerControl == False:
-                fastMode = True
-                if fastMode == True:
-                    tiltValue = controller.get_axis(3)
-                    steering = 0.5*MAX_STEERING_PUBLISH* tiltValue
-            elif fastMode == True and steerControl == False:
-                steering = 0
-
-        #Throttle ctrls(left joystick up incr throttle, down decr throttle)
-        """
-        if abs(controller.get_axis(4)) > 0:
-            throttle += 1
-        if abs(controller.get_axis(5)) > 0:
-            throttle += 1
-        """
-
-        if controller.get_axis(1) < -0.001 and cruiseControl == False:
-            tiltValue = -1*controller.get_axis(1)
-            throttle = 40.0 * tiltValue
-        elif cruiseControl == False:
-            throttle = 0
-
-
-        #Publish The Throttle
-        publishedThrottle = int(throttle)
-        if not publishedThrottle == old_publishedThrottle:
-            pubThrottle.publish(publishedThrottle)
-            old_publishedThrottle = publishedThrottle
-
-        #Publish The FNR
-        if not FNR == old_FNR:
-            old_FNR = FNR
-            pubFNR.publish(FNR)
-
-        while (USB_ENABLE == 1):
-            pass
-
-        #Publish The Steering
-        publishedSteering = int(0.5*MAX_STEERING_PUBLISH+ steering)
-        if abs(publishedSteering - old_publishedSteering) > 300:
-            pubSteering.publish(publishedSteering)
-            old_publishedSteering = publishedSteering
         # Draw Cart Path & Store Coordinates & Radii in pathParams Tuple
         pathParams = drawPath(screen, font, steering)
 
@@ -455,5 +326,5 @@ if __name__  == "__main__":
     print "FNR => UP, DOWN, RSHIFT"
     print "Steering => LEFT, RIGHT"
     print "Throttle => W, S"
-    JoystickCtrls()
+    TurnGUI()
 #i want to be able to store a value for throttle, FNR, steering

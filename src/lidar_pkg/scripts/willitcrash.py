@@ -1,7 +1,7 @@
 import math
 
 kDEBUG = False
-SAFETY_MARGIN = 0.5
+SAFETY_MARGIN = 0
 
 # The portion of the circle we're using for this part is valid for these indices
 kMAX_INDEX = 540
