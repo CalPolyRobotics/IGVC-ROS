@@ -7,9 +7,8 @@ import sys
 from collections import deque 
 
 from CRC8 import *
-from config import *
+from CONFIG import *
 from BoardCommsPub import *
-from BoardCommsSub import *
 
 from std_msgs.msg import UInt8, UInt16, UInt16MultiArray, UInt8MultiArray 
 
@@ -45,6 +44,7 @@ def enqueue_msg(num, data):
    # Append each byte of the data
    for i in range(DATA_CODES[DATA_TYPES[num]][1] - 1, -1, -1):
       packet.append((data >> (8 *i)) & 0xFF)
+      
 
    msg = bytearray(packet)
 
@@ -53,13 +53,14 @@ def enqueue_msg(num, data):
 def read_msg(serial, packet):
    tmp = serial.readline()
    tmp = tmp.encode("hex")
+   print(tmp)
    
    if (tmp is not None) and (tmp[0:2] == 'f0') and (tmp[2:4] == '5a') and (len(tmp) - header_size * 2== DATA_CODES[DATA_TYPES[packet[3] + 1]][1] * 2):
       data = tmp[2*header_size:] 
 
    else:
       data = None 
-      print("Data is None")
+      #print("Data is None")
 
    return data 
 
