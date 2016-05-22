@@ -1,9 +1,12 @@
 #!/usr/bin/env python
 
 import rospy, pygame, sys, math, os, time
+import pygame as pyg
 from std_msgs.msg import UInt8, UInt16, Float32MultiArray
 from willitcrash import getCrashDistancesCartesian
 from numpy import interp
+from collision_gui_config import *
+#from pygame_functions import *
 
 #Global Variables
 virtualMode = 0
@@ -13,9 +16,9 @@ publishedSteering = 0
 publishedFNR = 0
 publishedThrottle = 0
 publishedCruiseControl = 0
-#publishedSteerControl = 0
 actualSteering = 32766
 actualAngle = 0
+rangeConsidered = 20
 
 #Variable Initialization
 for i in range (0, 540):
@@ -27,33 +30,9 @@ collisionsDetected = 0
 BACKGROUND_IMAGE = pygame.image.load(os.path.abspath("src/lidar_pkg/scripts/images/Background.bmp"))
 LOGO_IMAGE = pygame.image.load(os.path.abspath("src/lidar_pkg/scripts/images/CPRCLogo.bmp"))
 
-#GUI_CONSTANTS
-SCALE_FACTOR = 30
-SCREEN_DIMENSIONS = WIDTH, HEIGHT = 1375, 850
-SCREEN_LABEL = "IGVC HUD"
-BACKGROUND_COLOR = (73,87,83)
-
-ORIGIN = X_AXIS_ORIGIN, Y_AXIS_ORIGIN = 20,20
-AXIS_COLOR = (0,0,0)
-AXIS_LENGTH = 20
-MARKER_COLOR = (100,100,100)
-TEXT_COLOR = (171,173,144)
-#LIDAR & STEERING CSONTANTS
-CIRCLE_COLOR = (175,175,175)
-TRUE_CIRCLE_COLOR = (255,255,255)
-#GOLF_CART_CONSTANTS
-#GOLF_CART_COLOR = (74,74,74)
-GOLF_CART_COLOR = (25,25,25)
-#GOLF_CART_COLOR = (86,82,72)
-CART_WIDTH = 45*2.54/2/100
-CART_HEIGHT = 65*2.54/100
-MAX_STEERING_ANGLE = 25
-MAX_STEERING_VALUE = 65535
-HALF_MAX_STEERING_VALUE = 32767
-
 #Don't Worry About This
 if democracy == 1:
-    BACKGROUND_IMAGE = pygame.image.load(os.path.abspath("src/lidar_pkg/scripts/images/Space2.bmp"))
+    BACKGROUND_IMAGE = pygame.image.load(os.path.abspath("src/lidar_pkg/scripts/images/Space.bmp"))
     #LOGO_IMAGE = pygame.image.load(os.path.abspath("src/lidar_pkg/scripts/images/GUI_Pinto_Horse.bmp"))
     LOGO_IMAGE = pygame.image.load(os.path.abspath("src/lidar_pkg/scripts/images/CPRCLogo.bmp"))
     GOLF_CART_COLOR = (255,153,0)
@@ -73,7 +52,10 @@ def CallbackSteering(data):
 
 def CallbackGetSteerValue(data):
     global actualSteering
-    actualSteering = -1*interp(int(data.data), [575,1570], [-32767, 32767])
+    #actualSteering = data.data
+    actualSteering = -1*interp(int(data.data), [0,65534], [-32767, 32767])
+
+    #actualSteering = -1*interp(int(data.data), [1100,2170], [-32767, 32767])
 
 def CallbackFNR(data):
     global publishedFNR
@@ -91,13 +73,15 @@ def InitializeGUI():
     global screen
     global font
     pygame.init()
-    screen = pygame.display.set_mode(SCREEN_DIMENSIONS)
+    screen = pygame.display.set_mode((SCREEN_DIMENSIONS), pyg.RESIZABLE)
     pygame.display.set_caption(SCREEN_LABEL)
     screen.fill(BACKGROUND_COLOR)
     #font = pygame.font.SysFont('Arial', 20)
     #font = pygame.font.SysFont('freesans', 20)
     #font = pygame.font.SysFont('cmmi10', 20)
     font = pygame.font.SysFont('dejavusansmono', 15)
+    #font = pygame.font.SysFont('loma', 15)
+
 
 
     print(pygame.font.get_fonts())
@@ -188,6 +172,9 @@ def DrawLidarData():
     #DebugPrint("pathParams[1]", pathParams[1], 4)
     #DebugPrint("pathParams[2]", pathParams[2], 5)
     #DebugPrint("pathParams[3]", pathParams[3], 6)
+    targetAngle = float(actualSteering-HALF_MAX_STEERING_VALUE)
+    if virtualMode == 1:
+        targetAngle = float(publishedSteering -HALF_MAX_STEERING_VALUE)
 
     crashDistances = getCrashDistancesCartesian(pathParams[0], pathParams[1], pathParams[2], pathParams[3])
     for i in range(0, 540):
@@ -200,33 +187,51 @@ def DrawLidarData():
             ((crashData[0] == -1) and (lidarDataArray[i] < crashData[1])) or
             ((crashData[0] != -1) and ((lidarDataArray[i] < crashData[0]) or 
             ((lidarDataArray[i] > crashData[2]) and (lidarDataArray[i] < crashData[1]))))
-            ):
+            ) and lidarDataArray[i] < rangeConsidered:
             pointColor = (204,0,51)
             global collisionsDetected
             collisionsDetected+=1
+        elif(targetAngle > -5 and targetAngle < 5):
+            pointColor = (51,204,0)
+            if (i > 90 and i < 450):
+                if (abs(math.cos(math.radians(abs(theta)))*lidarDataArray[i])<CART_WIDTH):
+                    pointColor = (204,0,51)
+                    global collisionsDetected
+                    collisionsDetected+=1
+
+
         else:
             pointColor = (51,204,0)
+        """
+        """
+        #(setCircleOriginX,setCircleOriginY,setCircleInnerRadius,setCircleOuterRadius)
 
         #Draws Lidar Points
         cos_function = lidarDataArray[i]*(math.cos(math.radians(theta)))
         sin_function = lidarDataArray[i]*(math.sin(math.radians(theta)))
         DrawCircle(pointColor, SCALE_FACTOR*(X_AXIS_ORIGIN+cos_function), SCALE_FACTOR*(Y_AXIS_ORIGIN-sin_function), 3,3)
 
+        #if crashData[1] != 0:
+        if targetAngle > 5 or targetAngle < -5:
         #Draws Collision Circles
         #Draws Crash Distance Outer Circle
-        cos_function = crashData[1]*(math.cos(math.radians(theta)))
-        sin_function = crashData[1]*(math.sin(math.radians(theta)))
-        DrawCircle((0,0,50), SCALE_FACTOR*(X_AXIS_ORIGIN+cos_function), SCALE_FACTOR*(Y_AXIS_ORIGIN-sin_function), 2,2)
+            cos_function = crashData[1]*(math.cos(math.radians(theta)))
+            sin_function = crashData[1]*(math.sin(math.radians(theta)))
+            DrawCircle((0,0,50), SCALE_FACTOR*(X_AXIS_ORIGIN+cos_function), SCALE_FACTOR*(Y_AXIS_ORIGIN-sin_function), 2,2)
 
         #Draws Crash Distance Inner Circle
         if (crashData[0] != -1):
-            cos_function = crashData[0]*(math.cos(math.radians(theta)))
-            sin_function = crashData[0]*(math.sin(math.radians(theta)))
-            DrawCircle((0,0,50), SCALE_FACTOR*(X_AXIS_ORIGIN+cos_function), SCALE_FACTOR*(Y_AXIS_ORIGIN-sin_function), 2,2)
+            #if crashData[0] != 0:
+            if targetAngle > 5 or targetAngle < -5:
+                cos_function = crashData[0]*(math.cos(math.radians(theta)))
+                sin_function = crashData[0]*(math.sin(math.radians(theta)))
+                DrawCircle((0,0,50), SCALE_FACTOR*(X_AXIS_ORIGIN+cos_function), SCALE_FACTOR*(Y_AXIS_ORIGIN-sin_function), 2,2)
 
-            cos_function = crashData[2]*(math.cos(math.radians(theta)))
-            sin_function = crashData[2]*(math.sin(math.radians(theta)))
-            DrawCircle((0,0,50), SCALE_FACTOR*(X_AXIS_ORIGIN+cos_function), SCALE_FACTOR*(Y_AXIS_ORIGIN-sin_function), 2,2)
+            #if crashData[2] != 0:
+            if targetAngle > 5 or targetAngle < -5:
+                cos_function = crashData[2]*(math.cos(math.radians(theta)))
+                sin_function = crashData[2]*(math.sin(math.radians(theta)))
+                DrawCircle((0,0,50), SCALE_FACTOR*(X_AXIS_ORIGIN+cos_function), SCALE_FACTOR*(Y_AXIS_ORIGIN-sin_function), 2,2)
 
 
 def DrawTargetPath():
@@ -236,7 +241,7 @@ def DrawTargetPath():
     #targetRadians = math.radians((targetAngle*25/HALF_MAX_STEERING_VALUE))
     DebugPrint("Angle", (targetRadians)*180/math.pi, 8)
     if targetAngle < 5 and targetAngle > -5:
-        DrawRectangle(CIRCLE_COLOR, (SCALE_FACTOR*(Y_AXIS_ORIGIN-CART_WIDTH), 0), SCALE_FACTOR*CART_WIDTH*2, HEIGHT, 2)
+        DrawRectangle(CIRCLE_COLOR, (SCALE_FACTOR*(Y_AXIS_ORIGIN-CART_WIDTH), 0), SCALE_FACTOR*CART_WIDTH*2, HEIGHT, 3)
     elif targetRadians != 0:
         if targetRadians < 0:
             steerInvert = -1
@@ -265,7 +270,7 @@ def DrawActualPath():
     targetAngle = actualSteering-HALF_MAX_STEERING_VALUE
     targetRadians = math.radians((targetAngle*25/HALF_MAX_STEERING_VALUE))
     if targetAngle < 5 and targetAngle > -5:
-        DrawRectangle(TRUE_CIRCLE_COLOR, (SCALE_FACTOR*(Y_AXIS_ORIGIN-CART_WIDTH), 0), SCALE_FACTOR*CART_WIDTH*2, HEIGHT, 2)
+        DrawRectangle(TRUE_CIRCLE_COLOR, (SCALE_FACTOR*(Y_AXIS_ORIGIN-CART_WIDTH), 0), SCALE_FACTOR*CART_WIDTH*2, HEIGHT, 3)
     elif targetRadians != 0:
         if targetRadians < 0:
             steerInvert = -1
@@ -298,7 +303,7 @@ def TurnGUI():
     rospy.Subscriber("Set_FNR", UInt8, CallbackFNR)
     rospy.Subscriber("Set_Throttle", UInt16, CallbackThrottle)
     rospy.Subscriber("Set_CruiseControl", UInt8, CallbackCruiseControl)
-    rospy.Subscriber("GetSteerValue", UInt8, CallbackGetSteerValue)
+    rospy.Subscriber("Get_Steering", UInt16, CallbackGetSteerValue)
     InitializeGUI()
     while not rospy.is_shutdown():
         RefreshGUI()
@@ -306,6 +311,7 @@ def TurnGUI():
         DrawActualPath()
         DrawLidarData()
         pygame.display.update()
+        time.sleep(0.01)
 
 if __name__ == "__main__":
     print("TurnGUI Running")
