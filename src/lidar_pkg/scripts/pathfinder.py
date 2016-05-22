@@ -8,7 +8,7 @@ from collision_gui_config import *
 lidarDataArray = []
 ANGLE_RANGE = (-25, 25)
 COLLISION_THRESHOLD = 1
-rangeConsidered = 2
+rangeConsidered = 1
 #Variable Initialization
 for i in range(0, 540):
     lidarDataArray.append(1)

@@ -10,7 +10,7 @@ from collision_gui_config import *
 
 #Global Variables
 virtualMode = 0
-democracy = 1
+democracy = 0
 lidarDataArray = []
 publishedSteering = 0
 publishedFNR = 0
@@ -19,6 +19,8 @@ publishedCruiseControl = 0
 actualSteering = 32766
 actualAngle = 0
 rangeConsidered = 20
+fullscreen = True
+#SCREEN_DIMENSIONS = WIDTH, HEIGHT = (1000, 500)
 
 #Variable Initialization
 for i in range (0, 540):
@@ -73,7 +75,15 @@ def InitializeGUI():
     global screen
     global font
     pygame.init()
-    screen = pygame.display.set_mode((SCREEN_DIMENSIONS), pyg.RESIZABLE)
+    #screen = pygame.display.set_mode((SCREEN_DIMENSIONS), pyg.RESIZABLE)
+    screen = pygame.display.set_mode((0,0), pyg.FULLSCREEN)
+    global SCREEN_DIMENSIONS
+    global WIDTH
+    global HEIGHT
+    SCREEN_DIMENSIONS = WIDTH, HEIGHT = screen.get_size()
+
+
+
     pygame.display.set_caption(SCREEN_LABEL)
     screen.fill(BACKGROUND_COLOR)
     #font = pygame.font.SysFont('Arial', 20)
@@ -82,9 +92,7 @@ def InitializeGUI():
     font = pygame.font.SysFont('dejavusansmono', 15)
     #font = pygame.font.SysFont('loma', 15)
 
-
-
-    print(pygame.font.get_fonts())
+    #print(pygame.font.get_fonts())
     pygame.display.update()
 
 def DrawLine(color, startPoint, endPoint):
@@ -241,7 +249,7 @@ def DrawTargetPath():
     #targetRadians = math.radians((targetAngle*25/HALF_MAX_STEERING_VALUE))
     DebugPrint("Angle", (targetRadians)*180/math.pi, 8)
     if targetAngle < 5 and targetAngle > -5:
-        DrawRectangle(CIRCLE_COLOR, (SCALE_FACTOR*(Y_AXIS_ORIGIN-CART_WIDTH), 0), SCALE_FACTOR*CART_WIDTH*2, HEIGHT, 3)
+        DrawRectangle(CIRCLE_COLOR, (SCALE_FACTOR*(X_AXIS_ORIGIN-CART_WIDTH), 0), SCALE_FACTOR*CART_WIDTH*2, HEIGHT, 3)
     elif targetRadians != 0:
         if targetRadians < 0:
             steerInvert = -1
@@ -270,7 +278,7 @@ def DrawActualPath():
     targetAngle = actualSteering-HALF_MAX_STEERING_VALUE
     targetRadians = math.radians((targetAngle*25/HALF_MAX_STEERING_VALUE))
     if targetAngle < 5 and targetAngle > -5:
-        DrawRectangle(TRUE_CIRCLE_COLOR, (SCALE_FACTOR*(Y_AXIS_ORIGIN-CART_WIDTH), 0), SCALE_FACTOR*CART_WIDTH*2, HEIGHT, 3)
+        DrawRectangle(TRUE_CIRCLE_COLOR, (SCALE_FACTOR*(X_AXIS_ORIGIN-CART_WIDTH), 0), SCALE_FACTOR*CART_WIDTH*2, HEIGHT, 3)
     elif targetRadians != 0:
         if targetRadians < 0:
             steerInvert = -1
@@ -292,6 +300,69 @@ def DrawActualPath():
                 SCALE_FACTOR*(steerInvert*innerRadius+X_AXIS_ORIGIN+steerInvert*(CART_WIDTH)), 
                 SCALE_FACTOR*(Y_AXIS_ORIGIN+CART_HEIGHT), 
                 SCALE_FACTOR*outerRadius, 3)
+def ScreenDimensions():
+    pressed = pygame.key.get_pressed()
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            pygame.quit()
+            sys.exit()
+        if event.type == pygame.KEYDOWN:
+            #pygame.quit()
+            #sys.exit()
+            pressed = pygame.key.get_pressed()
+    if pressed[pygame.K_q]:
+        pygame.quit()
+        sys.exit()
+    if pressed[pygame.K_f]:
+        if not fullscreen:
+            global fullscreen
+            fullscreen = not fullscreen
+            time.sleep(0.5)
+            screen = pygame.display.set_mode((0,0), pyg.FULLSCREEN)
+            global SCREEN_DIMENSIONS
+            global WIDTH
+            global HEIGHT
+            SCREEN_DIMENSIONS = WIDTH, HEIGHT = screen.get_size()
+            time.sleep(1)
+        elif fullscreen:
+            global fullscreen
+            fullscreen = not fullscreen
+            time.sleep(0.5)
+            screen = pygame.display.set_mode((0,0), pyg.RESIZABLE)
+            #global SCREEN_DIMENSIONS
+            global WIDTH
+            global HEIGHT
+            SCREEN_DIMENSIONS = WIDTH, HEIGHT = screen.get_size()
+            time.sleep(1)
+    if pressed[pygame.K_LEFT]:
+        time.sleep(1)
+        global X_AXIS_ORIGIN
+        X_AXIS_ORIGIN-=1
+
+    elif pressed[pygame.K_RIGHT]:
+        time.sleep(1)
+        global X_AXIS_ORIGIN
+        X_AXIS_ORIGIN+=1
+
+    elif pressed[pygame.K_UP]:
+        time.sleep(1)
+        global Y_AXIS_ORIGIN
+        Y_AXIS_ORIGIN-=1
+
+    elif pressed[pygame.K_DOWN]:
+        time.sleep(1)
+        global Y_AXIS_ORIGIN
+        Y_AXIS_ORIGIN+=1
+
+    elif pressed[pygame.K_p]:
+        time.sleep(1)
+        global SCALE_FACTOR
+        SCALE_FACTOR +=1
+
+    elif pressed[pygame.K_o]:
+        time.sleep(1)
+        global SCALE_FACTOR
+        SCALE_FACTOR -=1
 
 def TurnGUI():
     rospy.init_node('TurnGUI', anonymous=True)
@@ -306,6 +377,7 @@ def TurnGUI():
     rospy.Subscriber("Get_Steering", UInt16, CallbackGetSteerValue)
     InitializeGUI()
     while not rospy.is_shutdown():
+        ScreenDimensions()
         RefreshGUI()
         DrawTargetPath()
         DrawActualPath()
