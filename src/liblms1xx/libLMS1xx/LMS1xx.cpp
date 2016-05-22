@@ -36,7 +36,7 @@ using namespace std;
 
 LMS1xx::LMS1xx() :
 	connected(false) {
-	debug = true;
+	debug = false;
 }
 
 LMS1xx::~LMS1xx() {
@@ -238,7 +238,7 @@ void LMS1xx::getData(scanData& data) {
         // std::cout << "test";
 	} while ((buf[0] != 0x02) || (buf[len - 1] != 0x03));
 
-	//	if (debug)
+	if (debug)
 			std::cout << "scan data recieved" ;
 	buf[len - 1] = 0;
 	char* tok = strtok(buf, " "); //Type of command
