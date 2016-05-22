@@ -129,7 +129,7 @@ int main(int argc, char **argv){
 
            scan_pub.publish(scan_msg);
         }catch (int e){
-           std::cout << "connection lost reconnecting\n";
+           std::cout << "Reconnecting\n";
            //laser.disconnect();
            //laser.connect(host);
            //laser.startDevice(); // Log out to properly re-enable system after config
