@@ -3,15 +3,15 @@
 import rospy
 import serial
 import sys
-import Queue
-from crc8 import *
-from config import *
+import binascii
 
 from collections import deque 
+
 
 from CRC8 import *
 from CONFIG import *
 from BoardCommsPub import *
+from ConversionMethod import *
 
 from std_msgs.msg import UInt8, UInt16, UInt16MultiArray, UInt8MultiArray 
 
@@ -54,18 +54,22 @@ def enqueue_msg(num, data):
    packet_queue.appendleft(msg)
 
 def read_msg(serial, packet):
-   tmp = serial.readline()
-   tmp = tmp.encode("hex")
-   print(tmp)
+   # Read in header 
+   header = bytearray(serial.read(header_size))
    
-   if (tmp is not None) and (tmp[0:2] == 'f0') and (tmp[2:4] == '5a') and (len(tmp) - header_size * 2== DATA_CODES[DATA_TYPES[packet[3] + 1]][1] * 2):
-      data = tmp[2*header_size:] 
+   # Ensure the first two  bytes are the correct start bytes
+   if(len(header) > 0 and header[START_BYTE1] == start_1 and header[START_BYTE2] == start_2):
+      data_len = header[PACKET_LEN] - header_size
+
+      # Append each piece of data to a byte array
+      data = bytearray(serial.read(data_len))
+      #print(binascii.hexlify(data))
+      return data
 
    else:
-      data = None 
-      #print("Data is None")
-
-   return data 
+      # Clear the buffer
+      ser.flush()
+      return None
 
 
 def run_process():
@@ -92,7 +96,13 @@ def run_process():
 
          # Will Not Work For Info getting messages
          if not data == None:
-            publisher_callbacks[packet[3]](data)
+            # Try to publish data
+            try:
+               publisher_callbacks[packet[3]](data)
+
+            except:
+               # Message_type is not a publisher
+               print("Cannot Publish Type")
 
          # Increase seq -> max is 255
          seq = (seq + 1) % 256
