@@ -24,7 +24,6 @@ def init():
 
    seq = 0
    packet_queue = deque()
-   init_crc8()
 
    rospy.init_node('BoardComms', anonymous=True)
 
@@ -63,7 +62,7 @@ def read_msg(serial, packet):
 
       # Append each piece of data to a byte array
       data = bytearray(serial.read(data_len))
-      #print(binascii.hexlify(data))
+      # print(binascii.hexlify(data))
       return data
 
    else:
@@ -131,7 +130,6 @@ def callbackSFNR(data):
 
 def callbackSSteering(data):
    enqueue_msg(DATA_CODES["SET_STEERING"][0], data.data)
->>>>>>> c65b54694e508b5686197b706d613af3b53b69d3
 
 def callbackSThrottle(data):
    enqueue_msg(DATA_CODES["SET_THROTTLE"][0], data.data)

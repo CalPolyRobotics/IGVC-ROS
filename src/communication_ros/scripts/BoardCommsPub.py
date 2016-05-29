@@ -38,7 +38,7 @@ def callbackRSpeed(data):
    speed.publish(byteArrToUInt16Arr(data))
 
 def callbackRSteering(data):
-   steering.publish((data[1] << 8) & data[0])
+   steering.publish((data[0] << 8) | data[1])
 
 def callbackRPower(data):
    power.publish(byteArrToUInt16Arr(data))
@@ -53,7 +53,7 @@ def callbackRBattery(data):
 def byteArrToUInt16Arr(data):
    conv = UInt16MultiArray()
    for i in range(0, len(data), 2):
-      conv.data.append((data[i] << 8) + data[i+1])
+      conv.data.append((data[i] << 8) | data[i+1])
    return conv
 
 def byteArrToUInt8Arr(data):
@@ -69,7 +69,7 @@ publisher_callbacks = {
   0x04 : callbackRSonarAll,
   0x08 : callbackRFNR,
   0x0E : callbackRSpeed,
-  0x12 :  callbackRSteering,
+  0x12 : callbackRSteering,
   0x16 : callbackRBattery,
   0x18 : callbackRPower}
 
