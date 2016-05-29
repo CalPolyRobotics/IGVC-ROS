@@ -49,7 +49,7 @@ DATA_CODES ={
    "SET_THROTTLE"   : (0x0A, 2),
    "SET_SPEED"      : (0x0C, 2), 
    "GET_SPEED"      : (0x0E, 0), 
-   "SET_STEERING"   : (0x10, 1), 
+   "SET_STEERING"   : (0x10, 2), 
 	"GET_STEERING"   : (0x12, 0), 
    "SET_LIGHTS"     : (0x14, 2), 
    "GET_BATTERY"    : (0x16, 0),

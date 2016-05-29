@@ -46,7 +46,6 @@ def enqueue_msg(num, data):
    # Append each byte of the data
    for i in range(DATA_CODES[DATA_TYPES[num]][1] - 1, -1, -1):
       packet.append((data >> (8 *i)) & 0xFF)
-      
 
    msg = bytearray(packet)
 
