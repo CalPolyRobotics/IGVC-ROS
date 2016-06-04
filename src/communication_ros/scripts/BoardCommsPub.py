@@ -17,7 +17,8 @@ power    =  rospy.Publisher("Get_Power", UInt16MultiArray, queue_size=1000)
 #msg_type = [0x00, 0x02, 0x04, 0x08, 0x0E, 0x12, 0x16, 0x18]
 
 # Only Publishing Implemented Types
-msg_type = [0x08, 0x0E, 0x12, 0x18] 
+# TODO Messages are getting mixed up when read
+msg_type = [0x0E] 
 
 
 "----------- Callbacks ----------"

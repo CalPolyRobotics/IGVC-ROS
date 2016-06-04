@@ -66,7 +66,7 @@ def read_msg(serial, packet):
 
    else:
       # Clear the buffer
-      ser.flush()
+      # ser.flush()
       return None
 
 
@@ -89,7 +89,6 @@ def run_process():
          packet = packet_queue.pop()
 
          ser.write(packet)
-         rospy.sleep(.01)
          data = read_msg(ser, packet)
 
          # Will Not Work For Info getting messages
