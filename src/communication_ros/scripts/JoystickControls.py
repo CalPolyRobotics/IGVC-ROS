@@ -75,12 +75,12 @@ def JoystickCtrls():
         if leftSteering > 0:
             fastMode = False
             if steering > -32765:
-                steering -= 15
+                steering -= 20
         rightSteering = controller.get_axis(5)
         if rightSteering > 0:
             fastMode = False
             if steering < 32765:
-                steering += 15
+                steering += 20
 
         #Steering ctrls Joystick (right joystick left to turn left, right to turn right)
         if controller.get_axis(3) < -0.001 and steerControl == False:

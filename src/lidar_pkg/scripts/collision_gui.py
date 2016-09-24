@@ -9,7 +9,7 @@ from collision_gui_config import *
 #from pygame_functions import *
 
 #Global Variables
-virtualMode = 0
+virtualMode = 1
 democracy = 0
 lidarDataArray = []
 publishedSteering = 0
@@ -128,7 +128,7 @@ def DebugPrint(title, text, index):
     textLength= len(str(text))
     screen.blit(font.render(str(text), True, TEXT_COLOR), (-10+WIDTH-10*textLength, HEIGHT-35*(2*index+1)))
 
-def DrawAllText():
+def DrawAllDoodads():
     global collisionsDetected
     DebugPrint("FNR State", publishedFNR, 0)
     DebugPrint("Throttle", publishedThrottle, 1)
@@ -136,16 +136,22 @@ def DrawAllText():
     DebugPrint("Collisions", collisionsDetected, 7)
     DebugPrint("CruiseControl", publishedCruiseControl, 5)
     DebugPrint("GetSteerValue", actualSteering, 4)
-
     collisionsDetected = 0
-    #Max DebugPrintIndex is 8
+
+    if publishedCruiseControl == 1:
+        throttleColor = (200,200,200)
+    else:
+        throttleColor = (0,204,0)
+    rect = pygame.draw.rect(screen, throttleColor, (WIDTH - 205, 150, 200, 15), 2)
+    rect = pygame.draw.rect(screen, throttleColor, (WIDTH - 205, 150, publishedThrottle*100*2.0/40, 15), 0)
+
 
 def RefreshGUI():
     #screen.fill(BACKGROUND_COLOR)
     screen.blit(BACKGROUND_IMAGE, (0,0))
     screen.blit(LOGO_IMAGE, (WIDTH-237,0))
     DrawStaticObjects()
-    DrawAllText()
+    DrawAllDoodads()
 
 def returnPathParams():
     targetAngle = float(actualSteering-HALF_MAX_STEERING_VALUE)
@@ -278,7 +284,8 @@ def DrawActualPath():
     targetAngle = actualSteering-HALF_MAX_STEERING_VALUE
     targetRadians = math.radians((targetAngle*25/HALF_MAX_STEERING_VALUE))
     if targetAngle < 5 and targetAngle > -5:
-        DrawRectangle(TRUE_CIRCLE_COLOR, (SCALE_FACTOR*(X_AXIS_ORIGIN-CART_WIDTH), 0), SCALE_FACTOR*CART_WIDTH*2, HEIGHT, 3)
+        #DrawRectangle(TRUE_CIRCLE_COLOR, (SCALE_FACTOR*(X_AXIS_ORIGIN-CART_WIDTH), 0), SCALE_FACTOR*CART_WIDTH*2, HEIGHT, 3)
+        pass
     elif targetRadians != 0:
         if targetRadians < 0:
             steerInvert = -1
