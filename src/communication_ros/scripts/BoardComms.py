@@ -77,8 +77,6 @@ def run_process():
 
    init()
 
-   initSubscribers()
-
    rate = rospy.Rate(10) # 10hz
 
    pub_ind = 0
@@ -87,7 +85,6 @@ def run_process():
       # Clear packets in packet_queue
       if len(packet_queue) > 0:
          packet = packet_queue.pop()
-
          ser.write(packet)
          data = read_msg(ser, packet)
 
