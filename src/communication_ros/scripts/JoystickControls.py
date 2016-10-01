@@ -41,20 +41,30 @@ def JoystickCtrls():
             if event.type == pygame.JOYBUTTONDOWN:
                 #Foward and background ctrls(right joystick up and down is forward & backward)
                 if not controller.get_button(2) == 0: #Button X
+                    if steering > -32765:
+                        steering -= 16000
+                    """
                     old_FNR = FNR
                     if cruiseControl:
                         cruiseControl = not cruiseControl
                     FNR = 0
+                    """
+
                 if not controller.get_button(0) == 0: #Button A
                     old_FNR = FNR
                     if cruiseControl:
                         cruiseControl = not cruiseControl
                     FNR = 2
-                if not controller.get_button(1) == 0: #Button X
+                if not controller.get_button(1) == 0: #Button B
+                    if steering < 32765:
+                        steering += 16000
+                    """
                     old_FNR = FNR
                     if cruiseControl:
                         cruiseControl = not cruiseControl
                     FNR = 0
+                    """
+
                 if not controller.get_button(3) == 0: #Button Y
                     old_FNR = FNR
                     if cruiseControl:
@@ -76,6 +86,7 @@ def JoystickCtrls():
             fastMode = False
             if steering > -32765:
                 steering -= 20
+
         rightSteering = controller.get_axis(5)
         if rightSteering > 0:
             fastMode = False
@@ -117,7 +128,7 @@ def JoystickCtrls():
         #Publish The Steering
         #pubSteering.publish(int(0.5*MAX_STEERING_PUBLISH+steering))
         publishedSteering = int(0.5*MAX_STEERING_PUBLISH+ steering)
-        if abs(publishedSteering - old_publishedSteering) > 100:
+        if abs(publishedSteering - old_publishedSteering) > 15000:
             pubSteering.publish(publishedSteering)
             old_publishedSteering = publishedSteering
 

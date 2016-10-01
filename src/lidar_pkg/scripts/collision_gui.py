@@ -131,9 +131,9 @@ def DebugPrint(title, text, index):
 def DrawAllDoodads():
     global collisionsDetected
     DebugPrint("FNR State", publishedFNR, 0)
-    DebugPrint("Throttle", publishedThrottle, 1)
+    DebugPrint("Throttle", publishedThrottle, 7)
     DebugPrint("Steering", publishedSteering, 2)
-    DebugPrint("Collisions", collisionsDetected, 7)
+    DebugPrint("Collisions", collisionsDetected, 1)
     DebugPrint("CruiseControl", publishedCruiseControl, 5)
     DebugPrint("GetSteerValue", actualSteering, 4)
     collisionsDetected = 0
