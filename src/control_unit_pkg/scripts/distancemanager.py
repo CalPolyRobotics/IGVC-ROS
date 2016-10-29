@@ -19,11 +19,10 @@ HALF_WIDTH = .546
 PUB_FNR = rospy.Publisher('Set_FNR', UInt8, queue_size=10)
 #PUB_THR = rospy.Publisher('Set_Throttle', UInt16, queue_size=10)
 
-# Distance to Trigger Reverse
-FIRST_VIEW = .05
-
-# Distance to Trigger Neutral Range(FirstView to SecondView)
-SECOND_VIEW = 1.5 # 1.5 
+# Distances
+x0 = .1 
+x1 = 1.0 
+x2 = 2.0
 
 # Safe Distance to Trigger Forward Range( > SecondView)
 
@@ -40,39 +39,7 @@ RANGE_END =421 #450  # 421
 # Initialize values, should receive this from a publisher
 FNR_state = 0 
 currentSpeed = 0
-count = 0
 
-'''def interpretRanges(ranges):
-   global FNR_state
-   
-   if FNR_state != STATE_4:
-      pref_state = FORWARD 
-      for i in range(RANGE_BEG, RANGE_END):
-         if rangeRectangle(i, ranges[i]):
-            if ranges[i] > TOLERANCE:
-               if ranges[i] < FIRST_VIEW:
-                  pref_state = REVERSE 
-                  break
-               elif ranges[i] < SECOND_VIEW:
-                  pref_state = NEUTRAL 
-           
-           # Otherwise: Preferred State Remains Forward
-
-      # Set the State to Preferred if it is not Already
-      if pref_state != FNR_state:
-         if pref_state == FORWARD and FNR_state == REVERSE:
-            PUB_FNR.publish(NEUTRAL)
-         PUB_FNR.publish(pref_state)
-         FNR_state = pref_state
-   else:
-      global count
-      if count >= STATE_4_COUNT_DELAY:
-         count = 0
-         PUB_FNR.publish(FORWARD)
-         FNR_state = FORWARD 
-      else:
-         count += 1
-'''
 def interpretRanges(ranges):
    global FNR_state
    global pref_state
@@ -84,9 +51,9 @@ def interpretRanges(ranges):
             print "In Range Rectangle"
             if(ranges[i] > TOLERANCE):
                print "Greater than Tolderance"
-               if(in_threshold_2(ranges[i]) == True):
+               if(in_threshold_2() == True):
                   print "In Threshold 2"
-                  if(in_threshold_1(ranges[i]) == True):
+                  if(in_threshold_1() == True):
                      #print "In Threshold 1"
                      if(is_Cart_Moving() == True):
                         pref_state = REVERSE             # change_state(REVERSE)
