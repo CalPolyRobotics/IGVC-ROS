@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 import rospy
 import math
-from std_msgs.msg import Float32MultiArray 
+from std_msgs.msg import Float32MultiArray
 from std_msgs.msg import UInt16MultiArray
 from std_msgs.msg import UInt8
 from std_msgs.msg import UInt16
@@ -17,13 +17,14 @@ HALF_WIDTH = .546
 # Set_FNR Publisher PUB_FNR = rospy.Publisher('Set_FNR', UInt8, queue_size=10)
 # Declare Publishers
 PUB_FNR = rospy.Publisher('Set_FNR', UInt8, queue_size=10)
+PUB_FNR.publish(1)
 #PUB_THR = rospy.Publisher('Set_Throttle', UInt16, queue_size=10)
 
 # Distance to Trigger Reverse
 FIRST_VIEW = .05
 
 # Distance to Trigger Neutral Range(FirstView to SecondView)
-SECOND_VIEW = 1.5 # 1.5 
+SECOND_VIEW = 1.5 # 1.5
 
 # Safe Distance to Trigger Forward Range( > SecondView)
 
@@ -31,31 +32,31 @@ SECOND_VIEW = 1.5 # 1.5
 TOLERANCE = .003
 
 # Ranges to View for Computation
-RANGE_BEG =130 #90   # 130 
+RANGE_BEG =130 #90   # 130
 RANGE_END =421 #450  # 421
 
 # Counter for State 4: REVERSE_TO_NEUTRAL
 #STATE_4_COUNT_DELAY = 30
 
 # Initialize values, should receive this from a publisher
-FNR_state = 0 
+FNR_state = 1
 currentSpeed = 0
 count = 0
 
 '''def interpretRanges(ranges):
    global FNR_state
-   
+
    if FNR_state != STATE_4:
-      pref_state = FORWARD 
+      pref_state = FORWARD
       for i in range(RANGE_BEG, RANGE_END):
          if rangeRectangle(i, ranges[i]):
             if ranges[i] > TOLERANCE:
                if ranges[i] < FIRST_VIEW:
-                  pref_state = REVERSE 
+                  pref_state = REVERSE
                   break
                elif ranges[i] < SECOND_VIEW:
-                  pref_state = NEUTRAL 
-           
+                  pref_state = NEUTRAL
+
            # Otherwise: Preferred State Remains Forward
 
       # Set the State to Preferred if it is not Already
@@ -69,7 +70,7 @@ count = 0
       if count >= STATE_4_COUNT_DELAY:
          count = 0
          PUB_FNR.publish(FORWARD)
-         FNR_state = FORWARD 
+         FNR_state = FORWARD
       else:
          count += 1
 '''
@@ -80,7 +81,7 @@ def interpretRanges(ranges):
    print ("Pref State: " , pref_state)
    if FNR_state != STATE_4:
       for i in range(RANGE_BEG, RANGE_END):
-         if range_Rectangle(i, ranges[i]):  
+         if range_Rectangle(i, ranges[i]):
             print "In Range Rectangle"
             if(ranges[i] > TOLERANCE):
                print "Greater than Tolderance"
@@ -107,7 +108,7 @@ def interpretRanges(ranges):
          if pref_state == REVERSE and FNR_state == FORWARD:
             print("Going to Neutral 2")
             PUB_FNR.publish(NEUTRAL)
-         print"Publishing state:", pref_state
+         print ("Publishing state:" + pref_state)
          PUB_FNR.publish(pref_state)
          FNR_state = pref_state
 
@@ -156,6 +157,7 @@ def listener():
    rospy.Subscriber("Get_Speed", UInt16MultiArray, callbackSpeed)
    rospy.Subscriber("Get_FNR", UInt8, callbackFNR)
    # spin() simply keeps python from exiting until this node is stopped
+
    rospy.spin()
 
 def callbackLidar(data):
