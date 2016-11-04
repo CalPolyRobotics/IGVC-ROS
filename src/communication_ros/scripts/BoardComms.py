@@ -77,7 +77,7 @@ def run_process():
 
    init()
 
-   rate = rospy.Rate(10) # 10hz
+   rate = rospy.Rate(1000) # 1000hz
 
    pub_ind = 0
 
@@ -105,7 +105,7 @@ def run_process():
       else:
          enqueue_msg(msg_type[pub_ind], None)
          pub_ind = (pub_ind + 1) % len(msg_type)
-      
+
       rate.sleep()
 
    rospy.spin()
