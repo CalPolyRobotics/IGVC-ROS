@@ -5,7 +5,7 @@ import serial
 import sys
 import binascii
 
-from collections import deque 
+from collections import deque
 
 
 from CRC8 import *
@@ -13,7 +13,7 @@ from CONFIG import *
 from BoardCommsPub import *
 from ConversionMethod import *
 
-from std_msgs.msg import UInt8, UInt16, UInt16MultiArray, UInt8MultiArray 
+from std_msgs.msg import UInt8, UInt16, UInt16MultiArray, UInt8MultiArray
 
 "Initialize values and setup Node"
 
@@ -42,7 +42,7 @@ def enqueue_msg(num, data):
    CRC_8 = 0
    packet = [start_1, start_2, CRC_8, num, seq, DATA_CODES[DATA_TYPES[num]][1] + header_size]
    #print(''.join(format(x, '02x') for x in packet))
-   
+
    # Append each byte of the data
    for i in range(DATA_CODES[DATA_TYPES[num]][1] - 1, -1, -1):
       packet.append((data >> (8 *i)) & 0xFF)
@@ -52,9 +52,9 @@ def enqueue_msg(num, data):
    packet_queue.appendleft(msg)
 
 def read_msg(serial, packet):
-   # Read in header 
+   # Read in header
    header = bytearray(serial.read(header_size))
-   
+
    # Ensure the first two  bytes are the correct start bytes
    if(len(header) > 0 and header[START_BYTE1] == start_1 and header[START_BYTE2] == start_2):
       data_len = header[PACKET_LEN] - header_size
@@ -77,7 +77,7 @@ def run_process():
 
    init()
 
-   rate = rospy.Rate(10) # 10hz
+   rate = rospy.Rate(1000) # 10hz
 
    pub_ind = 0
 
@@ -101,11 +101,11 @@ def run_process():
          # Increase seq -> max is 255
          seq = (seq + 1) % 256
 
-      # Append a publish packet to the packet_queue 
+      # Append a publish packet to the packet_queue
       else:
          enqueue_msg(msg_type[pub_ind], None)
          pub_ind = (pub_ind + 1) % len(msg_type)
-      
+
       rate.sleep()
 
    rospy.spin()
