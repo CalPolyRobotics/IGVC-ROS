@@ -1,10 +1,7 @@
 var map;
 var polyLineCoords = [];
-var lat;
-var lng;
 var image;
 var marker;
-var receivingLat = true;
 var flightPath;
 window.onload = function () {
 
@@ -25,22 +22,18 @@ window.onload = function () {
   });
 
   // Subscribing to a Topic
-
   var listener = new ROSLIB.Topic({
     ros : ros,
-    name : '/GPSChatter',
-    messageType : 'std_msgs/Int32'
+    name : '/gps_data_coords',
+    messageType : 'gps_pkg/GPS_Coord'
   });
 
-  listener.subscribe(function(message) {
-    console.log('Received message on ' + listener.name + ': ' + message.data);
-	if(receivingLat){
-		lat = parseFloat(message.data)/10000000;
-		receivingLat = false;
-	}else{
-		lng = parseFloat(message.data)/10000000;
-		receivingLat = true;
-		polyLineCoords.push({lat: lat , lng: lng});
+
+   listener.subscribe(function(message) {
+      console.log('Received message on ' + listener.name + ': ' + message.data);
+      lat = parseFloat(message.lat)/10000000;
+      lng = parseFloat(message.lng)/10000000;
+      polyLineCoords.push({lat: lat , lng: lng});
 			
 		flightPath = new google.maps.Polyline({
     		path: polyLineCoords,
@@ -50,7 +43,7 @@ window.onload = function () {
     		strokeWeight: 2
 		});
 		
-        map.setCenter(polyLineCoords[polyLineCoords.length - 1]);
+      map.setCenter(polyLineCoords[polyLineCoords.length - 1]);
 
 		marker.setMap(null);
 		marker = new google.maps.Marker({
@@ -61,10 +54,7 @@ window.onload = function () {
 		});
 
 		flightPath.setMap(map);
-		
-	}
   });
-
 }
 
 
