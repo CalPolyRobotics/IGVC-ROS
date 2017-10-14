@@ -77,7 +77,7 @@ def run_process():
 
    init()
 
-   rate = rospy.Rate(1000) # 10hz
+   rate = rospy.Rate(1000) # 1000hz
 
    pub_ind = 0
 

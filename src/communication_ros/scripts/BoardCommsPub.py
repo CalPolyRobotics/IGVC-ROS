@@ -5,20 +5,24 @@ import binascii
 
 from std_msgs.msg import UInt8, UInt8MultiArray, UInt16MultiArray, UInt16  
 
-status   = rospy.Publisher("Status", UInt8, queue_size=1000)
+status   =  rospy.Publisher("Status", UInt8, queue_size=1000)
 sonar1   =  rospy.Publisher("Get_Sonar_1", UInt8, queue_size=1000)
 sonarAll =  rospy.Publisher("Get_Sonar_All", UInt8MultiArray, queue_size=1000)
-fnr      = rospy.Publisher("Get_FNR", UInt8, queue_size=1000)
+fnr      =  rospy.Publisher("Get_FNR", UInt8, queue_size=1000)
 speed    =  rospy.Publisher("Get_Speed", UInt16MultiArray, queue_size=1000)
 steering =  rospy.Publisher("Get_Steering", UInt16, queue_size=1000)
-battery  = rospy.Publisher("Get_Battery", UInt16, queue_size=1000)
+battery  =  rospy.Publisher("Get_Battery", UInt16, queue_size=1000)
 power    =  rospy.Publisher("Get_Power", UInt16MultiArray, queue_size=1000)
+
+def writeMessage( msgNum, msgType, data ):
+
+
 
 #msg_type = [0x00, 0x02, 0x04, 0x08, 0x0E, 0x12, 0x16, 0x18]
 
 # Only Publishing Implemented Types
 # TODO Messages are getting mixed up when read
-msg_type = [0x0E] 
+msg_type = [0x08, 0x0E] 
 
 
 "----------- Callbacks ----------"
