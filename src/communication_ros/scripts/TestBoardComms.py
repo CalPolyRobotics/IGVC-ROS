@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 import rospy
-import binascii
+import time
 
 from std_msgs.msg import UInt8, UInt8MultiArray, UInt16MultiArray, UInt16  
 
@@ -37,19 +37,27 @@ getBattPass = "No Response"
 def testBoardComms():
    initTests()
    
+   print "Testing Getters"
    time.sleep(5000)
 
-   print( "Status Test: %s", getStatPass )
-   
+   print "Status Test: ", getStatPass
+   print "Sonar 1 Test: ", getSon1Pass
+   print "Sonar All Test: ", getSonAPass
+   print "FNR Test: ", getFNRPass
+   print "Speed Test: ", getSpeedPass
+   print "Steering Test: ", getSteerPass
+   print "Power Test: ", getPowerPass
+   print "Battery Test: ", getBattPass
 
-
-"----------- Callbacks ----------"
-
+"----------- Callbacks ----------" 
 def assertStatus(data):
+   getStatPass = "Not Implemented"
 
 def assertSon1(data):
+   getSon1Pass = "Not Implemented"
 
 def assertSonA(data):
+   getSonAPass = "Not Implemented"
 
 def assertFNR(data):
 
@@ -63,12 +71,5 @@ def assertPower(data):
 
 "--------- End Callbacks --------"
 
-publisher_callbacks = {
-  0x00 : callbackRStatus,
-  0x02 : callbackRSonar1,
-  0x04 : callbackRSonarAll,
-  0x08 : callbackRFNR,
-  0x0E : callbackRSpeed,
-  0x12 : callbackRSteering,
-  0x16 : callbackRBattery,
-  0x18 : callbackRPower}
+if __name__ == '__main__':
+   testBoardComms()
