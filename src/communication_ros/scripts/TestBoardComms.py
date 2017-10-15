@@ -14,7 +14,7 @@ ligt = rospy.Publisher('Set_Lights', UInt16, queue_size=10)
 stop = rospy.Publisher('Stop', UInt8, queue_size=10)
 """
 
-def initTest():
+def initTests():
    rospy.Subscriber('Status', UInt8, assertStatus )
    rospy.Subscriber('Get_Sonar_1', UInt8, assertSon1 )
    rospy.Subscriber('Get_Sonar_All', UInt8MultiArray, assertSonA )
@@ -39,9 +39,9 @@ def printSuccess(msg):
    print "\033[0;32m" + msg + "\033[0;0m"
 
 def testBoardComms():
-   initTest()
+   initTests()
    
-   printSuccess("Testing Getters...")
+   printSuccess("Testing Getters")
    time.sleep(1)
 
    print "Status Test: ", getStatPass
@@ -64,7 +64,7 @@ def assertSon1(data):
 
 def assertSonA(data):
    global getSonAPass
-   getSonAPass = "Not Implemented"
+   getStatPass = "Not Implemented"
 
 def assertFNR(data):
    global getFNRPass
