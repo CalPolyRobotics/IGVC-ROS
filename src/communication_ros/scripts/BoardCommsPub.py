@@ -14,16 +14,10 @@ steering =  rospy.Publisher("Get_Steering", UInt16, queue_size=1000)
 battery  =  rospy.Publisher("Get_Battery", UInt16, queue_size=1000)
 power    =  rospy.Publisher("Get_Power", UInt16MultiArray, queue_size=1000)
 
-def writeMessage( msgNum, msgType, data ):
-
-
-
-#msg_type = [0x00, 0x02, 0x04, 0x08, 0x0E, 0x12, 0x16, 0x18]
+msg_type = [0x00, 0x02, 0x04, 0x08, 0x0E, 0x12, 0x16, 0x18]
 
 # Only Publishing Implemented Types
-# TODO Messages are getting mixed up when read
-msg_type = [0x08, 0x0E] 
-
+# TODO: Messages are getting mixed up when read
 
 "----------- Callbacks ----------"
 

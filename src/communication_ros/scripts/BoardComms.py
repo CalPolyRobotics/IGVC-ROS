@@ -91,12 +91,14 @@ def run_process():
          # Will Not Work For Info getting messages
          if not data == None:
             # Try to publish data
-            try:
-               publisher_callbacks[packet[3]](data)
+            #try:
+            print("packet")
+            print(publisher_callbacks[2])
+            publisher_callbacks[packet[3]](data)
 
-            except:
+            #except:
                # Message_type is not a publisher
-               print("Cannot Publish Type")
+               #print("Cannot Publish Type")
 
          # Increase seq -> max is 255
          seq = (seq + 1) % 256
