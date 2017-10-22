@@ -6,15 +6,16 @@ import binascii
 from std_msgs.msg import UInt8, UInt8MultiArray, UInt16MultiArray, UInt16  
 
 status   =  rospy.Publisher("Status", UInt8, queue_size=1000)
-sonar1   =  rospy.Publisher("Get_Sonar_1", UInt8, queue_size=1000)
-sonarAll =  rospy.Publisher("Get_Sonar_All", UInt8MultiArray, queue_size=1000)
+#sonar1   =  rospy.Publisher("Get_Sonar_1", UInt8, queue_size=1000)
+#sonarAll =  rospy.Publisher("Get_Sonar_All", UInt8MultiArray, queue_size=1000)
 fnr      =  rospy.Publisher("Get_FNR", UInt8, queue_size=1000)
 speed    =  rospy.Publisher("Get_Speed", UInt16MultiArray, queue_size=1000)
 steering =  rospy.Publisher("Get_Steering", UInt16, queue_size=1000)
-battery  =  rospy.Publisher("Get_Battery", UInt16, queue_size=1000)
+#battery  =  rospy.Publisher("Get_Battery", UInt16, queue_size=1000)
 power    =  rospy.Publisher("Get_Power", UInt16MultiArray, queue_size=1000)
 
-msg_type = [0x00, 0x02, 0x04, 0x08, 0x0E, 0x12, 0x16, 0x18]
+#TODO: Reimplement sonar1 0x02, sonarAll 0x04, RBattery 0x16
+msg_type = [0x00, 0x08, 0x0E, 0x12, 0x18]
 
 # Only Publishing Implemented Types
 # TODO: Messages are getting mixed up when read
@@ -22,21 +23,30 @@ msg_type = [0x00, 0x02, 0x04, 0x08, 0x0E, 0x12, 0x16, 0x18]
 "----------- Callbacks ----------"
 
 def callbackRStatus(data):
-   status.publish(data[0])
+   #status.publish(data[0])
+   #TODO: Implement Status
+   status.publish(0)
 
 def callbackRSonar1(data):
-   sonar1.publish(data[0])
+   #sonar1.publish(data[0])
+   #TODO: Implement SONAR 
+   sonar1.publish(0);
 
 def callbackRSonarAll(data):
-   sonarAll.publish(data)
+   #TODO: Implement SONAR 
+   #sonarAll.publish(data)
+   sonarAll.publish([0])
 
 def callbackRFNR(data):
+   print "I'm alive"
    fnr.publish(data[0])
 
 def callbackRSpeed(data):
+   print(binascii.hexlify(data))
    speed.publish(byteArrToUInt16Arr(data))
 
 def callbackRSteering(data):
+   print(binascii.hexlify(data))
    steering.publish((data[0] << 8) | data[1])
 
 def callbackRPower(data):

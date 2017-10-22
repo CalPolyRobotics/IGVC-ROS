@@ -51,24 +51,25 @@ def enqueue_msg(num, data):
 
    packet_queue.appendleft(msg)
 
-def read_msg(serial, packet):
+def read_msg(packet):
+   global ser
    # Read in header
-   header = bytearray(serial.read(header_size))
+   header = bytearray(ser.read(header_size))
+   print("read_msg header:" + str(binascii.hexlify(header)))
+   print("Sequence number from read: " + str(packet[4]))
 
    # Ensure the first two  bytes are the correct start bytes
-   if(len(header) > 0 and header[START_BYTE1] == start_1 and header[START_BYTE2] == start_2):
+   if(len(header) > 0 and header[START_BYTE1] == start_1 and header[START_BYTE2] == start_2 and packet[4] == header[4]):
       data_len = header[PACKET_LEN] - header_size
 
       # Append each piece of data to a byte array
-      data = bytearray(serial.read(data_len))
-      # print(binascii.hexlify(data))
-      return data
+      data = bytearray(ser.read(data_len))
 
-   else:
-      # Clear the buffer
-      # ser.flush()
-      return None
+      if ((len(data) == data_len) and (len(data) == DATA_LENGTH[header[MSG_TYPE]])):
+         return data
 
+   ser.flushInput()
+   return None
 
 def run_process():
    global seq
@@ -86,15 +87,18 @@ def run_process():
       if len(packet_queue) > 0:
          packet = packet_queue.pop()
          ser.write(packet)
-         data = read_msg(ser, packet)
+         print("Sequence number: " + str(packet[4]))
+         data = read_msg(packet)
 
          # Will Not Work For Info getting messages
          if not data == None:
             # Try to publish data
             #try:
-            print("packet")
-            print(publisher_callbacks[2])
+            print( "0x%0.2X" % packet[3] )
+            #print(publisher_callbacks[2])
             publisher_callbacks[packet[3]](data)
+         else:
+            print "Data Error"
 
             #except:
                # Message_type is not a publisher
@@ -123,21 +127,27 @@ def initSubscribers():
    rospy.Subscriber('Stop', UInt8, callbackSStop) # Data is irrelevant
 
 def callbackSFNR(data):
+   print "FNRLength " + str(len(data))
    enqueue_msg(DATA_CODES["SET_FNR"][0], data.data)
 
 def callbackSSteering(data):
+   print "steeringLength " + str(len(data))
    enqueue_msg(DATA_CODES["SET_STEERING"][0], data.data)
 
 def callbackSThrottle(data):
+   print "throttleLen " + str(len(data))
    enqueue_msg(DATA_CODES["SET_THROTTLE"][0], data.data)
 
 def callbackSSpeed(data):
+   print "speedLen " + str(len(data))
    enqueue_msg(DATA_CODES["SET_STEERING"][0], data.data)
 
 def callbackSLights(data):
+   print "lightsLen " + str(len(data))
    enqueue_msg(DATA_CODES["SET_LIGHTS"][0], data.data)
 
 def callbackSStop(data):
+   print "stopLen " + str(len(data))
    enqueue_msg(DATA_CODES["STOP"][0], data.data)
 
 "-----------------End subscriber methods--------------"
