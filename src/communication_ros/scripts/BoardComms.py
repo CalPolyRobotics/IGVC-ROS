@@ -15,6 +15,8 @@ from ConversionMethod import *
 
 from std_msgs.msg import UInt8, UInt16, UInt16MultiArray, UInt8MultiArray
 
+global ser
+
 "Initialize values and setup Node"
 
 def init():
@@ -51,8 +53,7 @@ def enqueue_msg(num, data):
 
    packet_queue.appendleft(msg)
 
-def read_msg(packet):
-   global ser
+def read_msg(ser, packet):
    # Read in header
    header = bytearray(ser.read(header_size))
    print("read_msg header:" + str(binascii.hexlify(header)))
@@ -88,7 +89,7 @@ def run_process():
          packet = packet_queue.pop()
          ser.write(packet)
          print("Sequence number: " + str(packet[4]))
-         data = read_msg(packet)
+         data = read_msg(ser, packet)
 
          # Will Not Work For Info getting messages
          if not data == None:
