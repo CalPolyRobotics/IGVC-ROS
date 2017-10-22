@@ -70,3 +70,19 @@ DATA_CODES ={
    "R_GET_BATTERY"  : (0x17, 4), 
    "R_GET_POWER"    : (0x19, 16),
    "R_STOP"         : (0x1B, 1)}
+
+DATA_LENGTH ={
+   0x01: DATA_CODES["R_GET_STATUS"   ][1],
+   0x03: DATA_CODES["R_GET_SONAR_1"  ][1],
+   0x05: DATA_CODES["R_GET_SONAR"    ][1],
+   0x07: DATA_CODES["R_SET_FNR"      ][1],
+   0x09: DATA_CODES["R_GET_FNR"      ][1],
+   0x0B: DATA_CODES["R_SET_THROTTLE" ][1],
+   0x0D: DATA_CODES["R_SET_SPEED"    ][1],
+   0x0F: DATA_CODES["R_GET_SPEED"    ][1],
+   0x11: DATA_CODES["R_SET_STEERING" ][1],
+   0x13: DATA_CODES["R_GET_STEERING" ][1],
+   0x15: DATA_CODES["R_SET_LIGHTS"   ][1],
+   0x17: DATA_CODES["R_GET_BATTERY"  ][1],
+   0x19: DATA_CODES["R_GET_POWER"    ][1],
+   0x1B: DATA_CODES["R_STOP"         ][1]}
