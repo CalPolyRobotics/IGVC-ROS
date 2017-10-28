@@ -1,15 +1,3 @@
-start_1  = 0xF0 # Start Byte 1
-start_2  = 0x5A # Start Byte 2
-header_size = 6    # Size of Header
-
-# Indecices of bytes in packet
-START_BYTE1   = 0
-START_BYTE2   = 1
-CRC8          = 2
-MSG_TYPE      = 3
-SEQUENCE_NUM  = 4
-PACKET_LEN    = 5
-
 DATA_TYPES = (
    "GET_STATUS", 
    "R_GET_STATUS", 
