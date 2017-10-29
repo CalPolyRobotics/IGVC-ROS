@@ -1,0 +1,10 @@
+<launch>
+  	<!-- declare camera_source arg to be passed in -->
+  	<arg name="camera_source" default="1"/> 
+
+  	<!-- read value of arg -->
+  	<param name="camera_source" value="$(arg camera_source)"/>
+
+    <node name="raw_camera_stream" pkg="opencv_pkg" type="raw_camera_stream.py" output="screen"/>
+    <node name="ros_image_node" pkg="opencv_pkg" type="ros_image_node.py"/>
+</launch>
