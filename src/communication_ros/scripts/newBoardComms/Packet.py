@@ -29,9 +29,9 @@ class Packet(object):
         self.seq_num = seq_num
 
         if crc is None:
-            self.crc = self.calc_crc
-        else:
             self.crc = self.calc_crc()
+        else:
+            self.crc = crc
 
     def to_bytearray(self):
         """

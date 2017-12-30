@@ -55,7 +55,7 @@ Dictionary of Message types
 response message types are 1 + the message type
 """
 MTYPE = {
-    "status" : 0x00,
+    "get_status" : 0x00,
     "get_1_sonar" : 0x02,
     "get_all_sonar_1" : 0x04,
     "set_fnr" : 0x06,

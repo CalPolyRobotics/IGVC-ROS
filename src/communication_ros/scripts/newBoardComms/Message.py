@@ -6,8 +6,13 @@ communication between the golf cart and computer
 
 """
 
-from MESSAGES import * 
-from Packet import format_data
+from MESSAGES import MSG_INFO
+
+def format_data(data):
+    """
+    Returns a hex string of the data array
+    """
+    return '[' + ', '.join(['0x%X']*len(data)) % tuple(data) + ']'
 
 class Message(object):
     """
