@@ -9,3 +9,7 @@ Packet
 
 CRC
    - Implement CRC check and create
+
+GetMessagesTest
+   - Implement test for battery and power
+   - Fix so that the asserts properly set a variable to show pass or fail
