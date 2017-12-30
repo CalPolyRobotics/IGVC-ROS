@@ -29,7 +29,8 @@ def set_fnr_callback(data):
     """
     Callback for set fnr message
     """
-    return data
+    data = bytearray([data.data])
+    this.comms_handler.queue_packet(Packet(crc=0x00, msg_type=0x14, seq_num=0x00, data=data))
 
 def set_throttle_callback(data):
     """
@@ -55,8 +56,6 @@ def set_lights_callback(data):
     """
     data = bytearray([data.data & 0xFF, (data.data >> 8) & 0xFF])
     this.comms_handler.queue_packet(Packet(crc=0x00, msg_type=0x14, seq_num=0x00, data=data))
-
-    return data
 
 def stop_callback(data):
     """

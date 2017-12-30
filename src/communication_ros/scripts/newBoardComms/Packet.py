@@ -6,6 +6,7 @@ cart
 """
 
 from MESSAGES import * 
+from Message import Message
 
 def format_data(data):
     """
@@ -16,44 +17,41 @@ def format_data(data):
 class Packet(object):
     """
     An object representing packets for board communication
-    crc byte - Checksum for message, unused for outgoing packets
-    msg_type byte - Value for the specific message type
+    message - The message being sent in the packet
     seq_num byte - The current sequence number for the packet being sent,
         unused for outgoing packets
-    data bytearray - Data being sent in the message, expect empty array
-        for no data
+    crc byte - Checksum for message, unused for outgoing packets
     """
-    def __init__(self, crc, msg_type, seq_num, data):
-        self.msg_type = msg_type
+    def __init__(self, message, seq_num, crc=None):
+        self.msg_type = message.get_type()
+        self.data = message.get_data()
+        self.length = HEAD_SIZE + len(self.data)
         self.seq_num = seq_num
-        self.crc = crc
-        self.data = data
-        self.length = HEAD_SIZE + len(data)
 
-    def build_bytearray(self):
+        if crc is None:
+            self.crc = self.calc_crc
+        else:
+            self.crc = self.calc_crc()
+
+    def to_bytearray(self):
         """
         Builds a bytearray message for the current packet
+        TODO: CRC goes to end of message
         """
-        arr = bytearray([STRT_BYT_1, STRT_BYT_2, self.crc, self.msg_type, self.seq_num,
-                         self.length])
+        arr = bytearray([STRT_BYT_1, STRT_BYT_2, self.crc, self.msg_type,
+                         self.seq_num, self.length])
+
         for dat in self.data:
             arr.append(dat)
 
         return arr
-
-
-    def set_sequence_num(self, seq_num):
-        """
-        Sets the sequence number of the packet
-        """
-        self.seq_num = seq_num
 
     def calc_crc(self):
         """
         Calculates the 8-bit crc for the message
         TODO
         """
-        self.crc = 0xCC
+        return 0xCC
 
     def get_type(self):
         """
