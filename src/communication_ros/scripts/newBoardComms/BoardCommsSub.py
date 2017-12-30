@@ -7,7 +7,9 @@ BoardCommsSub
 import sys
 import rospy
 from Packet import Packet
-from std_msgs.msg import UInt8, UInt16
+from Message import Message
+from std_msgs.msg import UInt8, UInt16, Empty
+from MESSAGES import MTYPE
 
 this = sys.modules[__name__]
 this.comms_handler = None
@@ -23,42 +25,51 @@ def init_subscribers(handler):
     rospy.Subscriber('Set_Steering', UInt16, set_steering_callback)
     rospy.Subscriber('Set_Speed', UInt16, set_speed_callback)
     rospy.Subscriber('Set_Lights', UInt16, set_lights_callback)
-    rospy.Subscriber('Stop', UInt8, stop_callback) # Data is irrelevant
+    rospy.Subscriber('Stop', Empty, stop_callback) # Data is irrelevant
 
 def set_fnr_callback(data):
     """
     Callback for set fnr message
+    data UInt8 - FNR state for Golf Cart
     """
     data = bytearray([data.data])
-    this.comms_handler.queue_packet(Packet(crc=0x00, msg_type=0x14, seq_num=0x00, data=data))
+    this.comms_handler.enqueue_message(Message(msg_type=MTYPE['set_fnr'], data=data))
 
 def set_throttle_callback(data):
     """
     Callback for the set throttle message
+    data UInt16 - Throttle Value for Golf Cart
     """
-    return data
+    data = bytearray([data.data & 0xFF, (data.data >> 8) & 0xFF])
+    this.comms_handler.enqueue_message(Message(msg_type=MTYPE['set_throttle'], data=data))
 
 def set_steering_callback(data):
     """
     Callback for the set steering message
+    data UInt16 - Steering Value for Golf Cart
     """
-    return data
+    data = bytearray([data.data & 0xFF, (data.data >> 8) & 0xFF])
+    this.comms_handler.enqueue_message(Message(msg_type=MTYPE['set_steering'], data=data))
 
 def set_speed_callback(data):
     """
     Callback for the set speed message
+    data UInt16 - Speed for Golf Cart
     """
-    return data
+    data = bytearray([data.data & 0xFF, (data.data >> 8) & 0xFF])
+    this.comms_handler.enqueue_message(Message(msg_type=MTYPE['set_speed'], data=data))
 
 def set_lights_callback(data):
     """
     Callback for the set lights message
+    data UInt16 - light directive
     """
     data = bytearray([data.data & 0xFF, (data.data >> 8) & 0xFF])
-    this.comms_handler.queue_packet(Packet(crc=0x00, msg_type=0x14, seq_num=0x00, data=data))
+    this.comms_handler.enqueue_message(Message(msg_type=MTYPE['set_lights'], data=data))
 
 def stop_callback(data):
     """
     Callback for the stop message
+    data Empty - no data
     """
-    return data
+    this.enqueue_message(Message(msg_type=MTYPE['send_stop']))

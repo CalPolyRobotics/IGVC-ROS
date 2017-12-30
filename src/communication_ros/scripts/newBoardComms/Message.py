@@ -15,9 +15,12 @@ class Message(object):
     msg_type byte - the specific message type being sent as documented online
     data bytearray - the data being sent in the message
     """
-    def __init__(self, msg_type, data):
+    def __init__(self, msg_type, data=None):
         self.msg_type = msg_type
-        self.data = data
+        if data is None:
+            self.data = []
+        else:
+            self.data = data
 
     def get_data(self):
         """

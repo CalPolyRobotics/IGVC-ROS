@@ -3,6 +3,8 @@ MESSAGES
 Configuration of messages and Packets
 """
 
+from enum import Enum
+
 STRT_BYT_1 = 0xF0  # Start Byte 1
 STRT_BYT_2 = 0x5A  # Start Byte 2
 HEAD_SIZE = 6    # Size of Header
@@ -44,4 +46,27 @@ MSG_INFO = {
     0x19 : {"name": "Get Power Response", "length": 16},
     0x1A : {"name": "Stop", "length": 0},
     0x1B : {"name": "Stop Response", "length": 1}
+}
+
+"""
+MTYPE
+Dictionary of Message types
+
+response message types are 1 + the message type
+"""
+MTYPE = {
+    "status" : 0x00,
+    "get_1_sonar" : 0x02,
+    "get_all_sonar_1" : 0x04,
+    "set_fnr" : 0x06,
+    "get_fnr" : 0x08,
+    "set_throttle" : 0x0A,
+    "set_speed" : 0x0C,
+    "get_speed" : 0x0E,
+    "set_steering" : 0x10,
+    "get_steering" : 0x12,
+    "set_lights" : 0x14,
+    "get_battery" : 0x16,
+    "get_power" : 0x18,
+    "send_stop" : 0x1A,
 }

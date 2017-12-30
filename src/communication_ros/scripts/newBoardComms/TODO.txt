@@ -1,17 +1,11 @@
 Publisher Callbacks
-   - Get Status
-   - Get Sonar 1
-   - Get Sonar All
    - Get Battery
 
 Subscriber Callbacks
-   - FNR
-   - Set Throttle
-   - Set Steering
-   - Set Speed
-   - Set Lights
-   - Stop
+   - Check That Endianess is correct
 
 Packet
-   - Instead of defaulting crc to zero, calculate the actual crc
-     line 34 of Packet.py
+   - Restructure CRC to end
+
+CRC
+   - Implement CRC check and create

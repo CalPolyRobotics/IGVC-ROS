@@ -7,11 +7,11 @@ from Message import Message
 from BoardCommsPub import PUB_CALLBACK_LUT
 
 GET_MESSAGES = [
-    Message(msg_type=0x00, data=[]), #Status
-    Message(msg_type=0x08, data=[]), #FNR
-    Message(msg_type=0x0E, data=[]), #Speed
-    Message(msg_type=0x16, data=[]), #Battery
-    Message(msg_type=0x18, data=[]) #Power
+    Message(msg_type=MTYPE['get_status']),
+    Message(msg_type=MTYPE['get_fnr']),
+    Message(msg_type=MTYPE['get_speed']),
+    Message(msg_type=MTYPE['get_battery']),
+    Message(msg_type=MTYPE['get_power'])
 ]
 
 class CommsHandler(object):
