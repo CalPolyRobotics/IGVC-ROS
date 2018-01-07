@@ -8,7 +8,7 @@ import sys
 import rospy
 
 from Message import Message
-from std_msgs.msg import UInt8, UInt16, Empty
+from std_msgs.msg import UInt8, UInt8MultiArray, UInt16, Empty
 from MESSAGES import MTYPE
 
 this = sys.modules[__name__]
@@ -20,12 +20,21 @@ def init_subscribers(handler):
     """
     this.comms_handler = handler
 
+    rospy.Subscriber('Echo', UInt8MultiArray, echo_callback)
     rospy.Subscriber('Set_FNR', UInt8, set_fnr_callback)
     rospy.Subscriber('Set_Throttle', UInt16, set_throttle_callback)
     rospy.Subscriber('Set_Steering', UInt16, set_steering_callback)
     rospy.Subscriber('Set_Speed', UInt16, set_speed_callback)
     rospy.Subscriber('Set_Lights', UInt16, set_lights_callback)
     rospy.Subscriber('Stop', Empty, stop_callback)
+
+def echo_callback(data):
+    """
+    Callback for echo message
+    data Uint8MultiArray - Array of data to be echoed back by the board
+    """
+    data = bytearray(data.data)
+    this.comms_handler.enqueue_message(Message(msg_type=MTYPE['echo'], data=data))
 
 def set_fnr_callback(data):
     """

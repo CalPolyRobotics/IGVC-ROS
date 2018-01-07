@@ -46,10 +46,6 @@ class CommsHandler(object):
 
                 if ret_pack is not None and ret_pack.get_type() in PUB_CALLBACK_LUT:
                     PUB_CALLBACK_LUT[ret_pack.get_type()](ret_pack.get_data())
-                else:
-                    # Message Failed
-                    # TODO - Make more useful error handling
-                    print "Message response could not be handled"
             else:
                 self.enqueue_message(GET_MESSAGES[self.gt_idx])
                 self.gt_idx = (self.gt_idx + 1) % len(GET_MESSAGES)
@@ -73,7 +69,6 @@ class CommsHandler(object):
         self.seq_num = (self.seq_num + 1) % 256
 
         self.ser.write(pack)
-        self.msg_sent = self.msg_sent + 1
 
         # Return packet will be of the same message type + 1
         return self.read_packet(pack[MSG_TYP_IDX] + 1)
@@ -87,7 +82,8 @@ class CommsHandler(object):
         header = bytearray(self.ser.read(HEAD_SIZE))
 
         # Check the message for errors
-        if not (len(header) > 0 and header[STRT_BYT_1_IDX] == STRT_BYT_1 and
+        if not (len(header) == HEAD_SIZE and
+                header[STRT_BYT_1_IDX] == STRT_BYT_1 and
                 header[STRT_BYT_2_IDX] == STRT_BYT_2 and
                 msg_type == header[MSG_TYP_IDX]):
 
@@ -102,7 +98,10 @@ class CommsHandler(object):
 
         #TODO Check CRC
 
-        if not (len(data) == data_len and len(data) == MSG_INFO[header[MSG_TYP_IDX]]["length"]):
+        if not (len(data) == data_len and
+                len(data) >= MSG_INFO[header[MSG_TYP_IDX]]["min_length"] and
+                len(data) <= MSG_INFO[header[MSG_TYP_IDX]]["max_length"]):
+
             # Clear Buffer
             self.ser.flushInput()
             return None

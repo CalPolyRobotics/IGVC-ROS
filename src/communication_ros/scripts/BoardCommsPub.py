@@ -7,21 +7,11 @@ Publisher functions for publishing data from communication with the golf cart
 import rospy
 from std_msgs.msg import UInt8, UInt8MultiArray, UInt16MultiArray, UInt16
 
-STATUS = rospy.Publisher("Status", UInt8, queue_size=1000)
 FNR = rospy.Publisher("Get_FNR", UInt8, queue_size=1000)
 SPEED = rospy.Publisher("Get_Speed", UInt16MultiArray, queue_size=1000)
 STEERING = rospy.Publisher("Get_Steering", UInt16, queue_size=1000)
 BATTERY = rospy.Publisher("Get_Battery", UInt16, queue_size=1000)
 POWER = rospy.Publisher("Get_Power", UInt16MultiArray, queue_size=1000)
-
-def get_status_resp(data):
-    """
-    get_status_resp
-
-    Publishes the data from a get_status request
-    """
-    #TODO Implement Status
-    STATUS.publish(0)
 
 def get_fnr_resp(data):
     """
@@ -63,7 +53,6 @@ def get_power_resp(data):
     POWER.publish(power)
 
 PUB_CALLBACK_LUT = {
-    0x01 : get_status_resp,
     #0x03 : get_sonar_1_resp,
     #0x05 : get_sonar_all_resp,
     0x07 : get_fnr_resp,
