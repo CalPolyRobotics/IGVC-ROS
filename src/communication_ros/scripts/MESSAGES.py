@@ -3,8 +3,6 @@ MESSAGES
 Configuration of messages and Packets
 """
 
-from enum import Enum
-
 STRT_BYT_1 = 0xF0  # Start Byte 1
 STRT_BYT_2 = 0x5A  # Start Byte 2
 HEAD_SIZE = 6    # Size of Header

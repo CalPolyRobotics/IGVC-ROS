@@ -1,10 +1,13 @@
-from Packet import Packet
 import rospy
 import serial
+
 from collections import deque
+
+from BoardCommsPub import PUB_CALLBACK_LUT
 from MESSAGES import *
 from Message import Message
-from BoardCommsPub import PUB_CALLBACK_LUT
+from Packet import Packet
+
 
 GET_MESSAGES = [
     Message(msg_type=MTYPE['get_status']),
