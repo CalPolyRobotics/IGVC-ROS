@@ -24,18 +24,13 @@ class CommsHandler(object):
 
     port - the name of the port to connect to over serial
     baud - the baud rate to communicate over serial
-    test - is the instance of CommsHandler for a test
     """
 
-    def __init__(self, port, baud, test=False):
+    def __init__(self, port, baud):
         self.ser = serial.Serial(port, baud, timeout=1)
         self.mqueue = deque()
         self.seq_num = 0
         self.gt_idx = 0
-        self.test = test
-        if test:
-            self.msg_sent = 0
-            self.msg_fail = 0
 
     def run(self):
         """
@@ -49,12 +44,12 @@ class CommsHandler(object):
             if len(self.mqueue) > 0:
                 ret_pack = self.send_message(self.mqueue.pop())
 
-                if ret_pack is None:
-                    if self.test:
-                        self.msg_fail = self.msg_fail + 1
+                if ret_pack is not None and ret_pack.get_type() in PUB_CALLBACK_LUT:
+                    PUB_CALLBACK_LUT[ret_pack.get_type()](ret_pack.get_data())
                 else:
-                    if ret_pack.get_type() in PUB_CALLBACK_LUT:
-                        PUB_CALLBACK_LUT[ret_pack.get_type()](ret_pack.get_data())
+                    # Message Failed
+                    # TODO - Make more useful error handling
+                    print "Message response could not be handled"
             else:
                 self.enqueue_message(GET_MESSAGES[self.gt_idx])
                 self.gt_idx = (self.gt_idx + 1) % len(GET_MESSAGES)
@@ -114,21 +109,3 @@ class CommsHandler(object):
 
         return Packet(Message(header[MSG_TYP_IDX], data), header[SEQ_NUM_IDX],
                       header[CRC_IDX])
-
-    def get_num_total_packets(self):
-        """
-        Return the total number of packets sent
-        """
-        if self.test:
-            return self.msg_sent
-        else:
-            return 0
-
-    def get_num_failed_packets(self):
-        """
-        Return the total number of packets that failed
-        """
-        if self.test:
-            return self.msg_fail
-        else:
-            return 0

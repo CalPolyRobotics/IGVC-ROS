@@ -6,7 +6,7 @@ BoardCommsSub
 
 import sys
 import rospy
-from Packet import Packet
+
 from Message import Message
 from std_msgs.msg import UInt8, UInt16, Empty
 from MESSAGES import MTYPE
@@ -25,7 +25,7 @@ def init_subscribers(handler):
     rospy.Subscriber('Set_Steering', UInt16, set_steering_callback)
     rospy.Subscriber('Set_Speed', UInt16, set_speed_callback)
     rospy.Subscriber('Set_Lights', UInt16, set_lights_callback)
-    rospy.Subscriber('Stop', Empty, stop_callback) # Data is irrelevant
+    rospy.Subscriber('Stop', Empty, stop_callback)
 
 def set_fnr_callback(data):
     """
