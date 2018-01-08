@@ -24,6 +24,10 @@ def throughput_test():
     Print out total data sent, total messages sent, %failure data, %failure mesages
     """
 
+    echo = rospy.Publisher("Echo", UInt8MultiArray, queue_size=1000)
+    for i in range(1000):
+        echo.
+
 def run_throughput_tests(test):
     """
     Runs all throughput tests

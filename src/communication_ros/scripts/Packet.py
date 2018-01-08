@@ -46,13 +46,6 @@ class Packet(object):
 
         return arr
 
-    def is_callback_valid(self):
-        """
-        Determines if the callback for the given packet is valid
-        """
-        return self.msg_type in PUB_CALLBACK_LUT
-
-
     def calc_crc(self):
         """
         Calculates the 8-bit crc for the message
