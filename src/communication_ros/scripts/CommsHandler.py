@@ -91,7 +91,8 @@ class CommsHandler(object):
             self.ser.flushInput()
             return None
 
-        data_len = header[PKT_LEN_IDX] - HEAD_SIZE
+        # CRC is at the end of the packet
+        data_len = header[PKT_LEN_IDX] - HEAD_SIZE - 1
 
         # Append each piece of data to a byte array
         data = bytearray(self.ser.read(data_len))
@@ -106,5 +107,7 @@ class CommsHandler(object):
             self.ser.flushInput()
             return None
 
-        return Packet(Message(header[MSG_TYP_IDX], data), header[SEQ_NUM_IDX],
-                      header[CRC_IDX])
+        crc = self.ser.read(1)
+        # TODO chec crc is valid?
+
+        return Packet(Message(header[MSG_TYP_IDX], data), header[SEQ_NUM_IDX], crc)

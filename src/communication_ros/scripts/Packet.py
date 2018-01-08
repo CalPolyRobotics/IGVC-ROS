@@ -38,11 +38,13 @@ class Packet(object):
         Builds a bytearray message for the current packet
         TODO: CRC goes to end of message
         """
-        arr = bytearray([STRT_BYT_1, STRT_BYT_2, self.crc, self.msg_type,
+        arr = bytearray([STRT_BYT_1, STRT_BYT_2, self.msg_type,
                          self.seq_num, self.length])
 
         for dat in self.data:
             arr.append(dat)
+
+        arr.append(self.crc)
 
         return arr
 
@@ -69,5 +71,5 @@ class Packet(object):
         """
         Returns a string representation of the packet
         """
-        return "Packet:\n\tType: {}\n\tCRC:{}\n\tSeq Num: {}\n\tData {}".format(
-            MSG_INFO[self.msg_type]["name"], self.crc, self.seq_num, format_data(self.data))
+        return "Packet:\n\tType: {}\n\tSeq Num: {}\n\tData {}\n\tCRC:{}".format(
+            MSG_INFO[self.msg_type]["name"], self.seq_num, format_data(self.data), self.crc)

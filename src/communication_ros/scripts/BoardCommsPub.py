@@ -66,7 +66,7 @@ def get_power_resp(data):
     POWER.publish(power)
 
 PUB_CALLBACK_LUT = {
-    0x01 : echo_resp
+    0x01 : echo_resp,
     #0x03 : get_sonar_1_resp,
     #0x05 : get_sonar_all_resp,
     0x07 : get_fnr_resp,
