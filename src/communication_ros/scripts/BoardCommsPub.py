@@ -20,9 +20,8 @@ def echo_resp(data):
 
     Publishes the data from an echo response
     """
-    echo = UINT8MultiArray()
-    for i in range(len(data)):
-        echo.data.append(data[i])
+    echo = UInt8MultiArray()
+    echo.data = list(data)
 
     ECHO.publish(echo)
 
@@ -34,16 +33,25 @@ def get_fnr_resp(data):
     """
     FNR.publish(data[0])
 
+def get_speed_resp(data):
+    """
+    get_speed_resp
+
+    Publishes the data from a get_speed_resp
+    """
+    speed = UInt16MultiArray()
+    for i in range(0, len(data), 2):
+        speed.data.append((data[i] << 8) | data[i+1])
+    SPEED.publish(speed)
+
 def get_steering_resp(data):
     """
     get_steering_resp
 
     Publishes the data from a get_steering_resp
     """
-    speed = UInt16MultiArray()
-    for i in range(0, len(data), 2):
-        speed.data.append((data[i] << 8) | data[i+1])
-    SPEED.publish(speed)
+    steer = (data[0] << 8) | data[1] 
+    STEERING.publish(steer)
 
 def get_battery_resp(data):
     """
@@ -69,7 +77,8 @@ PUB_CALLBACK_LUT = {
     0x01 : echo_resp,
     #0x03 : get_sonar_1_resp,
     #0x05 : get_sonar_all_resp,
-    0x07 : get_fnr_resp,
+    0x09 : get_fnr_resp,
+    0x0F : get_speed_resp,
     0x13 : get_steering_resp,
     0x17 : get_battery_resp,
     0x19 : get_power_resp,

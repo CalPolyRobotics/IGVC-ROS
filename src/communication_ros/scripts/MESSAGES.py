@@ -5,15 +5,14 @@ Configuration of messages and Packets
 
 STRT_BYT_1 = 0xF0  # Start Byte 1
 STRT_BYT_2 = 0x5A  # Start Byte 2
-HEAD_SIZE = 6    # Size of Header
+HEAD_SIZE = 5    # Size of Header
 
 # Indecices of bytes in packet
 STRT_BYT_1_IDX = 0
 STRT_BYT_2_IDX = 1
-CRC_IDX = 2
-MSG_TYP_IDX = 3
-SEQ_NUM_IDX = 4
-PKT_LEN_IDX = 5
+MSG_TYP_IDX = 2
+SEQ_NUM_IDX = 3
+PKT_LEN_IDX = 4
 MAX_DATA_LENGTH = 250
 
 MSG_INFO = {
@@ -63,8 +62,8 @@ MSG_INFO = {
             "min_length": 0,
             "max_length": 0},
     0x0F : {"name": "Get Speed Response",
-            "min_length": 2,
-            "max_length": 2},
+            "min_length": 4,
+            "max_length": 4},
     0x10 : {"name": "Set Steering",
             "min_length": 2,
             "max_length": 2},
@@ -110,7 +109,7 @@ Dictionary of Message types
 response message types are 1 + the message type
 """
 MTYPE = {
-    "get_status" : 0x00,
+    "echo" : 0x00,
     "get_1_sonar" : 0x02,
     "get_all_sonar_1" : 0x04,
     "set_fnr" : 0x06,

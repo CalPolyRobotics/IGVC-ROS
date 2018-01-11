@@ -25,7 +25,9 @@ class Packet(object):
     def __init__(self, message, seq_num, crc=None):
         self.msg_type = message.get_type()
         self.data = message.get_data()
-        self.length = HEAD_SIZE + len(self.data)
+
+        # CRC is of length 1
+        self.length = HEAD_SIZE + len(self.data) + 1
         self.seq_num = seq_num
 
         if crc is None:

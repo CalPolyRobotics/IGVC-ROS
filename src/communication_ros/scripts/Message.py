@@ -23,7 +23,7 @@ class Message(object):
     def __init__(self, msg_type, data=None):
         self.msg_type = msg_type
         if data is None:
-            self.data = []
+            self.data = bytearray()
         else:
             self.data = data
 
