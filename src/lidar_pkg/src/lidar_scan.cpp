@@ -13,6 +13,7 @@ int main(int argc, char **argv){
   scanCfg cfg;
   scanDataCfg dataCfg;
   scanData data;
+  bool newPacket = false;
 
   // Publish Data 
   sensor_msgs::LaserScan scan_msg;
@@ -101,20 +102,16 @@ int main(int argc, char **argv){
     laser.scanContinous(1);
     
     while (ros::ok()){
-
       ros::Time start = ros::Time::now();
-
       scan_msg.header.stamp = start;
       ++scan_msg.header.seq;
+      newPacket = false;
 
-      //bool gotpackat =false;
-
-      /// added Reconnection to  ensure that
-      // while(gotpackat == false)
-      //{
+      while(newPacket == false)
+      {
         try{
            laser.getData(data);
-           //gotpackat = true;
+           newPacket = true;
            
            for (int i = 0; i < data.dist_len1; i++){
               scan_msg.ranges[i] = data.dist1[i] * 0.001;
@@ -129,13 +126,13 @@ int main(int argc, char **argv){
 
            scan_pub.publish(scan_msg);
         }catch (int e){
-           std::cout << "Reconnecting\n";
-           //laser.disconnect();
-           //laser.connect(host);
-           //laser.startDevice(); // Log out to properly re-enable system after config
-           //laser.scanContinous(1);
+           // Reconnect Lidar for quick recovery
+           laser.disconnect();
+           laser.connect(host);
+           laser.startDevice(); // Log out to properly re-enable system after config
+           laser.scanContinous(1);
         }
-      //}
+      }
        ros::spinOnce();
     }
 

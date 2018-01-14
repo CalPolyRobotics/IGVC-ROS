@@ -216,9 +216,9 @@ void LMS1xx::getData(scanData& data) {
 	struct timeval tv;
 	int retval, len;
 	len = 0;
-    int timeoutcounter = 0;
+   int timeoutcounter = 0;
 	do {
-         timeoutcounter++;
+      timeoutcounter++;
 		FD_ZERO(&rfds);
 		FD_SET(sockDesc, &rfds);
 
@@ -325,6 +325,7 @@ void LMS1xx::getData(scanData& data) {
 		}
 	}
 
+   /*
 	tok = strtok(NULL, " "); //NumberChannels8Bit
 	int NumberChannels8Bit;
 	sscanf(tok, "%d", &NumberChannels8Bit);
@@ -380,6 +381,7 @@ void LMS1xx::getData(scanData& data) {
 			}
 		}
 	}
+   */
 
 }
 
