@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<launch>
+    <!-- These are the arguments you can pass this launch file -->
+  <arg name="camera_source" default="1"/>  <!-- Defaults to external USB camera -->
+  <arg name="show_images" default="0"/>  <!-- Default to 0 in this launch file because it will show up in RVIZ -->
+
+  <!-- Launch RVIZ with saved configurations -->
+  <node name="rviz" pkg="rviz" type="rviz" args="-d $(find control_unit_pkg)/launch/rviz_config.rviz"/> 
+  <!-- Launch BoardComms for communicating with the board -->
+  <!--<node name="BoardComms" pkg="communication_ros" type="BoardComms.py"/> -->
+  <!-- LIDAR scan data -->
+  <node name="lidar_scan" pkg="lidar_pkg" type="lidar_scan"/> 
+  <!-- Launch IMU node -->
+  <include file="$(find imu_pkg)/launch/imu_pkg.launch" /> 
+  <!-- Launch OpenCV camera node with parameters set -->
+  <include file="$(find opencv_pkg)/launch/camera.launch">
+    <arg name="camera_source" value="$(arg camera_source)" />
+    <arg name="show_images" value="$(arg show_images)" />
+  </include>
+
+
+</launch>

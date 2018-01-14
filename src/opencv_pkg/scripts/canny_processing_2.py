@@ -72,12 +72,13 @@ class ImageConverter(object):
         #cv2.imshow('Processing - Before Function', cv_image)
         result = image_processing(cv_image)
 
-        cv2.imshow('Processed', result)
+        if SHOW_IMAGES:
+            cv2.imshow('Processed', result)
 
         cv2.waitKey(3)  # Some delay - REQUIRED
 
         try:
-            self.image_pub.publish(self.bridge.cv2_to_imgmsg(cv_image, "bgr8"))
+            self.image_pub.publish(self.bridge.cv2_to_imgmsg(result, "bgr8"))
         except CvBridgeError as error:
             print error
 
@@ -102,14 +103,14 @@ def image_processing(frame):
 
     # Test detected edges by uncommenting this
     #return cv2.cvtColor(ROI_image, cv2.COLOR_GRAY2RGB)
-    cv2.imshow('ROI', ROI_image)
+    if SHOW_IMAGES:
+        cv2.imshow('ROI', ROI_image)
     print("Hello")
 
     #return lineMarkedImage
 
     # draw output on top of original
     return weighted_img(lineMarkedImage, grayscale_image)
-
     """
     full_ROI_image = edges_image
     lines = hough_lines(full_ROI_image)
@@ -146,8 +147,7 @@ def convert_gray_scale(image):
     return cv2.cvtColor(image, cv2.COLOR_RGB2GRAY)
 
 
-def convert_color(image):
-    return cv2.cvtColor(image, cv2.COLOR_GRAY2RGB)
+def convert_color(image): return cv2.cvtColor(image, cv2.COLOR_GRAY2RGB)
 
 
 def apply_smoothing(image, kernel_size=9):
@@ -424,5 +424,7 @@ def main():
 
 
 if __name__ == '__main__':
+    # Get parameter, defaults to 1
+    SHOW_IMAGES = rospy.get_param('show_images', 1)
     main()
     #main(sys.argv)

@@ -1,9 +1,11 @@
 <launch>
   	<!-- declare camera_source arg to be passed in -->
   	<arg name="camera_source" default="1"/> 
+  	<arg name="show_images" default="1"/> 
 
   	<!-- read value of arg -->
   	<param name="camera_source" value="$(arg camera_source)"/>
+  	<param name="show_images" value="$(arg show_images)"/>
 
     <node name="raw_camera_stream" pkg="opencv_pkg" type="raw_camera_stream.py" output="screen"/>
     <!-- <node name="canny_processing_node" pkg="opencv_pkg" type="canny_processing.py"/> -->
