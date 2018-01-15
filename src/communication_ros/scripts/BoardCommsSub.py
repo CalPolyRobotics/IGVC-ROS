@@ -73,7 +73,7 @@ def set_lights_callback(data):
     Callback for the set lights message
     data UInt16 - light directive
     """
-    data = bytearray([data.data & 0xFF, (data.data >> 8) & 0xFF])
+    data = bytearray([(data.data >> 8) & 0xFF, data.data & 0xFF])
     this.comms_handler.enqueue_message(Message(msg_type=MTYPE['set_lights'], data=data))
 
 def stop_callback(data):
@@ -81,4 +81,4 @@ def stop_callback(data):
     Callback for the stop message
     data Empty - no data
     """
-    this.enqueue_message(Message(msg_type=MTYPE['send_stop']))
+    this.comms_handler.enqueue_message(Message(msg_type=MTYPE['send_stop']))

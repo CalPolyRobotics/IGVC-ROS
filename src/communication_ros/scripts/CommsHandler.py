@@ -10,11 +10,10 @@ from Packet import Packet
 
 
 GET_MESSAGES = [
-    Message(msg_type=MTYPE['echo']),
+    #Message(msg_type=MTYPE['echo']),
     Message(msg_type=MTYPE['get_fnr']),
     Message(msg_type=MTYPE['get_speed']),
     Message(msg_type=MTYPE['get_steering']),
-#    Message(msg_type=MTYPE['get_battery']),
     Message(msg_type=MTYPE['get_power'])
 ]
 
