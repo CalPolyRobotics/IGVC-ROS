@@ -7,6 +7,7 @@ cart
 
 from MESSAGES import * 
 from Message import Message
+from CRC8 import crc8
 
 def format_data(data):
     """
@@ -31,14 +32,14 @@ class Packet(object):
         self.seq_num = seq_num
 
         if crc is None:
-            self.crc = self.calc_crc()
+            self.crc = crc8(self.to_bytearray(withCrc=0))
         else:
             self.crc = crc
 
-    def to_bytearray(self):
+    def to_bytearray(self, withCrc=1):
         """
         Builds a bytearray message for the current packet
-        TODO: CRC goes to end of message
+        withCrc - int include the CRC in building the bytearray
         """
         arr = bytearray([STRT_BYT_1, STRT_BYT_2, self.msg_type,
                          self.seq_num, self.length])
@@ -46,16 +47,10 @@ class Packet(object):
         for dat in self.data:
             arr.append(dat)
 
-        arr.append(self.crc)
+        if withCrc == 1:
+            arr.append(self.crc)
 
         return arr
-
-    def calc_crc(self):
-        """
-        Calculates the 8-bit crc for the message
-        TODO
-        """
-        return 0xCC
 
     def get_type(self):
         """

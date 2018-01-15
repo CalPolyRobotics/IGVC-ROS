@@ -7,6 +7,7 @@ from BoardCommsPub import PUB_CALLBACK_LUT
 from MESSAGES import *
 from Message import Message
 from Packet import Packet
+from CRC8 import crc8
 
 
 GET_MESSAGES = [
@@ -97,8 +98,6 @@ class CommsHandler(object):
         # Append each piece of data to a byte array
         data = bytearray(self.ser.read(data_len))
 
-        #TODO Check CRC
-
         if not (len(data) == data_len and
                 len(data) >= MSG_INFO[header[MSG_TYP_IDX]]["min_length"] and
                 len(data) <= MSG_INFO[header[MSG_TYP_IDX]]["max_length"]):
@@ -108,6 +107,10 @@ class CommsHandler(object):
             return None
 
         crc = self.ser.read(1)
-        # TODO chec crc is valid?
+        pack = Packet(Message(header[MSG_TYP_IDX], data), header[SEQ_NUM_IDX], crc)
 
-        return Packet(Message(header[MSG_TYP_IDX], data), header[SEQ_NUM_IDX], crc)
+        if crc8(pack.to_bytearray()) != 0:
+            self.ser.flushInput()
+            return None
+
+        return pack
