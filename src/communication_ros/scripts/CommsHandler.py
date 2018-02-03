@@ -15,6 +15,7 @@ GET_MESSAGES = [
     Message(msg_type=MTYPE['get_fnr']),
     Message(msg_type=MTYPE['get_speed']),
     Message(msg_type=MTYPE['get_steering']),
+    Message(msg_type=MTYPE['get_pedal']),
     Message(msg_type=MTYPE['get_power'])
 ]
 

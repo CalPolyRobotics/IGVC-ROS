@@ -11,7 +11,7 @@ ECHO = rospy.Publisher("Echo_Response", UInt8MultiArray, queue_size=1000)
 FNR = rospy.Publisher("Get_FNR", UInt8, queue_size=1000)
 SPEED = rospy.Publisher("Get_Speed", UInt16MultiArray, queue_size=1000)
 STEERING = rospy.Publisher("Get_Steering", UInt16, queue_size=1000)
-BATTERY = rospy.Publisher("Get_Battery", UInt16, queue_size=1000)
+PEDAL = rospy.Publisher("Get_Pedal", UInt16, queue_size=1000)
 POWER = rospy.Publisher("Get_Power", UInt16MultiArray, queue_size=1000)
 
 def echo_resp(data):
@@ -53,14 +53,14 @@ def get_steering_resp(data):
     steer = (data[0] << 8) | data[1] 
     STEERING.publish(steer)
 
-def get_battery_resp(data):
+def get_pedal_resp(data):
     """
-    get_battery_resp
+    get_pedal_resp
 
-    Publishes the data from a get_battery_resp
+    Publishes the data from a get_pedal_resp
     """
-    #TODO Implement Battery
-    BATTERY.publish(data[0])
+    pedal = (data[0] << 8) | data[1]
+    PEDAL.publish(pedal)
 
 def get_power_resp(data):
     """
@@ -80,6 +80,6 @@ PUB_CALLBACK_LUT = {
     0x09 : get_fnr_resp,
     0x0F : get_speed_resp,
     0x13 : get_steering_resp,
-    0x17 : get_battery_resp,
+    0x17 : get_pedal_resp,
     0x19 : get_power_resp,
 }
