@@ -1,6 +1,3 @@
-Publisher Callbacks
-   - Get Battery
-
 Subscriber Callbacks
    - Check That Endianess is correct
 
@@ -11,5 +8,5 @@ CRC
    - Implement CRC check and create
 
 GetMessagesTest
-   - Implement test for battery and power
+   - Implement test for power
    - Fix so that the asserts properly set a variable to show pass or fail
