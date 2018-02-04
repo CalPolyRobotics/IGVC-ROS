@@ -704,6 +704,9 @@ main(int argc, char** argv)
   ros::NodeHandle nh;
 
   ImuNode in(nh);
+
+  ros::Rate r(100);
+
   in.spin();
 
   return(0);
