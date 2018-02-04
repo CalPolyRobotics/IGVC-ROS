@@ -1,9 +1,11 @@
 <launch>
 
+    <arg name="port" default="/dev/ttyUSB0"/>
+
 <!-- imu -->
   <node pkg="imu_pkg" type="imu_node" name="imu_pkg_node" output="screen">
     <param name="time_offset" value="-0.040" />
-    <param name="port"  type="string" value="/dev/ttyUSB0" />
+    <param name="port"  type="string" value="$(arg port)" />
     <param name="autostart" type="bool" value="true" />
     <param name="frameid"  type="string" value="imu" />
     <param name="autocalibrate" type="bool" value="true" />

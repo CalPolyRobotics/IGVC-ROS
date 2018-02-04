@@ -43,7 +43,8 @@ def main():
         # crop_img = frame[150:480, 0:640] # NOTE: its img[y: y + h, x: x + w]
 
         # Display the resulting frames
-        cv2.imshow('Original', frame)
+        if SHOW_IMAGES:
+            cv2.imshow('Original', frame)
 
         # cv2.wait acts as a minimum delay and a way to check if window should be closed
         if cv2.waitKey(1) & 0xFF == ord('q'):
@@ -72,6 +73,8 @@ if __name__ == '__main__':
     rospy.init_node('raw_camera_stream')  # Create openCV processing node
     PUB_CV = rospy.Publisher("raw_image_topic", Image,
                              queue_size=10)  # Add queue_size
+    # Get parameter, defaults to 1
+    SHOW_IMAGES = rospy.get_param('show_images', 1)
     # Get camera source parameter, defaults to 1
     CAMERA_SOURCE = rospy.get_param('camera_source', 1)
     CAPTURE = cv2.VideoCapture(CAMERA_SOURCE)  # Launch camera source
@@ -79,7 +82,7 @@ if __name__ == '__main__':
     print "---------------------CHANGE CAMERA SOURCE-----------------------"
     print "Camera souce can be changed by specifing camera_source parameter"
     print "Example for first camera: "
-    print "roslaunch .. .. camera_source:=0"
+    print "roslaunch .. .. camera_source:=0 show_images:=0"
     print "----------------------------------------------------------------"
     print ""
 
