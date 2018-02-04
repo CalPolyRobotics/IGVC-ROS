@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+<launch>
+  <!--<node pkg="rqt_bag" type="rqt_bag" name="rqt_bag" output="screen"/> -->
+  <node pkg="rosbag" type="record" args="-a -o /media/ssmarok/2742-73E2/bags/baggo --split --size=2048" name="record" output="screen"/>
+  <!--<node pkg="rosbag" type="record" args="-a -o /home/ssmarok/Robotics/bags/data -split -size=2048" name="record" output="screen"/> --> <!-- Add hyphen to split and size -->
+</launch>
