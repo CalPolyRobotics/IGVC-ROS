@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <package>
-  <name>gps_pkg</name>
+  <name>gps_pkg_custom</name>
   <version>1.0.0</version>
   <description>The GPS Package</description>
 

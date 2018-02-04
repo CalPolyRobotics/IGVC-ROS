@@ -1,3 +1,7 @@
+*.csv
+*.zip
+*.bag
+*.bak
 # standard eclipse files for those using it
 .cproject
 .project
