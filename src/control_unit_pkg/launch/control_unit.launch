@@ -1,21 +1,18 @@
 <?xml version="1.0"?>
 <launch>
   <!-- These are the arguments you can pass this launch file -->
-  <arg name="camera_source" default="1"/>   <!-- Defaults to external USB camera -->
-  <arg name="show_images" default="0"/>     <!-- Default to 0 in this launch file because it will show up in RVIZ -->
-  <arg name="imu_port" default="/dev/ttyUSB1"/>     <!-- Default to 0 in this launch file because it will show up in RVIZ -->
-
-  <!--<param name="use_sim_time" value="True"/> -->
+  <arg name="camera_source" default="1"/>           <!-- Defaults to external USB camera -->
+  <arg name="show_images" default="0"/>             <!-- Default to 0 in this launch file because it will show up in RVIZ -->
+  <arg name="imu_port" default="/dev/ttyUSB1"/>     <!-- Default IMU port -->
 
   <!-- ROSbag recording on start-->
   <!--<node pkg="rosbag" type="record" args="-a -o /home/ssmarok/Robotics/bags/data" name="record" output="screen"/> -->
   <!--<node pkg="rosbag" type="record" args="-a -o /media/ssmarok/USB\ DISK/bags/data" name="record" output="screen"/> -->
 
   <!-- Launch RQT Gui with saved configurations -->
-  <node name="rqt" pkg="rqt_gui" type="rqt_gui" args="--perspective-file $(find control_unit_pkg)/launch/view_data.perspective" required="true"/> 
+  <node name="rqt" pkg="rqt_gui" type="rqt_gui" args="--perspective-file $(find control_unit_pkg)/config/view_data.perspective" required="true"/> 
   <!-- Launch RVIZ with saved configurations -->
-  <!--<node name="rviz" pkg="rviz" type="rviz" args="-d $(find control_unit_pkg)/launch/rviz_config.rviz"/>  -->
-  <!-- Launch BoardComms for communicating with the board -->
+  <!--<node name="rviz" pkg="rviz" type="rviz" args="-d $(find control_unit_pkg)/config/rviz_config.rviz"/>  --> <!-- Launch BoardComms for communicating with the board -->
   <node name="BoardComms" pkg="communication_ros" type="BoardComms.py"/> -->
   <!-- LIDAR scan data -->
   <node name="lidar_scan" pkg="lidar_pkg" type="lidar_scan"/> 
