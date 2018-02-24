@@ -7,6 +7,7 @@
 
   <!-- ROSbag recording on start-->
   <!--<node pkg="rosbag" type="record" args="-a -o /home/ssmarok/Robotics/bags/data" name="record" output="screen"/> -->
+  <!--<node pkg="rosbag" type="record" args="-a -o /media/ssmarok/USB\ DISK/bags/data" name="record" output="screen"/> -->
 
   <!-- Launch RQT Gui with saved configurations -->
   <node name="rqt" pkg="rqt_gui" type="rqt_gui" args="--perspective-file $(find control_unit_pkg)/config/view_data.perspective" required="true"/> 
