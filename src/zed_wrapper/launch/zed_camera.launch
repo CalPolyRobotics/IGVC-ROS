@@ -16,6 +16,9 @@ THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 -->
+
+<!-- SEE WEBSITE FOR PARAMETER INFO -->
+
 <launch>
     <arg name="camera_model"          default="0" /> <!-- 0=ZED, 1=ZEDM-->
     <arg name="svo_file"              default="" /><!-- <arg name="svo_file" default="path/to/svo/file.svo"> -->
@@ -52,8 +55,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
         <param name="zed_id"                value="$(arg zed_id)" />
         <param name="serial_number"      value="$(arg serial_number)" />
 
-        <param name="resolution"            value="3" /> <!-- Original: 2 -->
-        <param name="quality"               value="2" /> <!-- Original: 1 -->
+        <param name="resolution"            value="1" /> <!-- Original: 2 -->
+        <param name="quality"               value="1" /> <!-- Original: 1 -->
         <param name="sensing_mode"          value="0" /> <!-- Original: 0 -->
         <param name="frame_rate"            value="60" />
         <param name="odometry_db"           value="" />
