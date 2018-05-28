@@ -1,4 +1,7 @@
 #!/usr/bin/env python
+'''@file wheel_odometry.py
+Odometry based only on wheel encoder data
+'''
 from math import sin, cos
 import rospy
 import tf
@@ -27,8 +30,6 @@ def vel_callback(data):
 def update_vel():
     "Main loop"""
     global g_last_loop_time, g_vel_x, g_vel_y, g_vel_dt, x_pos, y_pos
-    #x_pos = 0.0
-    #y_pos = 0.0
 
     #while not rospy.is_shutdown():
     current_time = rospy.Time.now()
@@ -60,7 +61,6 @@ def update_vel():
     odom_pub.publish(odom)
 
     g_last_loop_time = current_time
-    #r.sleep()
 
 
 if __name__ == "__main__":
@@ -78,11 +78,8 @@ if __name__ == "__main__":
     x_pos = 0.0
     y_pos = 0.0
 
-    #r = rospy.Rate(15.0)
-
     odom_pub = rospy.Publisher("wheel_odom", Odometry, queue_size=50)
     vel_sub = rospy.Subscriber(
         "Get_Speed", UInt16MultiArray, vel_callback)
 
-    #main()
     rospy.spin()

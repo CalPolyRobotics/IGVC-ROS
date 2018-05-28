@@ -30,13 +30,13 @@ def vel_callback(data):
 
 def imu_callback(imu_data):
     """Callback for IMU data update"""
-    global g_last_imu_time, g_imu_z, g_imu_dt
+    global g_last_imu_time, g_imu_z, g_imu_dt, IMU_DIRECTION
     current_time = rospy.Time.now()
 
     if (imu_data.angular_velocity.z > -0.03 and imu_data.angular_velocity.z < 0.03):
         g_imu_z = 0.0
     else:
-        g_imu_z = imu_data.angular_velocity.z
+        g_imu_z = imu_data.angular_velocity.z * IMU_DIRECTION
 
     if DEBUG:
         print("Angular Velocity: %d", g_imu_z)
@@ -115,6 +115,8 @@ if __name__ == "__main__":
     # Globals for IMU based angular velocity
     g_imu_z = 0.0
     g_imu_dt = 0.0
+    IMU_DIRECTION = rospy.get_param(
+        'imu_direction', 1)  # +/- 1 to reverse IMU data
 
     # Globals for position
     x_pos = 0.0
