@@ -11,7 +11,7 @@ from CRC8 import crc8
 
 
 GET_MESSAGES = [
-    #Message(msg_type=MTYPE['echo']),
+    Message(msg_type=MTYPE['status']),
     Message(msg_type=MTYPE['get_fnr']),
     Message(msg_type=MTYPE['get_speed']),
     Message(msg_type=MTYPE['get_steering']),
