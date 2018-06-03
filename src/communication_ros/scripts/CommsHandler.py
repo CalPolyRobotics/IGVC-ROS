@@ -100,8 +100,7 @@ class CommsHandler(object):
         data = bytearray(self.ser.read(data_len))
 
         if not (len(data) == data_len and
-                len(data) >= MSG_INFO[header[MSG_TYP_IDX]]["min_length"] and
-                len(data) <= MSG_INFO[header[MSG_TYP_IDX]]["max_length"]):
+                len(data) == MSG_INFO[header[MSG_TYP_IDX]]["length"]):
 
             # Clear Buffer
             self.ser.flushInput()
