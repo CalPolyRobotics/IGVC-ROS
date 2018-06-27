@@ -4,15 +4,24 @@
   <arg name="camera_source" default="1"/>           <!-- Defaults to external USB camera -->
   <arg name="show_images" default="0"/>             <!-- Default to 0 in this launch file because it will show up in RVIZ -->
   <arg name="imu_port" default="/dev/ttyUSB1"/>     <!-- Default IMU port -->
+  <arg name="imu_direction" default="1"/>          <!-- Default IMU direction WAS 1 --> 
+  <arg name="map_file" default="$(find nav_pkg)/maps/loop_map.yaml"/>     <!-- Default map file -->
+  <arg name="navigation_mode" default="1"/>         <!-- Default Nagivation mode (enabled) --> 
+  <arg name="use_sim_time" default="false"/>        <!-- Default simulation time setting(disabled) --> 
+  <!-- Remap all instances of scan to lidar_scan_laser_scan -->
+  <!--<remap from="scan" to="lidar_scan_laser_scan"/> -->
+  <!-- Set use_sim_time parameter -->
+  <param name="use_sim_time" value="$(arg use_sim_time)"/>
 
   <!-- ROSbag recording on start-->
   <!--<node pkg="rosbag" type="record" args="-a -o /home/ssmarok/Robotics/bags/data" name="record" output="screen"/> -->
   <!--<node pkg="rosbag" type="record" args="-a -o /media/ssmarok/USB\ DISK/bags/data" name="record" output="screen"/> -->
 
   <!-- Launch RQT Gui with saved configurations -->
-  <node name="rqt" pkg="rqt_gui" type="rqt_gui" args="--perspective-file $(find control_unit_pkg)/config/view_data.perspective" required="true"/> 
+  <node name="rqt" pkg="rqt_gui" type="rqt_gui" args="--perspective-file $(find control_unit_pkg)/config/view_data.perspective" required="false"/> 
   <!-- Launch RVIZ with saved configurations -->
-  <!--<node name="rviz" pkg="rviz" type="rviz" args="-d $(find control_unit_pkg)/config/rviz_config.rviz"/>  --> <!-- Launch BoardComms for communicating with the board -->
+  <!--<node name="rviz" pkg="rviz" type="rviz" args="-d $(find control_unit_pkg)/config/rviz_config.rviz"/>  --> 
+  <!-- Launch BoardComms for communicating with the board -->
   <node name="BoardComms" pkg="communication_pkg" type="BoardComms.py"/> -->
   <!-- LIDAR scan data -->
   <node name="lidar_scan" pkg="lidar_pkg" type="lidar_scan"/> 
@@ -34,5 +43,16 @@
   <include file="$(find rbcar_description)/launch/rbcar_control_unit.launch"/>
   <!-- Create static transform for lidar_scan -->
   <node pkg="tf" type="static_transform_publisher" name="laser_transform" args="0 0 0 0 0 0 lidar_link laser 100" />
+  <node pkg="tf" type="static_transform_publisher" name="laser_to_base" args=".1 0 .1 0 0 0 base_footprint lidar_link 100" />
+
+  <!-- Launch odometry node  -->
+  <include file="$(find nav_pkg)/launch/odometry.launch">
+    <arg name="imu_direction" value="$(arg imu_direction)" />
+  </include>
+  <!-- Launch navigation node with parameters -->
+  <include if="$(arg navigation_mode)" file="$(find nav_pkg)/launch/navigation.launch">
+    <!-- Map used for navigation -->
+    <arg name="map_file" value="$(arg map_file)" />
+  </include>
 
 </launch>
