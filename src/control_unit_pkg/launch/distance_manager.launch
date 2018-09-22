@@ -1,6 +1,6 @@
 <!-- Launch File that launches relevent nodes for Milestone 1 -->
 <launch>
-   <node name="BoardComms" pkg="communication_ros" type="BoardComms.py" />
+   <node name="BoardComms" pkg="communication_pkg" type="BoardComms.py" />
    <node name="lidar_scan" pkg="lidar_pkg" type="lidar_scan" />
    <node name="distance_manager" pkg="control_unit_pkg" type="proximitymanager.py" respawn="true"/>
 <!--<node name="lidar_logic_throttle" pkg="lidar_pkg" type="lidar_logic_throttle.py" />-->

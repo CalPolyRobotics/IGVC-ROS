@@ -13,7 +13,7 @@
   <node name="rqt" pkg="rqt_gui" type="rqt_gui" args="--perspective-file $(find control_unit_pkg)/config/view_data.perspective" required="true"/> 
   <!-- Launch RVIZ with saved configurations -->
   <!--<node name="rviz" pkg="rviz" type="rviz" args="-d $(find control_unit_pkg)/config/rviz_config.rviz"/>  --> <!-- Launch BoardComms for communicating with the board -->
-  <node name="BoardComms" pkg="communication_ros" type="BoardComms.py"/> -->
+  <node name="BoardComms" pkg="communication_pkg" type="BoardComms.py"/> -->
   <!-- LIDAR scan data -->
   <node name="lidar_scan" pkg="lidar_pkg" type="lidar_scan"/> 
   <!-- Launch GPS node -->
