@@ -15,7 +15,7 @@ def JoystickCtrls():
     pubSteerControl = rospy.Publisher("Set_SteerControl", UInt8, queue_size=1)
     pubCruiseControl = rospy.Publisher("Set_CruiseControl", UInt8, queue_size=1)
     pubSteering = rospy.Publisher("Set_Steering", UInt16, queue_size=1)
-    pubThrottle = rospy.Publisher("Set_Throttle", UInt16, queue_size=1)
+    pubThrottle = rospy.Publisher("Set_Speed", UInt16, queue_size=1)
     rospy.init_node('JoystickCtrls', anonymous=True)
     pygame.init()
     controller = pygame.joystick.Joystick(0)

@@ -81,7 +81,7 @@ def get_steering_resp(data):
 
     Publishes the data from a get_steering_resp
     """
-    steer = (data[0] << 8) | data[1]
+    steer = (data[1] <<8 | data[0])
     STEERING.publish(steer)
 
 def get_power_resp(data):

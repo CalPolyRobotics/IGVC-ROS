@@ -366,7 +366,7 @@ def TurnGUI():
     rospy.Subscriber("lidar_scan_ranges", Float32MultiArray, CallbackLidar)
     rospy.Subscriber("Set_Steering", UInt16, CallbackSteering)
     rospy.Subscriber("Set_FNR", UInt8, CallbackFNR)
-    rospy.Subscriber("Set_Throttle", UInt16, CallbackThrottle)
+    rospy.Subscriber("Set_Speed", UInt16, CallbackThrottle)
     rospy.Subscriber("Set_CruiseControl", UInt8, CallbackCruiseControl)
     rospy.Subscriber("Get_Steering", UInt16, CallbackGetSteerValue)
     InitializeGUI()
