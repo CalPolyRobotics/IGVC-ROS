@@ -6,11 +6,10 @@ from std_msgs.msg import UInt8, UInt16, Float32MultiArray
 from willitcrash import getCrashDistancesCartesian
 from numpy import interp
 from collision_gui_config import *
-#from pygame_functions import *
 
 #Global Variables
+backgroundMode = 0
 virtualMode = 1
-democracy = 0
 lidarDataArray = []
 publishedSteering = 0
 publishedFNR = 0
@@ -20,7 +19,6 @@ actualSteering = 32766
 actualAngle = 0
 rangeConsidered = 20
 fullscreen = True
-#SCREEN_DIMENSIONS = WIDTH, HEIGHT = (1000, 500)
 
 #Variable Initialization
 for i in range (0, 540):
@@ -29,14 +27,14 @@ publishedSteering = 32767
 collisionsDetected = 0
 
 #GUI_BACKGROUNDS
-BACKGROUND_IMAGE = pygame.image.load(os.path.abspath("src/lidar_pkg/scripts/images/Background.bmp"))
-LOGO_IMAGE = pygame.image.load(os.path.abspath("src/lidar_pkg/scripts/images/CPRCLogo.bmp"))
+BACKGROUND_IMAGE = pygame.image.load(os.path.abspath("images/Background.bmp"))
+LOGO_IMAGE = pygame.image.load(os.path.abspath("images/CPRCLogo.bmp"))
 
 #Don't Worry About This
-if democracy == 1:
-    BACKGROUND_IMAGE = pygame.image.load(os.path.abspath("src/lidar_pkg/scripts/images/Space.bmp"))
-    #LOGO_IMAGE = pygame.image.load(os.path.abspath("src/lidar_pkg/scripts/images/GUI_Pinto_Horse.bmp"))
-    LOGO_IMAGE = pygame.image.load(os.path.abspath("src/lidar_pkg/scripts/images/CPRCLogo.bmp"))
+if backgroundMode == 1:
+    BACKGROUND_IMAGE = pygame.image.load(os.path.abspath("images/Space.bmp"))
+    LOGO_IMAGE = pygame.image.load(os.path.abspath("images/GUI_Pinto_Horse.bmp"))
+    #LOGO_IMAGE = pygame.image.load(os.path.abspath("src/lidar_pkg/scripts/images/CPRCLogo.bmp"))
     GOLF_CART_COLOR = (255,153,0)
     AXIS_COLOR = (185,185,185)
     TEXT_COLOR = (255,255,255)
@@ -75,7 +73,6 @@ def InitializeGUI():
     global screen
     global font
     pygame.init()
-    #screen = pygame.display.set_mode((SCREEN_DIMENSIONS), pyg.RESIZABLE)
     screen = pygame.display.set_mode((0,0), pyg.FULLSCREEN)
     global SCREEN_DIMENSIONS
     global WIDTH
@@ -122,6 +119,7 @@ def DrawStaticObjects():
 
 #Supports 9 Printouts
 def DebugPrint(title, text, index):
+    global WIDTH
     titleLength = len(str(title))
     screen.blit(font.render(str(title), True, TEXT_COLOR), (-10+WIDTH-10*titleLength, -30+HEIGHT-35*(2*index+1)))
 
@@ -129,7 +127,7 @@ def DebugPrint(title, text, index):
     screen.blit(font.render(str(text), True, TEXT_COLOR), (-10+WIDTH-10*textLength, HEIGHT-35*(2*index+1)))
 
 def DrawAllDoodads():
-    global collisionsDetected
+    global collisionsDetected, WIDTH
     DebugPrint("FNR State", publishedFNR, 0)
     DebugPrint("Throttle", publishedThrottle, 7)
     DebugPrint("Steering", publishedSteering, 2)
@@ -147,7 +145,6 @@ def DrawAllDoodads():
 
 
 def RefreshGUI():
-    #screen.fill(BACKGROUND_COLOR)
     screen.blit(BACKGROUND_IMAGE, (0,0))
     screen.blit(LOGO_IMAGE, (WIDTH-237,0))
     DrawStaticObjects()
@@ -158,14 +155,11 @@ def returnPathParams():
     if virtualMode == 1:
         targetAngle = float(publishedSteering -HALF_MAX_STEERING_VALUE)
     targetRadians = math.radians((targetAngle*25/HALF_MAX_STEERING_VALUE))
-    steerInvert = 1
-    circleCenterX = 1
-    circleCenterY = 1
-    circleInnerR = 1
-    circleOuterR = 1
+    steerInvert = circleCenterX = circleCenterY = circleInnerR = circleOuterR = 1
 
     if targetRadians == 0:
-        print("OH NO FALSE TARGET RADIANS IS 0!!!")
+        #print("Target Radians is 0. Is the LIDAR Connected?")
+        pass
     else:
         if targetRadians < 0:
             steerInvert = -1
@@ -182,10 +176,6 @@ def returnPathParams():
 
 def DrawLidarData():
     pathParams = returnPathParams()
-    #DebugPrint("pathParams[0]", pathParams[0], 3)
-    #DebugPrint("pathParams[1]", pathParams[1], 4)
-    #DebugPrint("pathParams[2]", pathParams[2], 5)
-    #DebugPrint("pathParams[3]", pathParams[3], 6)
     targetAngle = float(actualSteering-HALF_MAX_STEERING_VALUE)
     if virtualMode == 1:
         targetAngle = float(publishedSteering -HALF_MAX_STEERING_VALUE)
@@ -216,9 +206,6 @@ def DrawLidarData():
 
         else:
             pointColor = (51,204,0)
-        """
-        """
-        #(setCircleOriginX,setCircleOriginY,setCircleInnerRadius,setCircleOuterRadius)
 
         #Draws Lidar Points
         cos_function = lidarDataArray[i]*(math.cos(math.radians(theta)))
@@ -321,8 +308,8 @@ def ScreenDimensions():
         pygame.quit()
         sys.exit()
     if pressed[pygame.K_f]:
+        global fullscreen
         if not fullscreen:
-            global fullscreen
             fullscreen = not fullscreen
             time.sleep(0.5)
             screen = pygame.display.set_mode((0,0), pyg.FULLSCREEN)

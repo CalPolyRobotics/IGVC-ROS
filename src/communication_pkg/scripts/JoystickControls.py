@@ -4,6 +4,8 @@ import rospy, pygame, sys, os
 import time
 from std_msgs.msg import UInt8, UInt16
 MAX_STEERING_PUBLISH = 65535
+PUBLISH_RATE = 0.1
+cmptime=time.time()
 
 def JoystickCtrls():
     #sys.stdout = os.devnull
@@ -119,18 +121,36 @@ def JoystickCtrls():
         if not publishedThrottle == old_publishedThrottle:
             pubThrottle.publish(publishedThrottle)
             old_publishedThrottle = publishedThrottle
+            print("Publishing... Throttle Value: " + str(publishedThrottle))
 
         #Publish The FNR
         if not FNR == old_FNR:
             old_FNR = FNR
             pubFNR.publish(FNR)
+            print("Publishing... FNR Value: " + str(FNR))
 
         #Publish The Steering
-        #pubSteering.publish(int(0.5*MAX_STEERING_PUBLISH+steering))
-        publishedSteering = int(0.5*MAX_STEERING_PUBLISH+ steering)
+        #publishedSteering = int(0.5*MAX_STEERING_PUBLISH+ steering)
+
+        global cmptime
+        starttime=time.time()
+        if ((starttime > cmptime+PUBLISH_RATE) == True):
+           cmptime+=PUBLISH_RATE
+           publishedSteering = int(0.5*MAX_STEERING_PUBLISH+steering)
+           if (publishedSteering != old_publishedSteering):
+              #pubSteering.publish(int(0.5*MAX_STEERING_PUBLISH+steering))
+              pubSteering.publish(publishedSteering)
+              print("Publishing... Steering Value: " + str(int(0.5*MAX_STEERING_PUBLISH+steering)))
+              old_publishedSteering = publishedSteering
+
+
+        """
         if abs(publishedSteering - old_publishedSteering) > 15000:
             pubSteering.publish(publishedSteering)
-            old_publishedSteering = publishedSteering
+        """
+        #if abs(publishedSteering - old_publishedSteering) > 15000:
+        #pubSteering.publish(publishedSteering)
+        #old_publishedSteering = publishedSteering
 
         #Publish The CruiseControl
         if cruiseControl != old_cruiseControl:
