@@ -3,7 +3,8 @@
 import rospy, pygame, sys, os
 import time
 from std_msgs.msg import UInt8, UInt16
-MAX_STEERING_PUBLISH = 65535
+#MAX_STEERING_PUBLISH = 65535
+MAX_STEERING_PUBLISH = 60
 PUBLISH_RATE = 0.1
 cmptime=time.time()
 
@@ -45,6 +46,7 @@ def JoystickCtrls():
                 if not controller.get_button(2) == 0: #Button X
                     if steering > -32765:
                         steering -= 16000
+                    FNR = 0
                     """
                     old_FNR = FNR
                     if cruiseControl:
@@ -60,6 +62,7 @@ def JoystickCtrls():
                 if not controller.get_button(1) == 0: #Button B
                     if steering < 32765:
                         steering += 16000
+                    FNR = 0
                     """
                     old_FNR = FNR
                     if cruiseControl:
@@ -112,12 +115,13 @@ def JoystickCtrls():
         #Throttle ctrls Joystick (left joystick up incr throttle, down decr throttle)
         if controller.get_axis(1) < -0.001 and cruiseControl == False:
             tiltValue = -1*controller.get_axis(1)
-            throttle = 40.0 * tiltValue
+            #throttle = 40.0 * tiltValue
+            throttle = 64.0 * tiltValue
         elif cruiseControl == False:
             throttle = 0
 
         #Publish The Throttle
-        publishedThrottle = int(throttle)
+        publishedThrottle = int(abs(throttle*64-1))
         if not publishedThrottle == old_publishedThrottle:
             pubThrottle.publish(publishedThrottle)
             old_publishedThrottle = publishedThrottle
@@ -136,11 +140,11 @@ def JoystickCtrls():
         starttime=time.time()
         if ((starttime > cmptime+PUBLISH_RATE) == True):
            cmptime+=PUBLISH_RATE
-           publishedSteering = int(0.5*MAX_STEERING_PUBLISH+steering)
+           publishedSteering = int(62+0.5*MAX_STEERING_PUBLISH+steering)
            if (publishedSteering != old_publishedSteering):
               #pubSteering.publish(int(0.5*MAX_STEERING_PUBLISH+steering))
               pubSteering.publish(publishedSteering)
-              print("Publishing... Steering Value: " + str(int(0.5*MAX_STEERING_PUBLISH+steering)))
+              print("Publishing... Steering Value: " + str(int(62+0.5*MAX_STEERING_PUBLISH+steering)))
               old_publishedSteering = publishedSteering
 
 
