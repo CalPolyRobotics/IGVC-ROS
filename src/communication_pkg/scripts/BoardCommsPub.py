@@ -35,7 +35,7 @@ def get_speed_resp(data):
     """
     speed = UInt16MultiArray()
     for i in range(0, len(data), 2):
-        speed.data.append((data[i] << 8) | data[i+1])
+        speed.data.append((data[i+1] << 8) | data[i])
     SPEED.publish(speed)
 
 def get_pedal_resp(data):
@@ -81,7 +81,7 @@ def get_steering_resp(data):
 
     Publishes the data from a get_steering_resp
     """
-    steer = (data[1] <<8 | data[0])
+    steer = (data[1] << 8 | data[0])
     STEERING.publish(steer)
 
 def get_power_resp(data):
@@ -96,12 +96,11 @@ def get_power_resp(data):
     POWER.publish(power)
 
 PUB_CALLBACK_LUT = {
-    0x01 : status_resp,
-    0x03 : get_speed_resp,
-    0x05 : get_pedal_resp,
-    0x07 : get_sonar_resp,
-    0x0F : get_fnr_resp,
-    0x11 : get_aman_resp,
-    0x19 : get_steering_resp,
-    0x1F : get_power_resp
+    0x01: status_resp,
+    0x03: get_speed_resp,
+    0x05: get_steering_resp,
+    0x07: get_sonar_resp,
+    0x0F: get_fnr_resp,
+    0x11: get_aman_resp,
+    0x1F: get_power_resp
 }
