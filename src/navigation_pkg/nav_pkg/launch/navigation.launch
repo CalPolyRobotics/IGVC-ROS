@@ -1,0 +1,11 @@
+<launch>
+    <!-- Map server -->
+    <arg name="map_file" default="$(find nav_pkg)/maps/loop_map.yaml"/>
+    <node pkg="map_server" name="map_server"  type="map_server" args="$(arg map_file)" />
+
+    <!-- AMCL for localization -->
+    <include file="$(find nav_pkg)/launch/amcl.launch" />
+    
+    <!-- Calls ackermann based move_base launch file -->
+    <include file="$(find nav_pkg)/launch/move_base_ackermann.launch" />
+</launch>

@@ -1,7 +1,9 @@
 <?xml version="1.0"?>
 <launch>
+  <!-- These are the arguments you can pass this launch file -->
+  <arg name="imu_direction" default="-1"/>           <!-- Defaults to -1 for IMU direction -->
   <!-- Set use_sim_time parameter -->
-  <!--<param name="use_sim_time" value="True"/> -->
+  <param name="use_sim_time" value="true"/>
   <!-- Launch a simulated clock -->
   <!--<node name="simulated_clock" pkg="control_unit_pkg" type="simulated_clock.py"/> -->
   <!-- Launch RQT_Bag with simulated clock -->
@@ -9,11 +11,18 @@
 
   <!-- Launch RQT Gui with saved configurations -->
   <node name="rqt" pkg="rqt_gui" type="rqt_gui" args="--perspective-file $(find control_unit_pkg)/config/view_data.perspective" required="true"/> 
+  <!-- Launch odometry node -->
+  <include file="$(find nav_pkg)/launch/odometry.launch">
+    <arg name="imu_direction" value="$(arg imu_direction)" />
+  </include>
   <!-- Include golf cart model -->
   <include file="$(find rbcar_description)/launch/rbcar_control_unit.launch"/> 
   <!-- Create static transform for lidar_scan -->
   <node pkg="tf" type="static_transform_publisher" name="laser_transform" args="0 0 0 0 0 0 lidar_link laser 100" />
-  <!-- Publish simple odometry -->
-  <!--<node pkg="control_unit_pkg" type="odometry.py" name="odometry_publisher" /> -->
+  <node pkg="tf" type="static_transform_publisher" name="laser_to_base" args=".1 0 .1 0 0 0 base_footprint lidar_link 100" />
+
+  <!--Start map_server with loaded map -->
+  <!--<node name="map_server" pkg="map_server" type="map_server" args=" $(find nav_pkg)/maps/map.yaml" /> -->
+
 
 </launch>

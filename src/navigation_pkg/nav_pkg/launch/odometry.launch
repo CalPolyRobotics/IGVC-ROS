@@ -1,0 +1,12 @@
+<launch>
+    <!-- declare camera_source arg to be passed in -->
+    <arg name="imu_direction" default="1"/> 
+
+    <!-- read value of arg -->
+    <param name="imu_direction" value="$(arg imu_direction)"/>
+
+    <!-- Launch Odometry Node -->
+    <node name="odometry" pkg="nav_pkg" type="odometry.py" output="screen"/>
+
+</launch>
+

@@ -10,13 +10,13 @@ from sensor_msgs.msg import Imu
 DEBUG = 0
 
 
-def vel_callback(data):
+def wheel_vel_callback(data):
     """Callback for velocity update"""
     global g_last_vel_time, g_vel_x, g_vel_y, g_vel_dt
     current_time = rospy.Time.now()
 
-    v_left = (data.data[0] - 25) / 1000.0     # Left wheel data
-    v_right = (data.data[1] - 25) / 1000.0    # Right wheel data
+    v_left = (data.data[0]) / 1000.0     # Left wheel data
+    v_right = (data.data[1]) / 1000.0    # Right wheel data
 
     g_vel_x = (v_left + v_right) / 2          # Average Velocity
     if DEBUG:
@@ -30,13 +30,13 @@ def vel_callback(data):
 
 def imu_callback(imu_data):
     """Callback for IMU data update"""
-    global g_last_imu_time, g_imu_z, g_imu_dt
+    global g_last_imu_time, g_imu_z, g_imu_dt, IMU_DIRECTION
     current_time = rospy.Time.now()
 
     if (imu_data.angular_velocity.z > -0.03 and imu_data.angular_velocity.z < 0.03):
         g_imu_z = 0.0
     else:
-        g_imu_z = imu_data.angular_velocity.z
+        g_imu_z = imu_data.angular_velocity.z * IMU_DIRECTION
 
     if DEBUG:
         print("Angular Velocity: %d", g_imu_z)
@@ -115,6 +115,8 @@ if __name__ == "__main__":
     # Globals for IMU based angular velocity
     g_imu_z = 0.0
     g_imu_dt = 0.0
+    IMU_DIRECTION = rospy.get_param(
+        'imu_direction', 1)  # +/- 1 to reverse IMU data
 
     # Globals for position
     x_pos = 0.0
@@ -122,9 +124,10 @@ if __name__ == "__main__":
     theta = 0.0
 
     # Publishers, Subscribers, Broadcasters
-    odom_pub = rospy.Publisher("odom", Odometry, queue_size=50)
+    odom_pub = rospy.Publisher("odom", Odometry, queue_size=1)
+    #odom_pub = rospy.Publisher("odom", Odometry, queue_size=50)
     vel_sub = rospy.Subscriber(
-        "Get_Speed", UInt16MultiArray, vel_callback)
+        "Get_Speed", UInt16MultiArray, wheel_vel_callback)
     imu_sub = rospy.Subscriber("imu/data", Imu, imu_callback)
     odom_broadcaster = tf.TransformBroadcaster()
 
