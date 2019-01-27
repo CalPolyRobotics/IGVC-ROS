@@ -15,8 +15,8 @@ def wheel_vel_callback(data):
     global g_last_vel_time, g_vel_x, g_vel_y, g_vel_dt
     current_time = rospy.Time.now()
 
-    v_left = (data.data[0] - 25) / 1000.0     # Left wheel data
-    v_right = (data.data[1] - 25) / 1000.0    # Right wheel data
+    v_left = (data.data[0]) / 1000.0     # Left wheel data
+    v_right = (data.data[1]) / 1000.0    # Right wheel data
 
     g_vel_x = (v_left + v_right) / 2          # Average Velocity
     if DEBUG:
@@ -124,7 +124,8 @@ if __name__ == "__main__":
     theta = 0.0
 
     # Publishers, Subscribers, Broadcasters
-    odom_pub = rospy.Publisher("odom", Odometry, queue_size=50)
+    odom_pub = rospy.Publisher("odom", Odometry, queue_size=1)
+    #odom_pub = rospy.Publisher("odom", Odometry, queue_size=50)
     vel_sub = rospy.Subscriber(
         "Get_Speed", UInt16MultiArray, wheel_vel_callback)
     imu_sub = rospy.Subscriber("imu/data", Imu, imu_callback)

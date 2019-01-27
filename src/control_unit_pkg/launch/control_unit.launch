@@ -6,7 +6,7 @@
   <arg name="imu_port" default="/dev/ttyUSB1"/>     <!-- Default IMU port -->
   <arg name="imu_direction" default="1"/>          <!-- Default IMU direction WAS 1 --> 
   <arg name="map_file" default="$(find nav_pkg)/maps/loop_map.yaml"/>     <!-- Default map file -->
-  <arg name="navigation_mode" default="1"/>         <!-- Default Nagivation mode (enabled) --> 
+  <arg name="navigation_mode" default="0"/>         <!-- Default Nagivation mode (enabled) --> 
   <arg name="use_sim_time" default="false"/>        <!-- Default simulation time setting(disabled) --> 
   <!-- Remap all instances of scan to lidar_scan_laser_scan -->
   <!--<remap from="scan" to="lidar_scan_laser_scan"/> -->
