@@ -1,0 +1,14 @@
+<launch>
+    <node pkg="move_base" type="move_base" respawn="false" name="move_base" output="screen">
+        <rosparam file="$(find nav_pkg)/param/costmap_common_params.yaml" command="load" ns="global_costmap" />
+        <rosparam file="$(find nav_pkg)/param/costmap_common_params.yaml" command="load" ns="local_costmap" />
+        <rosparam file="$(find nav_pkg)/param/local_costmap_params.yaml" command="load" />
+        <rosparam file="$(find nav_pkg)/param/global_costmap_params.yaml" command="load" />
+        <!-- Use TEB local planner specific configs -->
+        <rosparam file="$(find nav_pkg)/param/base_local_planner_ackermann_params.yaml" command="load" />
+        <rosparam file="$(find nav_pkg)/param/move_base_params.yaml" command="load" />
+
+        <!-- Run TEB local planner  -->
+        <param name="base_local_planner" value="teb_local_planner/TebLocalPlannerROS" />
+    </node>
+</launch>
