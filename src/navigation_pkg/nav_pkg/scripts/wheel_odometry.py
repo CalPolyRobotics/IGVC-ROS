@@ -7,7 +7,7 @@ import rospy
 import tf
 from nav_msgs.msg import Odometry
 from geometry_msgs.msg import Point, Pose, Quaternion, Twist, Vector3
-from std_msgs.msg import UInt16MultiArray
+from std_msgs.msg import Int16
 
 
 def vel_callback(data):
@@ -15,10 +15,8 @@ def vel_callback(data):
     global g_last_vel_time, g_vel_x, g_vel_y, g_vel_dt
     current_time = rospy.Time.now()
 
-    v_left = (data.data[0] - 25) / 1000.0     # Left wheel data
-    v_right = (data.data[1] - 25) / 1000.0    # Right wheel data
+    g_vel_x = data.data / 1000.0
 
-    g_vel_x = (v_left + v_right) / 2          # Average Velocity
     print("Avg Velocity is %d", g_vel_x)
     g_vel_y = 0  # No y-axis velocity for the golf cart
 
@@ -80,6 +78,6 @@ if __name__ == "__main__":
 
     odom_pub = rospy.Publisher("wheel_odom", Odometry, queue_size=50)
     vel_sub = rospy.Subscriber(
-        "Get_Speed", UInt16MultiArray, vel_callback)
+        "Get_Speed", Int16, vel_callback)
 
     rospy.spin()

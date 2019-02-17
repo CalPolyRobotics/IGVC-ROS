@@ -19,7 +19,7 @@ MSG_INFO = [
    {"name": "Status",                        "length": 0},
    {"name": "Status Response",               "length": 5},
    {"name": "Get Speed",                     "length": 0},
-   {"name": "Get Speed Response",            "length": 4},
+   {"name": "Get Speed Response",            "length": 2},
    {"name": "Get Steering",                  "length": 0},
    {"name": "Get Steering Response",         "length": 2},
    {"name": "Get Sonar",                     "length": 0},

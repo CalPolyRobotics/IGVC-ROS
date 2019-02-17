@@ -5,6 +5,7 @@ from std_msgs.msg import Float32MultiArray
 from std_msgs.msg import UInt16MultiArray
 from std_msgs.msg import UInt8
 from std_msgs.msg import UInt16
+from std_msgs.msg import Int16
 # States
 NEUTRAL = 0
 FORWARD = 1
@@ -154,7 +155,7 @@ def listener():
    print("Hello")
    rospy.init_node('proximity_manager', anonymous=True)
    rospy.Subscriber("lidar_scan_ranges", Float32MultiArray, callbackLidar)
-   rospy.Subscriber("Get_Speed", UInt16MultiArray, callbackSpeed)
+   rospy.Subscriber("Get_Speed", Int16, callbackSpeed)
    rospy.Subscriber("Get_FNR", UInt8, callbackFNR)
    # spin() simply keeps python from exiting until this node is stopped
 
@@ -162,11 +163,11 @@ def listener():
 
 def callbackLidar(data):
    #rospy.loginfo(rospy.get_caller_id() + "I heard %s", data.data)
-   interpretRanges(data.data);
+   interpretRanges(data.data)
 
 def callbackSpeed(data):
    global currentSpeed
-   currentSpeed =(data.data[0])/10
+   currentSpeed = data.data / 1000.0
 
    print"SPEED is : ", currentSpeed
 
