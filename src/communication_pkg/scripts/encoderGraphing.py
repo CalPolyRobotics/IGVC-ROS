@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import time
 import rospy
-from std_msgs.msg import UInt16MultiArray 
+from std_msgs.msg import UInt16MultiArray, Int16
 from sensor_msgs.msg import Imu
 
 
@@ -23,7 +23,7 @@ def callbackIMU(data):
 
 def callback(data):
    global encoder_v_raw
-   encoder_v_raw = data.data[0]#3000.0/data.data[0]
+   encoder_v_raw = data.data
 
 def listener():
    global encoder_v_raw
@@ -74,7 +74,7 @@ def listener():
 
    rospy.init_node('SpeedGun', anonymous=True)
 
-   rospy.Subscriber("Get_Speed", UInt16MultiArray, callback)
+   rospy.Subscriber("Get_Speed", Int16, callback)
 
    #rospy.init_node('Garbage', anonymous=True)
    rospy.Subscriber('imu/data', Imu, callbackIMU)

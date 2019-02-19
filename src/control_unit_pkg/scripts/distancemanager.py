@@ -2,7 +2,7 @@
 import rospy
 import math
 from std_msgs.msg import Float32MultiArray
-from std_msgs.msg import UInt16MultiArray, UInt8, UInt16
+from std_msgs.msg import UInt16MultiArray, UInt8, UInt16, Int16
 #---------------------------------------------------------------------------
 #                                Milestone 1
 #---------------------------------------------------------------------------
@@ -65,7 +65,7 @@ def findOurVelocity(data):
     ''' Callback to update ourVelocity value. '''
     global ourVelocity
     try:
-        ourVelocity = (data.data[0]) / 10
+        ourVelocity = data.data / 1000.0
     except:
         pass
 
@@ -123,7 +123,7 @@ def listener():
     ''' Subscribers.'''
     print("Hello! ~ Milestone 1")
     rospy.Subscriber("lidar_scan_ranges", Float32MultiArray, findOurDistance)
-    rospy.Subscriber("Get_Speed", UInt16MultiArray, findOurVelocity)
+    rospy.Subscriber("Get_Speed", Int16, findOurVelocity)
     rospy.Subscriber("Get_FNR", UInt8, callbackFNR)
     while not rospy.is_shutdown():
         stateMachine()  # TODO: Rename StateMachine
