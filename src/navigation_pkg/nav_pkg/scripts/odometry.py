@@ -4,7 +4,7 @@ import rospy
 import tf
 from nav_msgs.msg import Odometry
 from geometry_msgs.msg import Point, Pose, Quaternion, Twist, Vector3
-from std_msgs.msg import UInt16MultiArray
+from std_msgs.msg import Int16
 from sensor_msgs.msg import Imu
 
 DEBUG = 0
@@ -15,10 +15,8 @@ def wheel_vel_callback(data):
     global g_last_vel_time, g_vel_x, g_vel_y, g_vel_dt
     current_time = rospy.Time.now()
 
-    v_left = (data.data[0]) / 1000.0     # Left wheel data
-    v_right = (data.data[1]) / 1000.0    # Right wheel data
+    g_vel_x = (data.data) / 1000.0     # Wheel Speed
 
-    g_vel_x = (v_left + v_right) / 2          # Average Velocity
     if DEBUG:
         print("Avg Velocity: %d", g_vel_x)
     g_vel_y = 0  # No y-axis velocity for the golf cart
@@ -127,7 +125,7 @@ if __name__ == "__main__":
     odom_pub = rospy.Publisher("odom", Odometry, queue_size=1)
     #odom_pub = rospy.Publisher("odom", Odometry, queue_size=50)
     vel_sub = rospy.Subscriber(
-        "Get_Speed", UInt16MultiArray, wheel_vel_callback)
+        "Get_Speed", Int16, wheel_vel_callback)
     imu_sub = rospy.Subscriber("imu/data", Imu, imu_callback)
     odom_broadcaster = tf.TransformBroadcaster()
 

@@ -6,9 +6,10 @@ Publisher functions for publishing data from communication with the golf cart
 
 import rospy
 from std_msgs.msg import UInt8, UInt8MultiArray, UInt16MultiArray, UInt16
+from std_msgs.msg import Int16
 
 STATUS = rospy.Publisher("Status_Response", UInt8MultiArray, queue_size=1000)
-SPEED = rospy.Publisher("Get_Speed", UInt16MultiArray, queue_size=1000)
+SPEED = rospy.Publisher("Get_Speed", Int16, queue_size=1000)
 PEDAL = rospy.Publisher("Get_Pedal", UInt16, queue_size=1000)
 SONAR = rospy.Publisher("Get_Sonar", UInt16, queue_size=1000)
 FNR = rospy.Publisher("Get_FNR", UInt8, queue_size=1000)
@@ -33,10 +34,13 @@ def get_speed_resp(data):
 
     Publishes the data from a get_speed_resp
     """
-    speed = UInt16MultiArray()
-    for i in range(0, len(data), 2):
-        speed.data.append((data[i+1] << 8) | data[i])
-    SPEED.publish(speed)
+    intData = (data[1] << 8) | data[0]
+
+    # Take two's complement of number if negative
+    if (data[1] & 0x80) == 0x80:
+        intData = -1 * ((~intData + 1) & 0x7FFF)
+
+    SPEED.publish(intData)
 
 def get_pedal_resp(data):
     """

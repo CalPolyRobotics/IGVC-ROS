@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 import rospy, sys, os, datetime, pygame
-from std_msgs.msg import UInt8, UInt8MultiArray, UInt16, UInt16MultiArray, Float32MultiArray
+from std_msgs.msg import UInt8, UInt8MultiArray, UInt16, Int16, UInt16MultiArray, Float32MultiArray
 
 # general constants
 FRAME_RATE = 30
@@ -43,7 +43,7 @@ def init_subscribers():
     Initialize the subscribers for the hud
     """
     rospy.Subscriber('Get_FNR', UInt8, fnr_callback)
-    rospy.Subscriber('Get_Speed', UInt16MultiArray, speed_callback)
+    rospy.Subscriber('Get_Speed', Int16, speed_callback)
     rospy.Subscriber('Get_Steering', UInt16, steer_callback)
     rospy.Subscriber('Get_Pedal', UInt16, pedal_callback)
     rospy.Subscriber('Get_Power', UInt16MultiArray, power_callback)
@@ -61,8 +61,10 @@ def speed_callback(data):
     Stores averaged values in info
     """
     global info, speed_bufl, speed_bufr, speed_idx
-    speed_bufl[speed_idx] = data.data[0]
-    speed_bufr[speed_idx] = data.data[1]
+
+    speed_bufl[speed_idx] = data.data
+    speed_bufr[speed_idx] = data.data
+
     speed_idx = (speed_idx + 1) % AVG_VAL
 
     if speed_idx == 0:

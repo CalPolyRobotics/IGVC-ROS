@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 import rospy, math, time
 #from std_msgs.msg import Float32MultiArray
-from std_msgs.msg import UInt16MultiArray, UInt8, UInt16
+from std_msgs.msg import UInt16MultiArray, UInt8, UInt16, Int16
 # Declare Publishers
 
 #Global
@@ -22,7 +22,7 @@ def getVelocity(data):
     global currentVelocity
     try:
         #ourVelocity = (data.data[0])/10
-        currentVelocity = (data.data[0])/1000.0
+        currentVelocity = data.data / 1000.0
     except:
         #print("I died")
         pass
@@ -46,7 +46,7 @@ def cruiseControl(target):
 
 def listener():
     print("Hello")
-    rospy.Subscriber("Get_Speed", UInt16MultiArray, getVelocity)
+    rospy.Subscriber("Get_Speed", Int16, getVelocity)
     rospy.init_node('Cruise_Control', anonymous=True)
     while not rospy.is_shutdown():
         #print("I looped")
