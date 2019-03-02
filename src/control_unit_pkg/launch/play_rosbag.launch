@@ -19,7 +19,7 @@
   <include file="$(find rbcar_description)/launch/rbcar_control_unit.launch"/> 
   <!-- Create static transform for lidar_scan -->
   <node pkg="tf" type="static_transform_publisher" name="laser_transform" args="0 0 0 0 0 0 lidar_link laser 100" />
-  <node pkg="tf" type="static_transform_publisher" name="laser_to_base" args=".1 0 .1 0 0 0 base_footprint lidar_link 100" />
+  <!--  <node pkg="tf" type="static_transform_publisher" name="laser_to_base" args=".1 0 .1 0 0 0 base_footprint lidar_link 100" /> -->
 
   <!--Start map_server with loaded map -->
   <!--<node name="map_server" pkg="map_server" type="map_server" args=" $(find nav_pkg)/maps/map.yaml" /> -->

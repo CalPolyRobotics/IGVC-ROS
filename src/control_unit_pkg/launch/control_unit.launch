@@ -22,11 +22,11 @@
   <!-- Launch RVIZ with saved configurations -->
   <!--<node name="rviz" pkg="rviz" type="rviz" args="-d $(find control_unit_pkg)/config/rviz_config.rviz"/>  --> 
   <!-- Launch BoardComms for communicating with the board -->
-  <node name="BoardComms" pkg="communication_pkg" type="BoardComms.py"/> -->
+  <node name="BoardComms" pkg="communication_pkg" type="BoardComms.py"/> 
   <!-- LIDAR scan data -->
   <node name="lidar_scan" pkg="lidar_pkg" type="lidar_scan"/> 
   <!-- Launch GPS node -->
-  <node name="gps" pkg="nmea_navsat_driver" type="nmea_serial_driver"/> -->
+  <node name="gps" pkg="nmea_navsat_driver" type="nmea_serial_driver"/>
   <!-- Launch IMU node -->
   <include file="$(find imu_pkg)/launch/imu_pkg.launch">
     <arg name="port" value="$(arg imu_port)" />
@@ -43,7 +43,7 @@
   <include file="$(find rbcar_description)/launch/rbcar_control_unit.launch"/>
   <!-- Create static transform for lidar_scan -->
   <node pkg="tf" type="static_transform_publisher" name="laser_transform" args="0 0 0 0 0 0 lidar_link laser 100" />
-  <node pkg="tf" type="static_transform_publisher" name="laser_to_base" args=".1 0 .1 0 0 0 base_footprint lidar_link 100" />
+  <!--<node pkg="tf" type="static_transform_publisher" name="laser_to_base" args=".1 0 .1 0 0 0 base_footprint lidar_link 100" /> -->
 
   <!-- Launch odometry node  -->
   <include file="$(find nav_pkg)/launch/odometry.launch">
