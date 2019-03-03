@@ -13,6 +13,5 @@ while not rospy.is_shutdown():
     t = rospy.Time.now()
     msg = Clock()
     msg.clock = t
-    print t.to_sec()
     pub.publish(msg)
     r.sleep()
