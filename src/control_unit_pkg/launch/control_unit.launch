@@ -3,7 +3,7 @@
   <!-- These are the arguments you can pass this launch file -->
   <arg name="camera_source" default="1"/>           <!-- Defaults to external USB camera -->
   <arg name="show_images" default="0"/>             <!-- Default to 0 in this launch file because it will show up in RVIZ -->
-  <arg name="imu_port" default="/dev/ttyUSB1"/>     <!-- Default IMU port -->
+  <arg name="imu_port" default="/dev/igvc_imu"/>     <!-- Default IMU port -->
   <arg name="imu_direction" default="1"/>          <!-- Default IMU direction WAS 1 --> 
   <arg name="map_file" default="$(find nav_pkg)/maps/loop_map.yaml"/>     <!-- Default map file -->
   <arg name="navigation_mode" default="0"/>         <!-- Default Nagivation mode (enabled) --> 
@@ -43,7 +43,7 @@
   <include file="$(find rbcar_description)/launch/rbcar_control_unit.launch"/>
   <!-- Create static transform for lidar_scan -->
   <node pkg="tf" type="static_transform_publisher" name="laser_transform" args="0 0 0 0 0 0 lidar_link laser 100" />
-  <node pkg="tf" type="static_transform_publisher" name="laser_to_base" args=".1 0 .1 0 0 0 base_footprint lidar_link 100" />
+  <!--<node pkg="tf" type="static_transform_publisher" name="laser_to_base" args=".1 0 .1 0 0 0 base_footprint lidar_link 100" /> -->
 
   <!-- Launch odometry node  -->
   <include file="$(find nav_pkg)/launch/odometry.launch">
