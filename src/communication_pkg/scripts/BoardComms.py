@@ -17,11 +17,11 @@ from CommsHandler import CommsHandler
 if __name__ == '__main__':
     rospy.init_node('BoardComms', anonymous=True)
 
-    port = '/dev/ttyACM0'
+    port = '/dev/igvc_comm'
     if len(sys.argv) == 2:
         port = '/dev/' + sys.argv[1]
     elif len(sys.argv) != 1:
-        print 'usage: rosrun communication_pkg BoardComms.py [ttyACM1]'
+        print 'usage: rosrun communication_pkg BoardComms.py [port_path]'
 
     comms_handler = CommsHandler(port, 115200)
 
