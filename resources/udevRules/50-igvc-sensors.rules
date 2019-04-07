@@ -2,10 +2,10 @@
 SUBSYSTEM=="tty", ATTRS{idVendor}=="067b", ATTRS{idProduct}=="2303", ATTRS{product}=="USB-Serial Controller" \
     MODE:="0666", \
     ENV{ID_MM_DEVICE_IGNORE}="1", \
-    SYMLINK+="igvc_gps"
+    SYMLINK+="igvc_simple_gps"
 
 # IGVC 3DM-GX2 IMU
-SUBSYSTEMS=="usb", ATTRS{idVendor}=="10c4", ATTRS{idProduct}=="ea60", ATTRS{product}=="3DM-GX2 4200" \
+SUBSYSTEM=="tty", ATTRS{idVendor}=="10c4", ATTRS{idProduct}=="ea60", ATTRS{product}=="3DM-GX2 4200" \
     MODE:="0666", \
     ENV{ID_MM_DEVICE_IGNORE}="1", \
     SYMLINK+="igvc_imu"
