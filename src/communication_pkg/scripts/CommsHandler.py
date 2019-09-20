@@ -8,6 +8,7 @@ from MESSAGES import *
 from Message import Message
 from Packet import Packet
 from CRC8 import crc8
+from EthClient import EthClient
 
 
 GET_MESSAGES = [
@@ -23,12 +24,23 @@ class CommsHandler(object):
     Communication manager
     Manages information exchange with the given port
 
-    port - the name of the port to connect to over serial
-    baud - the baud rate to communicate over serial
+    ip   - string of ip address for board (if using ethernet)
+    port - the name of the port to connect if using serial or the port of tcp
+           server if using ethernet
+    baud - the baud rate to communicate over serial (if using serial)
     """
 
-    def __init__(self, port, baud):
-        self.ser = serial.Serial(port, baud, timeout=1)
+    def __init__(self, ip=None, port=None, baud=None):
+        if port is None or (ip is None and baud is None):
+            raise ValueError("Either IP and Port or Port and Baud must be "
+                             "specified")
+        if ip is not None:
+            #Attempt to setup ethernet client timout after 5 seconds
+            self.interface = EthClient(ip, port, 5)
+        else:
+            rospy.loginfo("Connecting to serial %s baud:%d"%(port, baud))
+            self.iterface = serial.Serial(port, baud, timeout=1)
+
         self.mqueue = deque()
         self.seq_num = 0
         self.gt_idx = 0
@@ -69,7 +81,7 @@ class CommsHandler(object):
         pack = Packet(message, self.seq_num).to_bytearray()
         self.seq_num = (self.seq_num + 1) % 256
 
-        self.ser.write(pack)
+        self.interface.write(pack)
 
         # Return packet will be of the same message type + 1
         return self.read_packet(pack[MSG_TYP_IDX] + 1)
@@ -80,7 +92,7 @@ class CommsHandler(object):
         return Packet - the response from the golf cart
         """
         # Read in header
-        header = bytearray(self.ser.read(HEAD_SIZE))
+        header = bytearray(self.interface.read(HEAD_SIZE))
 
         # Check the message for errors
         if not (len(header) == HEAD_SIZE and
@@ -89,27 +101,27 @@ class CommsHandler(object):
                 msg_type == header[MSG_TYP_IDX]):
 
             # Clear Buffer
-            self.ser.flushInput()
+            self.interface.flushInput()
             return None
 
         # CRC is at the end of the packet
         data_len = header[PKT_LEN_IDX] - HEAD_SIZE - 1
 
         # Append each piece of data to a byte array
-        data = bytearray(self.ser.read(data_len))
+        data = bytearray(self.interface.read(data_len))
 
         if not (len(data) == data_len and
                 len(data) == MSG_INFO[header[MSG_TYP_IDX]]["length"]):
 
             # Clear Buffer
-            self.ser.flushInput()
+            self.interface.flushInput()
             return None
 
-        crc = self.ser.read(1)
+        crc = self.interface.read(1)
         pack = Packet(Message(header[MSG_TYP_IDX], data), header[SEQ_NUM_IDX], crc)
 
         if crc8(pack.to_bytearray()) != 0:
-            self.ser.flushInput()
+            self.interface.flushInput()
             return None
 
         return pack
