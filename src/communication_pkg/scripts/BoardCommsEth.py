@@ -18,7 +18,7 @@ if __name__ == '__main__':
     rospy.init_node('BoardComms', anonymous=True)
 
     ip = '192.168.0.10'
-    port = 7
+    port = 9485
 
     if len(sys.argv) == 3:
         ip = sys.argv[1]
