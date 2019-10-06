@@ -9,7 +9,9 @@
 
   <buildtool_depend>catkin</buildtool_depend>
 
-  <!--<exec_depend></exec_depend>-->
+  <exec_depend>mapviz</exec_depend>
+  <exec_depend>mapviz_plugins</exec_depend>
+  <exec_depend>rviz_satellite</exec_depend>
 
   <!-- The export tag contains other, unspecified, tags -->
   <export>

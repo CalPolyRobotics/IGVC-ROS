@@ -9,7 +9,7 @@
 
   <buildtool_depend>catkin</buildtool_depend>
 
-  <!--<exec_depend></exec_depend>-->
+  <exec_depend>ublox</exec_depend>
 
   <!-- The export tag contains other, unspecified, tags -->
   <export>

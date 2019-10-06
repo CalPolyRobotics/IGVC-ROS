@@ -1,0 +1,11 @@
+<launch>
+   <node name="BoardComms" pkg="communication_pkg" type="BoardComms.py" />
+   <node name="lidar_scan" pkg="lidar_pkg" type="lidar_scan" />
+   <node name="lidar_logic_throttle" pkg="lidar_pkg" type="lidar_logic_throttle.py" />
+   <node name="lidar_logic_fnr" pkg="lidar_pkg" type="lidar_logic_fnr.py" />
+   <include file="$(find imu_pkg)/imu_pkg.launch" />
+   <!-- <node name="JoystickCtrls" pkg="communications_pkg" type="JoystickControls.py" respawn="true"/>-->
+   <!--<node name="TurnGUI" pkg="lidar_pkg" type="collision_gui.py" respawn="true"/>-->
+   <node name="SpeedGun" pkg="communications_pkg" type="encodeGraphing.py" respawn="true"/>
+   <node name="proximity_manager" pkg="control_unit_pkg" type="proximitymanager.py" respawn="true"/>
+</launch>
