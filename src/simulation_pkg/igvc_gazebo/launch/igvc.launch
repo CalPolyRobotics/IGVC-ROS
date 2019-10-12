@@ -1,0 +1,16 @@
+<launch>
+
+  <!-- We resume the logic in empty_world.launch, changing only the name of the world to be launched -->
+  <include file="$(find gazebo_ros)/launch/empty_world.launch">
+    <arg name="world_name" value="$(find igvc_gazebo)/worlds/igvc.world"/>
+    <!-- more default parameters can be changed here -->
+  </include>
+
+  <arg name="model" default="$(find igvc_description)/urdf/igvc.urdf.xacro" />
+  <arg name="urdf_file" default="$(find xacro)/xacro --inorder '$(find igvc_description)/urdf/igvc.urdf.xacro'" /> <!-- Add - to inorder -->
+
+  <param name="robot_description" command="$(arg urdf_file)" />
+
+  <node name="spawn_urdf" pkg="gazebo_ros" type="spawn_model" args="-param robot_description -urdf -z 1 -model igvc" />
+  
+</launch>
