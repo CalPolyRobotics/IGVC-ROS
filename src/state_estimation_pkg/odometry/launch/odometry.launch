@@ -6,7 +6,7 @@
     <param name="imu_direction" value="$(arg imu_direction)"/>
 
     <!-- Launch Odometry Node -->
-    <node name="odometry" pkg="nav_pkg" type="odometry.py" output="screen"/>
+    <node name="odometry" pkg="odometry" type="odometry.py" output="screen"/>
 
 </launch>
 
