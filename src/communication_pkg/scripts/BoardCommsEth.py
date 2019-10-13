@@ -17,13 +17,16 @@ from CommsHandler import CommsHandler
 if __name__ == '__main__':
     rospy.init_node('BoardComms', anonymous=True)
 
-    port = '/dev/igvc_comm'
-    if len(sys.argv) == 2:
-        port = '/dev/' + sys.argv[1]
-    elif len(sys.argv) != 1:
-        print 'usage: rosrun communication_pkg BoardComms.py [port_path]'
+    ip = '192.168.0.10'
+    port = 9485
 
-    comms_handler = CommsHandler(port=port, baud=115200)
+    if len(sys.argv) == 3:
+        ip = sys.argv[1]
+        port = sys.argv[2]
+    elif len(sys.argv) != 1:
+        print 'usage: rosrun communication_pkg BoardCommsEth.py [ip_addr port]'
+
+    comms_handler = CommsHandler(ip=ip, port=port)
 
     init_subscribers(comms_handler)
 
