@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<package format="2">>
+  <name>gnss_tools_pkg</name>
+  <version>0.1.0</version>
+  <description>Metapackage for GNSS tools related packages.</description>
+  <author>Sukhman Marok</author>
+  <maintainer email="ssmarok@gmail.com">Sukhman Marok</maintainer>
+  <license>BSD</license>
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <exec_depend>gps_umd</exec_depend>
+  <exec_depend>nmea_msgs</exec_depend>
+  <exec_depend>nmea_navsat_driver</exec_depend>
+
+  <!-- The export tag contains other, unspecified, tags -->
+  <export>
+    <!-- You can specify that this package is a metapackage here: -->
+    <metapackage />
+  </export>
+</package>

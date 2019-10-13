@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<package format="2">>
+  <name>sensors_pkg</name>
+  <version>0.1.0</version>
+  <description>Metapackage for sensors related packages.</description>
+  <author>Sukhman Marok</author>
+  <maintainer email="ssmarok@gmail.com">Sukhman Marok</maintainer>
+  <license>BSD</license>
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <exec_depend>camera_pkg</exec_depend>
+  <exec_depend>gnss_pkg</exec_depend>
+  <exec_depend>imu_pkg</exec_depend>
+  <exec_depend>lidar_pkg</exec_depend>
+
+  <!-- The export tag contains other, unspecified, tags -->
+  <export>
+    <!-- You can specify that this package is a metapackage here: -->
+    <metapackage />
+  </export>
+</package>
