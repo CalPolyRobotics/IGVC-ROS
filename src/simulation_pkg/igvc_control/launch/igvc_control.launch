@@ -1,5 +1,10 @@
 <launch>
 
+  <arg name="model" default="$(find igvc_description)/urdf/igvc.urdf.xacro" />
+  <arg name="urdf_file" default="$(find xacro)/xacro --inorder '$(find igvc_description)/urdf/igvc.urdf.xacro'" /> <!-- Add - to inorder -->
+
+  <param name="robot_description" command="$(arg urdf_file)" />
+
   <!-- Load joint controller configurations from YAML file to parameter server -->
   <rosparam file="$(find igvc_control)/config/igvc_control.yaml" command="load"/>
 
@@ -11,5 +16,8 @@
   <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" respawn="false" output="screen">
     <remap from="/joint_states" to="/igvc/joint_states" />
   </node>
+
+  <!-- listen to boardcomms and translate it to ros_control commands -->
+  <node name="SimBoardComms" pkg="igvc_control" type="SimBoardComms.py" respawn="false" />
 
 </launch>
