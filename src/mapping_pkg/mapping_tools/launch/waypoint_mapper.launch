@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<launch>
+	<!-- This is an argument for a path file that you can pass in-->
+	<arg name="waypoint_file" default="Waypoint_map_1.csv"/>
+	
+	<!-- Set a waypoint_map_file parameter -->
+	<param name="waypoint_map_file" value="$(find mapping_tools)/../maps/$(arg waypoint_file)" />
+	
+	<!-- Run the waypoint_mapper node -->
+	<node name="waypoint_mapper" pkg="mapping_tools" type="waypoint_mapping.py"/>
+</launch>
