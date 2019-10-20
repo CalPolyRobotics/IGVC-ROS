@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<package format="2">>
+  <name>messages_pkg</name>
+  <version>0.1.0</version>
+  <description>Metapackage for message related packages.</description>
+  <author>Wesley Khademi</author>
+  <maintainer email="wkhademi@calpoly.edu">Wesley Khademi</maintainer>
+  <license>BSD</license>
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <depend>igvc_msgs</depend>
+
+  <!-- The export tag contains other, unspecified, tags -->
+  <export>
+    <!-- You can specify that this package is a metapackage here: -->
+    <metapackage />
+  </export>
+</package>
