@@ -9,7 +9,7 @@
 
   <buildtool_depend>catkin</buildtool_depend>
 
-  <depend>igvc_msgs</depend>
+  <exec_depend>igvc_msgs</exec_depend>
 
   <!-- The export tag contains other, unspecified, tags -->
   <export>
