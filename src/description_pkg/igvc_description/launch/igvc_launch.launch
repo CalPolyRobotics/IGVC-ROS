@@ -1,0 +1,6 @@
+<launch>
+  <arg name="model" default="$(find igvc_description)/urdf/igvc.urdf.xacro" />
+  <arg name="urdf_file" default="$(find xacro)/xacro --inorder '$(find igvc_description)/urdf/igvc.urdf.xacro'" />
+
+  <param name="robot_description" command="$(arg urdf_file)" />
+</launch>

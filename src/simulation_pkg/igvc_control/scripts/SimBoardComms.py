@@ -21,10 +21,10 @@ class SimBoardComms:
 
     def __init__(self):
 
-        self._left_speed_pub = rospy.Publisher('/igvc/left_rear_velocity_controller/command/data', Float64, queue_size=10)
-        self._right_speed_pub = rospy.Publisher('/igvc/right_rear_velocity_controller/command/data', Float64, queue_size=10)
-        self._left_steer_pub = rospy.Publisher('/igvc/left_steering_position_controller/command/data', Float64, queue_size=10)
-        self._right_steer_pub = rospy.Publisher('/igvc/right_steering_position_controller/command/data', Float64, queue_size=10)
+        self._left_speed_pub = rospy.Publisher('/igvc/left_rear_velocity_controller/command', Float64, queue_size=10)
+        self._right_speed_pub = rospy.Publisher('/igvc/right_rear_velocity_controller/command', Float64, queue_size=10)
+        self._left_steer_pub = rospy.Publisher('/igvc/left_steering_position_controller/command', Float64, queue_size=10)
+        self._right_steer_pub = rospy.Publisher('/igvc/right_steering_position_controller/command', Float64, queue_size=10)
 
         self._current_set_speed = 0
         self._current_set_steering = 0
@@ -82,7 +82,7 @@ class SimBoardComms:
         percent -- The velocity the cart should move at
         """
 
-        velocity = _clip(velocity, 0, self._MAX_VELOCITY)
+        velocity = -1 * _clip(velocity, 0, self._MAX_VELOCITY)
         self._left_speed_pub.publish(velocity)
         self._right_speed_pub.publish(velocity)
 
