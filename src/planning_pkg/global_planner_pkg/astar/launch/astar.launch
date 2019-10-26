@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<launch>
+    <!-- Add start and end point to parameter server so they can be dynamically updated -->
+    <param name="start_point" value=/>
+    <param name="end_point" value=/>
+
+    <!-- Add map file name to param server -->
+    <arg name="map_file_name" value="waypoint_map_1.csv"/>
+    <param name="map_file" value="$(arg map_file_name)"/>
+
+    <!-- Run node that builds the graph from the map file -->
+    <node name="" pkg="" type=""/>
+
+    <!-- Run A* node for planning a global route from start to end point -->
+    <node name="astar" pkg="astar" type="$(find astar)/scripts/astar.py"/>
+</launch>
