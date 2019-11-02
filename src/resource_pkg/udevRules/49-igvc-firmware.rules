@@ -1,11 +1,11 @@
 # IGVC USB ComPort
-SUBSYSTEMS=="usb", ATTRS{idVendor}=="0483", ATTRS{idProduct}=="5740", ATTRS{product}=="IGVC USB ComPort" \
+SUBSYSTEM=="tty", ATTRS{idVendor}=="0483", ATTRS{idProduct}=="5740", ATTRS{product}=="IGVC USB ComPort" \
     MODE:="0666", \
     ENV{ID_MM_DEVICE_IGNORE}="1", \
     SYMLINK+="igvc_comm"
 
 # IGVC USB Bootloader
-SUBSYSTEMS=="usb", ATTRS{idVendor}=="0483", ATTRS{idProduct}=="5740", ATTRS{product}=="IGVC USB Bootloader" \
+SUBSYSTEM=="tty", ATTRS{idVendor}=="0483", ATTRS{idProduct}=="5740", ATTRS{product}=="IGVC USB Bootloader" \
     MODE:="0666", \
     ENV{ID_MM_DEVICE_IGNORE}="1", \
     SYMLINK+="igvc_boot"
