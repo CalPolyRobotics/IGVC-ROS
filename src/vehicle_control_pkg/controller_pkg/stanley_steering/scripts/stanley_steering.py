@@ -2,10 +2,11 @@ import rospy
 import tf
 from sensor_msgs.msg import NavSatFix , Imu 
 from nav_msgs.msg import Odometry
-from igvc_msgs.msg import Path , PathPoint
-from std_msgs import Bool
-import utm
+#from igvc_msgs.msg import Path , PathPoint
+#from std_msgs import Bool
+#import utm
 import math
+#import nav_utils
 
 MAX_ANGLE = math.pi/6
 
@@ -36,9 +37,8 @@ class StanleySteering:
         rospy.Subscriber('imu/data', Imu, update_angle)
         rospy.Subscriber('fix', NavSatFix, self.update_position)
         rospy.Subscriber('path', Path,  self.update_path)
-        
 
-    def update_angle(self, data): #callback for incoming odometry  
+    def update_angle(self, data):   
         '''
         call back for Imu data
 
@@ -71,7 +71,8 @@ class StanleySteering:
 
         x,y,_,_ = utm.from_lat_lon(data.latitude, data.longitude)
         self.current_pos = (x,y)
-        self.crosstracking_error = (current_pos[0] - self.target_point[0]) ** 2 + (current_pos[1] - self.target_point[1]) ** 2
+        self.crosstracking_error = self.distance(current_pos, target_point) ** 2
+
 
     def update_path(self, path):
         '''
@@ -82,16 +83,20 @@ class StanleySteering:
         '''
         self.path = path
 
-    #def find_init_point(self):
-        #use helper function to find what the closest point
-    
+
+
+    def set_init_point(self):
+        self.target_point = nav_utils.get_closest_point(self.path, current_pos)[0].point
+        self.target_orientation = nav_utils.get_closest_point(self.path, current_pos)[0].orientation
+      
     def distance(P1 , P2):
         return ((P2[0] - P1[0])**2 + (P2[1] - P1[1])**2) ** .5
 
     def update_target_pos(self):
-        #index = use helper function with index and next point 
-        next_point = path[index + 1].point
-        if(distance(self.current_pos , next_point) < .5):
+        index = nav_utils.get_closest_point(self.path, current_pos)[1]
+        next_point = self.path[index + 1].point
+
+        if(self.distance(self.current_pos , next_point) < .5):
             self.target_point = next_point.point
             self.target_orientation = next_point.orientation
             
@@ -101,11 +106,11 @@ class StanleySteering:
         updates the steering angle based on the current steering angle
         '''
 
-        self.steering_angle = self.angle_error + math.atran(self.k * self.crosstracking_error / self.velocity)
+        self.steering_angle = self.angle_error + math.atan(self.k * self.crosstracking_error / self.velocity)
+
     def adjust_steering(self):
-        self.find_init_point()
-        #index = use helper function with index and next point
-        while(index < len(path)):
+        self.set_init_point()
+        while(nav_utils.get_closest_point(self.path , current_pos)[1] < len(path) - 1):
             self.update_target_pos()
             self.set_steering_angle()
             angle = math.degrees(self.steering_angle)
@@ -115,4 +120,6 @@ class StanleySteering:
 
 if __name__ == "__main__":
     stanley_steering = StanleySteering()
+    stanley_steering.adjust_steering()
+
 
