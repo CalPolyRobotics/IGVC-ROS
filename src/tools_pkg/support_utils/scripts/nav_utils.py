@@ -15,23 +15,8 @@ def get_closest_point(path, point):
         closest_point: next closest point
         closest_idx: index of next closest point
     """
-    # modify path to be a numpy array
-    if isinstance(path, Path):
-        np_path = path_to_array(path)[:,0] 
-    elif isinstance(path, Trajectory):
-        np_path = trajectory_to_array(path)[:,0] 
-    elif isinstance(path, (list, np.array)):
-        np_path = np.array(path)
-    else:
-        raise ValueError("Invalid type for `path` argument. Must be an array-like type.")
-
-    # modify point to be a [x,y,z] numpy array
-    if isinstance(point, (PathPoint, TrajectoryPoint)):
-        np_point = np.array([point.point.x, point.point.y, point.point.z]) 
-    elif isinstance(point, (list, np.array)):
-        np_point = np.array(point) 
-    else:
-        raise ValueError("Invalid type for `point` argument. Must be a point-like type.")
+    np_path = convert_path_type(path)  # modify path to be a numpy array
+    np_point = convert_point_type(point)  # modify point to be a [x,y,z] numpy array
 
     # compute the distance from current location to every point in path and find index of the min distance
     distances = ((np_path[:,0] - np_point[0])**2 + (np_path[:,1] - np_point[1])**2)**0.5
@@ -45,7 +30,7 @@ def get_closest_point(path, point):
         path_vector = next_closest_point - closest_point
         current_vector = np_point - closest_point
 
-        # compute dot product to figure out whether location is behind or in front of closest_point 
+        # compute dot product to figure out whether location is behind or in front of closest_point
         dot_prod = np.dot(path_vector, current_vector)
 
         if dot_prod >= 0:  # closest point is behind current location
@@ -54,6 +39,86 @@ def get_closest_point(path, point):
     closest_point = path[closest_idx]  # retrieve point from original `path` argument for type consistency
 
     return closest_point, closest_idx
+
+def calculate_distance(point1, point2):
+    """
+    Calculate the distance between two points.
+
+    Args:
+        point1: A point-like type (PathPoint, TrajectoryPoint, [x,y,z] list or array)
+        point2: A point-like type (PathPoint, TrajectoryPoint, [x,y,z] list or array)
+
+    Returns:
+        distance: the distance between two points
+    """
+    # modify points to be a [x,y,z] numpy array
+    np_point_1 = convert_point_type(point1)
+    np_point_2 = convert_point_type(point2)
+
+    distance = ((np_point_1[0] - np_point_2[0])**2 + (np_point_1[1] - np_point_2[1])**2)**0.5
+
+    return distance
+
+def calculate_yaw_error(current_yaw, desired_yaw):
+    """
+    Calculate the yaw error with [-pi, pi] bounds.
+
+    Args:
+        current_yaw: a current orientation
+        desired_yaw: a desired orientation
+
+    Returns:
+        yaw_error: the angle difference in orientations
+    """
+    yaw_error = current_yaw - desired_yaw
+
+    # ensure within [-pi, pi] bounds
+    if yaw_error < -np.pi:
+        yaw_error += 2*np.pi
+    elif yaw_error > np.pi:
+        yaw_error -= 2*np.pi
+
+    return yaw_error
+
+def convert_path_type(path):
+    """
+    Convert any array-like type to a numpy array.
+
+    Args:
+        path: An array-like type (list, numpy array, Path, Trajectory)
+
+    Returns:
+        np_path: a numpy array
+    """
+    if isinstance(path, Path):
+        np_path = path_to_array(path)[:,0]
+    elif isinstance(path, Trajectory):
+        np_path = trajectory_to_array(path)[:,0]
+    elif isinstance(path, (list, np.array)):
+        np_path = np.array(path)
+    else:
+        raise ValueError("Invalid type for `path` argument. Must be an array-like type.")
+
+    return np_path
+
+def convert_point_type(point):
+    """
+    Convert any point-like type to a numpy array.
+
+    Args:
+        point: A point-like type (PathPoint, TrajectoryPoint, [x,y,z] list or array)
+
+    Returns:
+        np_point: a numpy array
+    """
+    if isinstance(point, (PathPoint, TrajectoryPoint)):
+        np_point = np.array([point.point.x, point.point.y, point.point.z])
+    elif isinstance(point, (list, np.array)):
+        np_point = np.array(point)
+    else:
+        raise ValueError("Invalid type for `point` argument. Must be a point-like type.")
+
+    return np_point
 
 def path_to_array(path):
     """
@@ -85,10 +150,10 @@ def trajectory_to_array(trajectory):
     Returns:
         np_trajectory: a numpy array
     """
-    traj = [] 
+    traj = []
 
     for point in trajectory.points:
-        traj.append([[point.point.x, point.point.y, point.point.z], 
+        traj.append([[point.point.x, point.point.y, point.point.z],
                      [point.velocity.x, point.velocity.y, point.velocity.z],
                      [point.orientation.x, point.orientation.y, point.orientation.z]])
 
