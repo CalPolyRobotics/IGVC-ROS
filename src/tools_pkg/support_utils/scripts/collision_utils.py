@@ -34,8 +34,8 @@ def check_intersection(point1, point2, point3, point4):
     if o1 != o2 and o3 != o4:  # general case: if orientations don't match then lines intersect
         intersects = True
     else:  # special case: check for overlap of line segments when they are collinear
-        if (o1 == 0 and check_on_segment(p1, p2, p3)) || (o2 == 0 and check_on_segment(p1, p2, p4)) ||
-           (o3 == 0 and check_on_segment(p3, p4, p1)) || (o4 == 0 and check_on_segment(p3, p4, p2)):
+        if (o1 == 0 and check_on_segment(p1, p2, p3)) or (o2 == 0 and check_on_segment(p1, p2, p4)) or
+           (o3 == 0 and check_on_segment(p3, p4, p1)) or (o4 == 0 and check_on_segment(p3, p4, p2)):
             intersects = True
 
     return intersects
@@ -81,7 +81,7 @@ def check_on_segment(p1, p2, p3):
     max_y = max(p1[1], p3[1])
 
     # check if p2 lies between p1 and p3
-    if (min_x <= p2[0] && p2[0] <= max_x) && (min_y <= p2[1] && p2[1] <= max_y):
+    if (min_x <= p2[0] and p2[0] <= max_x) and (min_y <= p2[1] and p2[1] <= max_y):
         on_segment = True
     else:
         on_segment = False
