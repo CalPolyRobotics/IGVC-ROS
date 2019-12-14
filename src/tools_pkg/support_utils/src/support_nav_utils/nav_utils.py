@@ -59,18 +59,18 @@ def calculate_distance(point1, point2):
 
     return distance
 
-def calculate_yaw_error(current_yaw, desired_yaw):
+def calculate_yaw_error(desired_yaw, current_yaw):
     """
-    Calculate the yaw error with [-pi, pi] bounds.
+    Calculate the yaw error with [-pi, pi] bounds. Error is with respect to current orientation.
 
     Args:
-        current_yaw: a current orientation
         desired_yaw: a desired orientation
+        current_yaw: a current orientation
 
     Returns:
         yaw_error: the angle difference in orientations
     """
-    yaw_error = current_yaw - desired_yaw
+    yaw_error = desired_yaw - current_yaw
 
     # ensure within [-pi, pi] bounds
     if yaw_error < -np.pi:
@@ -174,10 +174,11 @@ def array_to_path(np_array):
     path = Path()
 
     for point in np_array:
-        location = Point(point[0,0], point[0,1], point[0,2])
-        orientation = Vector3(point[1,0], point[1,1], point[1,2])
+        path_point = PathPoint()
+        path_point.point = Point(point[0,0], point[0,1], point[0,2])
+        path_point.orientation = Vector3(point[1,0], point[1,1], point[1,2])
 
-        path.points.append(PathPoint(location, orientation))
+        path.points.append(path_point)
 
     return path
 
@@ -194,10 +195,11 @@ def array_to_trajectory(np_array):
     trajectory = Trajectory()
 
     for point in np_array:
-        location = Point(point[0,0], point[0,1], point[0,2])
-        velocity = Vector3(point[1,0], point[1,1], point[1,2])
-        orientation = Vector3(point[2,0], point[2,1], point[2,2])
+        traj_point = TrajectoryPoint()
+        traj_point.point = Point(point[0,0], point[0,1], point[0,2])
+        traj_point.velocity = Vector3(point[1,0], point[1,1], point[1,2])
+        traj_point.orientation = Vector3(point[2,0], point[2,1], point[2,2])
 
-        trajectory.points.append(TrajectoryPoint(location, velocity, orientation))
+        trajectory.points.append(traj_point)
 
     return trajectory
