@@ -94,7 +94,7 @@ def convert_path_type(path):
         np_path = path_to_array(path)[:,0]
     elif isinstance(path, Trajectory):
         np_path = trajectory_to_array(path)[:,0]
-    elif isinstance(path, (list, np.array)):
+    elif isinstance(path, (list, np.ndarray)):
         np_path = np.array(path)
     else:
         raise ValueError("Invalid type for `path` argument. Must be an array-like type.")
@@ -113,7 +113,7 @@ def convert_point_type(point):
     """
     if isinstance(point, (PathPoint, TrajectoryPoint)):
         np_point = np.array([point.point.x, point.point.y, point.point.z])
-    elif isinstance(point, (list, np.array)):
+    elif isinstance(point, (list, np.ndarray)):
         np_point = np.array(point)
     else:
         raise ValueError("Invalid type for `point` argument. Must be a point-like type.")

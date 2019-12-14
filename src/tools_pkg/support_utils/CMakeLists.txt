@@ -7,7 +7,7 @@ project(support_utils)
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
-find_package(catkin REQUIRED rospy igvc_msgs geometry_msgs)
+find_package(catkin REQUIRED rospy igvc_msgs geometry_msgs rostest)
 
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
@@ -16,7 +16,7 @@ find_package(catkin REQUIRED rospy igvc_msgs geometry_msgs)
 ## Uncomment this if the package has a setup.py. This macro ensures
 ## modules and global scripts declared therein get installed
 ## See http://ros.org/doc/api/catkin/html/user_guide/setup_dot_py.html
-# catkin_python_setup()
+catkin_python_setup()
 
 ################################################
 ## Declare ROS messages, services and actions ##
@@ -155,8 +155,8 @@ include_directories(
 
 ## Mark executable scripts (Python etc.) for installation
 ## in contrast to setup.py, you can choose the destination
-install(PROGRAMS
-#   scripts/my_python_script
+install(
+    PROGRAMS scripts/test_nav_utils.py
     DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
 
@@ -199,4 +199,8 @@ install(PROGRAMS
 # endif()
 
 ## Add folders to be run by python nosetests
-# catkin_add_nosetests(test)
+#catkin_add_nosetests(~/Projects/Robotics/IGVC-ROS/src/tools_pkg/support_utils/scripts/test_nav_utils.py)
+
+if (CATKIN_ENABLE_TESTING)
+    add_rostest(launch/nav_utils.test)
+endif()
