@@ -14,28 +14,34 @@ class NavUtilsTests(unittest.TestCase):
         self.path_point2 = PathPoint(Header(), Point(5.,5.,0.), Vector3(0.,0.,0.))
         self.traj_point1 = TrajectoryPoint(Header(), Point(24.,10.,0.), Vector3(0.,0.,0.), Vector3(0.,0.,0.))
         self.traj_point2 = TrajectoryPoint(Header(), Point(5.,5.,0.), Vector3(0.,0.,0.), Vector3(0.,0.,0.))
-        self.list = [24.,10.,0.]
-        self.array = np.array([24.,10.,0.])
+        self.point_list = [24.,10.,0.]
+        self.point_array = np.array([24.,10.,0.])
         self.path = Path(Header(), [self.path_point1, self.path_point2, self.path_point1])
         self.path_array = np.array([[[24.,10.,0.], [0.,0.,0.]], [[5.,5.,0.], [0.,0.,0.]], [[24.,10.,0.], [0.,0.,0.]]])
         self.trajectory = Trajectory(Header(), [self.traj_point1, self.traj_point2, self.traj_point1])
         self.traj_array = np.array([[[24.,10.,0.], [0.,0.,0.], [0.,0.,0.]], [[5.,5.,0.], [0.,0.,0.], [0.,0.,0.]], [[24.,10.,0.], [0.,0.,0.], [0.,0.,0.]]])
+        self.array = np.array([[24.,10.,0.], [5.,5.,0.], [24.,10.,0.]])
+        self.list = [[24.,10.,0.], [5.,5.,0.], [24.,10.,0.]]
+        self.test_path = [[1.,1.,0], [2.,4.,0.], [3.,9.,0.], [4.,16.,0.], [5.,25.,0]]
+        self.test_point1 = [2.,3.5,0.]
+        self.test_point2 = [2.2,5.5,0.]
+        self.test_point3 = [4.5,24.,0.]
 
     def test_convert_path_point(self):
         """Test for converting a PathPoint msg to a numpy array"""
-        self.assertTrue(np.array_equal(nav_utils.convert_point_type(self.path_point1), self.array))
+        self.assertTrue(np.array_equal(nav_utils.convert_point_type(self.path_point1), self.point_array))
 
     def test_convert_trajectory_point(self):
         """Test for converting a TrajectoryPoint msg to a numpy array"""
-        self.assertTrue(np.array_equal(nav_utils.convert_point_type(self.traj_point1), self.array))
+        self.assertTrue(np.array_equal(nav_utils.convert_point_type(self.traj_point1), self.point_array))
 
     def test_convert_list_point(self):
         """Test for converting a list to a numpy array"""
-        self.assertTrue(np.array_equal(nav_utils.convert_point_type(self.list), self.array))
+        self.assertTrue(np.array_equal(nav_utils.convert_point_type(self.point_list), self.point_array))
 
     def test_convert_array_point(self):
         """Test for converting a numpy array to a numpy array"""
-        self.assertTrue(np.array_equal(nav_utils.convert_point_type(self.array), self.array))
+        self.assertTrue(np.array_equal(nav_utils.convert_point_type(self.point_array), self.point_array))
 
     def test_path_to_array(self):
         """Test for converting a Path msg to a numpy array"""
@@ -54,16 +60,20 @@ class NavUtilsTests(unittest.TestCase):
         self.assertEqual(nav_utils.array_to_trajectory(self.traj_array), self.trajectory)
 
     def test_convert_path_type_with_path(self):
-        pass
+        """Test for converting a Path msg to a numpy array (dropping orientation info)"""
+        self.assertTrue(np.array_equal(nav_utils.convert_path_type(self.path), self.array))
 
     def test_convert_path_type_with_trajectory(self):
-        pass
+        """Test for converting a Trajectory msg to a numpy array (dropping orientation & velocity info)"""
+        self.assertTrue(np.array_equal(nav_utils.convert_path_type(self.trajectory), self.array))
 
     def test_convert_path_type_with_list(self):
-        pass
+        """Test for converting a list to a numpy array"""
+        self.assertTrue(np.array_equal(nav_utils.convert_path_type(self.list), self.array))
 
     def test_convert_path_type_with_array(self):
-        pass
+        """Test for converting a numpy array to a numpy array"""
+        self.assertTrue(np.array_equal(nav_utils.convert_path_type(self.array), self.array))
 
     def test_calculate_distance_same_point_type(self):
         """Test for calculating the distance between two points of same type"""
@@ -87,15 +97,15 @@ class NavUtilsTests(unittest.TestCase):
 
     def test_get_closest_point_in_front(self):
         """Test for getting the next closest point when the closest point is in front of current point"""
-        pass
+        self.assertEqual(nav_utils.get_closest_point(self.test_path, self.test_point1), ([2.,4.,0.], 1))
 
     def test_get_closest_point_behind(self):
         """Test for getting the next closest point when the closest point is behind the current point"""
-        pass
+        self.assertEqual(nav_utils.get_closest_point(self.test_path, self.test_point2), ([3.,9.,0.], 2))
 
     def test_get_closest_point_last(self):
         """Test for getting the next closest point when the closest point is the last point"""
-        pass
+        self.assertEqual(nav_utils.get_closest_point(self.test_path, self.test_point3), ([5.,25.,0.], 4))
 
 
 if __name__ == '__main__':

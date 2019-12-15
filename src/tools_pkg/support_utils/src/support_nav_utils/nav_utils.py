@@ -130,6 +130,9 @@ def path_to_array(path):
     Returns:
         np_path: a numpy array
     """
+    if not isinstance(path, Path):
+        raise ValueError("Invalid type for `path` argument. Must be of type Path.")
+
     p = []
 
     for point in path.points:
@@ -150,6 +153,9 @@ def trajectory_to_array(trajectory):
     Returns:
         np_trajectory: a numpy array
     """
+    if not isinstance(trajectory, Trajectory):
+        raise ValueError("Invalid type for `trajectory` argument. Must be of type Trajectory.")
+
     traj = []
 
     for point in trajectory.points:
