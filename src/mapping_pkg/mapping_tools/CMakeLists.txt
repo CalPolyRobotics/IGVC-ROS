@@ -10,6 +10,7 @@ project(mapping_tools)
 find_package(catkin REQUIRED COMPONENTS
   rospy
   sensor_msgs
+  igvc_msgs
 )
 
 ## System dependencies are found with CMake's conventions
@@ -104,7 +105,7 @@ find_package(catkin REQUIRED COMPONENTS
 catkin_package(
 #  INCLUDE_DIRS include
 #  LIBRARIES mapping_tools
-  CATKIN_DEPENDS rospy sensor_msgs
+   CATKIN_DEPENDS rospy sensor_msgs igvc_msgs
 #  DEPENDS system_lib
 )
 
@@ -158,10 +159,10 @@ include_directories(
 
 ## Mark executable scripts (Python etc.) for installation
 ## in contrast to setup.py, you can choose the destination
- install(PROGRAMS
-	 #   scripts/my_python_script
-  DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
-  )
+install(PROGRAMS
+#   scripts/my_python_script
+    DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+)
 
 ## Mark executables for installation
 ## See http://docs.ros.org/melodic/api/catkin/html/howto/format1/building_executables.html

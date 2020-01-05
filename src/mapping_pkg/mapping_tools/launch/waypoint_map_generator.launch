@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<launch>
+    <!-- Command line args for generating a waypoint map -->
+    <arg name="map_dir" value="waypoint_map_1"/>
+    <arg name="map_name" value="waypoint_map_1.csv"/>
+
+    <!-- Waypoint map generation parameters added to the parameter server -->
+    <param name="waypoint_map_dir" value="$(find mapping_tools)/../maps/$(arg map_dir)"/>
+    <param name="waypoint_map_name" value="$(find mapping_tools)/../maps/$(arg map_dir)/$(arg map_name)"/>
+
+    <!-- Run waypoint map generation node -->
+    <node name="waypoint_map_generator" pkg="mapping_tools" type="waypoint_map_generator.py"/>
+</launch>

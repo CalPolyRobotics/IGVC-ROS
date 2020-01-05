@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<launch>
+    <!-- Command line args for loading a waypoint map -->
+    <arg name="map_dir" default="waypoint_map_1"/>
+    <arg name="map_name" default="waypoint_map_1.csv"/>
+
+    <!-- Waypoint map loader parameters added to the parameter server -->
+    <param name="waypoint_map_name" value="$(find mapping_tools)/../maps/$(arg map_dir)/$(arg map_name)"/>
+
+    <!-- Run waypoint map loader node -->
+    <node name="waypoint_map_loader" pkg="mapping_tools" type="waypoint_map_loader.py"/>
+</launch>

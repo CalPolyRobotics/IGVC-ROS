@@ -1,12 +1,13 @@
 <?xml version="1.0"?>
 <package format="2">
   <name>mapping_tools</name>
-  <version>0.0.0</version>
-  <description>The mapping_tools package</description>
+  <version>0.1.0</version>
+  <description>The mapping_tools package contains nodes for collecting, generating, and loading waypoint maps used for waypoint based navigation.</description>
 
   <!-- One maintainer tag required, multiple allowed, one person per tag -->
   <!-- Example:  -->
   <!-- <maintainer email="jane.doe@example.com">Jane Doe</maintainer> -->
+  <maintainer email="wkhademi@calpoly.edu">Wesley Khademi</maintainer>
   <maintainer email="tristan@gmail.com">tristan</maintainer>
 
 
@@ -25,7 +26,7 @@
   <!-- Author tags are optional, multiple are allowed, one per tag -->
   <!-- Authors do not have to be maintainers, but could be -->
   <!-- Example: -->
-  <!-- <author email="jane.doe@example.com">Jane Doe</author> -->
+  <author email="wkhademi@calpoly.edu">Wesley Khademi</author>
 
 
   <!-- The *depend tags are used to specify dependencies -->
@@ -50,9 +51,11 @@
   <!--   <doc_depend>doxygen</doc_depend> -->
   <buildtool_depend>catkin</buildtool_depend>
   <build_depend>rospy</build_depend>
-  <build_export_depend>rospy</build_export_depend>
+  <build_depend>sensor_msgs</build_depend>
+  <build_depend>igvc_msgs</build_depend>
   <exec_depend>rospy</exec_depend>
-  <depend>sensor_msgs</depend>
+  <exec_depend>sensor_msgs</exec_depend>
+  <exec_depend>igvc_msgs</exec_depend>
 
   <!-- The export tag contains other, unspecified, tags -->
   <export>
