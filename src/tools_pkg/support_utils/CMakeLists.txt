@@ -202,5 +202,5 @@ install(
 #catkin_add_nosetests(~/Projects/Robotics/IGVC-ROS/src/tools_pkg/support_utils/scripts/test_nav_utils.py)
 
 if (CATKIN_ENABLE_TESTING)
-    add_rostest(launch/nav_utils.test)
+    add_rostest(launch/support_utils.test)
 endif()
