@@ -1,4 +1,4 @@
 Header header
 
 # A list of TrajectoryPoint msgs
-TrajectoryPoint[] points
+igvc_msgs/TrajectoryPoint[] points
