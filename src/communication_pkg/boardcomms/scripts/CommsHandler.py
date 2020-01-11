@@ -39,7 +39,7 @@ class CommsHandler(object):
             self.interface = EthClient(ip, port, 5)
         else:
             rospy.loginfo("Connecting to serial %s baud:%d"%(port, baud))
-            self.iterface = serial.Serial(port, baud, timeout=1)
+            self.interface = serial.Serial(port, baud, timeout=1)
 
         self.mqueue = deque()
         self.seq_num = 0

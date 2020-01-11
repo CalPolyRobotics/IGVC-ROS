@@ -1,0 +1,4 @@
+<launch>
+    <test test-name="nav_utils" pkg="support_utils" type="test_nav_utils.py"/>
+    <test test-name="collision_utils" pkg="support_utils" type="test_collision_utils.py"/>
+</launch>
