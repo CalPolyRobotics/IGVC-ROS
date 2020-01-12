@@ -3,12 +3,12 @@
     <!-- Command line args for collecting waypoints for a new map -->
     <arg name="map_dir" default="waypoint_map_1"/>
     <arg name="map_name" default="on_road_map_1.csv"/>
-    <arg name="on_road" type="bool" default="True"/>
+    <arg name="on_road" default="True"/>
 
     <!-- Map collection parameters added to the parameter server -->
     <param name="waypoint_map_name" value="$(find mapping_tools)/../maps/$(arg map_dir)/$(arg map_name)"/>
     <param name="waypoints_on_road" type="bool" value="$(arg on_road)"/>
 
     <!-- Run map collection node -->
-    <node name="waypoint_collector" pkg="mapping_tools" type="waypoint_collector.py"/>
+    <node name="waypoint_collector" pkg="mapping_tools" type="waypoint_collector.py" output="screen"/>
 </launch>

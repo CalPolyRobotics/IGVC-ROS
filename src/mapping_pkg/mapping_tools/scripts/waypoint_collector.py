@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 import csv
 import rospy
-import geopy
+import geopy.distance
 from sensor_msgs.msg import NavSatFix
 
 
@@ -32,10 +32,10 @@ class WaypointCollector:
         curr_waypoint = (gps_info.latitude, gps_info.longitude)
 
         # record new waypoint if the distance from the previously recorded waypoint is greater than 3 meters
-        if self.prev_waypoint is None or geopy.distance.distance(self.prev_waypoint, curr_waypoint) >= 3:
+        if self.prev_waypoint is None or geopy.distance.distance(self.prev_waypoint, curr_waypoint).m >= 3:
             rospy.loginfo(curr_waypoint)
             self.writer.writerow((curr_waypoint[0], curr_waypoint[1], self.on_road))
-            self.prev_waypoint = curr_waypoint  # update the previous waypoint to the newly recorded waypoint
+            self.prev_waypoint = (gps_info.latitude, gps_info.longitude)  # update the previous waypoint to the newly recorded waypoint
 
 
 if __name__ == '__main__':

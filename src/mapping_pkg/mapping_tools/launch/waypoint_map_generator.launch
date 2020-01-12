@@ -9,5 +9,5 @@
     <param name="waypoint_map_name" value="$(find mapping_tools)/../maps/$(arg map_dir)/$(arg map_name)"/>
 
     <!-- Run waypoint map generation node -->
-    <node name="waypoint_map_generator" pkg="mapping_tools" type="waypoint_map_generator.py"/>
+    <node name="waypoint_map_generator" pkg="mapping_tools" type="waypoint_map_generator.py" output="screen"/>
 </launch>
