@@ -1,0 +1,5 @@
+<?xml version="1.0"?>
+<launch>
+  <!-- Launch JoystickControls-->
+  <node name="JoystickControls" pkg="remote_control" type="JoystickControls.py"/> 
+</launch>
