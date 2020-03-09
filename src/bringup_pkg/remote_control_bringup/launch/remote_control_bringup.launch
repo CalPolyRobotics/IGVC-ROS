@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<launch>
+  <!-- Launch BoardComms for communicating with the board -->
+  <node name="BoardComms" pkg="boardcomms" type="BoardComms.py"/>
+  <!-- Launch BoardCommsEth for communicating with the board -->
+  <!---<node name="BoardCommsEth" pkg="boardcomms" type="BoardCommsEth.py"/> -->
+  <!-- Launch remote_control-->
+  <include file="$(find remote_control)/launch/remote_control.launch"/>
+
+</launch>

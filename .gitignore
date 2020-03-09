@@ -38,3 +38,6 @@ devel/*
 
 # Package specific ignores
 src/tools_pkg/visualization_pkg/mapviz/CATKIN_IGNORE
+
+# VSCode
+.vscode/settings.json
